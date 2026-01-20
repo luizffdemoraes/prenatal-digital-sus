@@ -1,4 +1,4 @@
-package com.hackathon.sus.prenatal_auth;
+package br.com.hackathon.sus.prenatal_auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

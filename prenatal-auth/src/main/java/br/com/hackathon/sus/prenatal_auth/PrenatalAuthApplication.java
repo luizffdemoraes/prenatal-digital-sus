@@ -1,4 +1,4 @@
-package com.hackathon.sus.prenatal_auth;
+package br.com.hackathon.sus.prenatal_auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
