@@ -18,6 +18,7 @@ public class CreateUserUseCaseImp implements CreateUserUseCase {
         this.roleGateway = roleGateway;
     }
 
+    @Override
     public User execute(User user) {
         if (userGateway.existsUserByEmail(user.getEmail())) {
             throw new BusinessException("user.email.exists");

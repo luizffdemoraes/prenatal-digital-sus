@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,9 +76,9 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
         ValidationError err = new ValidationError();
 
-        e.getBindingResult().getFieldErrors().forEach(fieldError -> {
-            err.addError(fieldError.getField(), fieldError.getDefaultMessage());
-        });
+        e.getBindingResult().getFieldErrors().forEach(fieldError -> 
+            err.addError(fieldError.getField(), fieldError.getDefaultMessage())
+        );
 
         return ResponseEntity.status(status).body(err);
     }
@@ -144,7 +145,7 @@ public class GlobalExceptionHandler {
             } else {
                 errorMessage = ex.getMessage();
             }
-        } catch (Exception e) {
+        } catch (NoSuchMessageException e) {
             // Se não conseguir resolver, usa a mensagem original
             errorMessage = ex.getMessage();
         }

@@ -52,7 +52,7 @@ public class UserGatewayImpl implements UserGateway {
         return this.userRepository.existsByEmail(email);
     }
 
-
+    @Override
     public User findUserById(Integer id) {
         return findUserOrThrow(id);
     }
@@ -90,7 +90,8 @@ public class UserGatewayImpl implements UserGateway {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
             String username = jwtPrincipal.getClaim("username");
-            UserEntity userEntity = this.userRepository.findByEmail(username).get();
+            UserEntity userEntity = this.userRepository.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("error.user.invalid"));
             return UserMapper.toDomain(userEntity);
         } catch (Exception e) {
             throw new UsernameNotFoundException("error.user.invalid");
