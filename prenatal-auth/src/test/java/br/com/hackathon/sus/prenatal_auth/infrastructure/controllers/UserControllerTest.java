@@ -35,8 +35,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
     "spring.sql.init.mode=always",
+    "spring.sql.init.schema-locations=classpath:schema-h2.sql",
     // opcional: banco isolado se algum bean for usar DataSource
-    "spring.datasource.url=jdbc:h2:mem:controllerTestDb;MODE=PostgreSQL"
+    "spring.datasource.url=jdbc:h2:mem:controllerTestDb;MODE=PostgreSQL",
+    "spring.flyway.enabled=false",
+    "spring.jpa.hibernate.ddl-auto=none",
+    "spring.jpa.properties.hibernate.default_schema=auth",
+    "spring.main.allow-bean-definition-overriding=true",
+    "spring.h2.console.enabled=true"
 })
 class UserControllerTest {
 

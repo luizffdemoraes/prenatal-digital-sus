@@ -1,0 +1,184 @@
+package br.com.hackathon.sus.prenatal_auth.infrastructure.exceptions.handler;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.Mock;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.http.HttpInputMessage;
+import org.springframework.context.MessageSource;
+import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import br.com.hackathon.sus.prenatal_auth.infrastructure.exceptions.BusinessException;
+import br.com.hackathon.sus.prenatal_auth.infrastructure.exceptions.StandardError;
+import br.com.hackathon.sus.prenatal_auth.infrastructure.exceptions.ValidationError;
+import jakarta.servlet.http.HttpServletRequest;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class GlobalExceptionHandlerTest {
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private MessageSource messageSource;
+
+    private GlobalExceptionHandler handler;
+
+    @BeforeEach
+    void setup() {
+        handler = new GlobalExceptionHandler(messageSource);
+        when(request.getRequestURI()).thenReturn("/test-uri");
+
+        // Configurar mocks padrão para MessageSource (lenient para evitar stubbings desnecessários)
+        when(messageSource.getMessage(eq("error.endpoint.not.found"), any(), any())).thenReturn("Endpoint not found");
+        when(messageSource.getMessage(eq("error.endpoint.description"), any(), any())).thenReturn("The requested endpoint does not exist or the HTTP method is incorrect");
+        when(messageSource.getMessage(eq("error.request"), any(), any())).thenReturn("Request error");
+        when(messageSource.getMessage(eq("error.json.invalid"), any(), any())).thenReturn("Invalid JSON format");
+        when(messageSource.getMessage(eq("error.json.format"), any(), any())).thenReturn("JSON formatting error. Please check if all fields are correctly formatted");
+        when(messageSource.getMessage(eq("error.json.mapping"), any(), any())).thenReturn("JSON mapping error. Please verify that all fields have the correct types");
+        when(messageSource.getMessage(eq("error.unauthorized"), any(), any())).thenReturn("Unauthorized access");
+        when(messageSource.getMessage(eq("error.resource.not.found"), any(), any())).thenReturn("Resource not found");
+        when(messageSource.getMessage(eq("error.request.invalid"), any(), any())).thenReturn("Invalid request");
+    }
+
+    @Test
+    void handleNoResourceFound_ShouldReturnNotFoundResponse() {
+        NoResourceFoundException ex = new NoResourceFoundException(HttpMethod.GET, "/non-existent-endpoint");
+
+        ResponseEntity<StandardError> response = handler.handleNoResourceFound(ex, request);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Endpoint not found", response.getBody().error());
+        assertEquals("The requested endpoint does not exist or the HTTP method is incorrect", response.getBody().message());
+        assertEquals("/test-uri", response.getBody().path());
+    }
+
+    @Test
+    void handleHttpMessageNotReadable_WithJsonMappingException_ShouldReturnBadRequestWithMappingMessage() {
+        JsonMappingException cause = mock(JsonMappingException.class);
+        HttpInputMessage inputMessage = mock(HttpInputMessage.class);
+        HttpMessageNotReadableException ex = new HttpMessageNotReadableException("Error", cause, inputMessage);
+
+        ResponseEntity<StandardError> response = handler.handleHttpMessageNotReadable(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Request error", response.getBody().error());
+        assertEquals("JSON mapping error. Please verify that all fields have the correct types", response.getBody().message());
+    }
+
+    @Test
+    void handleHttpMessageNotReadable_WithOtherCause_ShouldReturnBadRequestWithDefaultMessage() {
+        HttpInputMessage inputMessage = mock(HttpInputMessage.class);
+        HttpMessageNotReadableException ex = new HttpMessageNotReadableException("Error", new RuntimeException(), inputMessage);
+
+        ResponseEntity<StandardError> response = handler.handleHttpMessageNotReadable(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Request error", response.getBody().error());
+        assertEquals("Invalid JSON format", response.getBody().message());
+    }
+
+    @Test
+    void validation_ShouldReturnValidationErrorWithFieldErrors() {
+        // Cria erros de campo reais
+        FieldError fieldError1 = new FieldError("object", "field1", "must not be blank");
+        FieldError fieldError2 = new FieldError("object", "field2", "must be a number");
+
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "object");
+        bindingResult.addError(fieldError1);
+        bindingResult.addError(fieldError2);
+
+        MethodParameter methodParameter = mock(MethodParameter.class);
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(methodParameter, bindingResult);
+
+        ResponseEntity<ValidationError> response = handler.validation(exception, request);
+
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().getErrors().size());
+
+        assertTrue(response.getBody().getErrors().toString().contains("field1"));
+        assertTrue(response.getBody().getErrors().toString().contains("field2"));
+        assertTrue(response.getBody().getErrors().toString().contains("must not be blank"));
+        assertTrue(response.getBody().getErrors().toString().contains("must be a number"));
+    }
+
+    @Test
+    void handleBusinessException_ShouldReturnUnauthorizedResponse() {
+        BusinessException ex = new BusinessException("Access denied");
+
+        ResponseEntity<StandardError> response = handler.handleBusinessException(ex, request);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Unauthorized access", response.getBody().error());
+        assertEquals("Access denied", response.getBody().message());
+        assertEquals("/test-uri", response.getBody().path());
+    }
+
+    @Test
+    void handleBusinessException_ShouldReturnNotFoundResponse() {
+        BusinessException ex = new BusinessException("Resource not found");
+
+        ResponseEntity<StandardError> response = handler.handleBusinessException(ex, request);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Resource not found", response.getBody().error());
+        assertEquals("Resource not found", response.getBody().message());
+        assertEquals("/test-uri", response.getBody().path());
+    }
+
+    @Test
+    void handleHttpMessageNotReadable_WhenCauseIsJsonParseException_ShouldReturnSpecificMessage() {
+        JsonParseException cause = new JsonParseException(null, "Mock cause");
+        HttpInputMessage inputMessage = mock(HttpInputMessage.class);
+        HttpMessageNotReadableException ex = new HttpMessageNotReadableException("Erro ao ler mensagem", cause, inputMessage);
+
+        ResponseEntity<StandardError> response = handler.handleHttpMessageNotReadable(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Request error", response.getBody().error());
+        assertEquals("JSON formatting error. Please check if all fields are correctly formatted", response.getBody().message());
+        assertEquals("/test-uri", response.getBody().path());
+    }
+
+    @Test
+    void handleIllegalArgumentException_ShouldReturnBadRequest() {
+        IllegalArgumentException ex = new IllegalArgumentException("Invalid parameter");
+
+        ResponseEntity<StandardError> response = handler.handleIllegalArgument(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Invalid request", response.getBody().error());
+        assertEquals("Invalid parameter", response.getBody().message());
+        assertEquals("/test-uri", response.getBody().path());
+    }
+}

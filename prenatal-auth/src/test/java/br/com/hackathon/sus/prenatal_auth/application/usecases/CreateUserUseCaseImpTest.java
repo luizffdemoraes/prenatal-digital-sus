@@ -109,7 +109,8 @@ class CreateUserUseCaseImpTest {
 
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> createUserUseCaseImp.execute(userRequestAdmin));
-        assertEquals("Email already registered", exception.getMessage());
+        assertEquals("user.email.exists", exception.getMessage());
+        assertEquals("user.email.exists", exception.getMessageKey());
     }
 
     @Test
@@ -119,6 +120,6 @@ class CreateUserUseCaseImpTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> createUserUseCaseImp.execute(userRequestAdmin));
-        assertEquals("Invalid role: ROLE_DOCTOR", exception.getMessage());
+        assertEquals("error.role.invalid: ROLE_DOCTOR", exception.getMessage());
     }
 }

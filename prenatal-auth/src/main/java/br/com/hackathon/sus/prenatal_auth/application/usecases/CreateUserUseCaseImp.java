@@ -21,7 +21,7 @@ public class CreateUserUseCaseImp implements CreateUserUseCase {
     @Override
     public User execute(User user) {
         if (userGateway.existsUserByEmail(user.getEmail())) {
-            throw new BusinessException("user.email.exists");
+            throw new BusinessException("user.email.exists", new Object[0]);
         }
         // Sempre pega o authority do "request"
         String authority = user.getRoles().iterator().next().getAuthority();
