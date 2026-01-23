@@ -1,4 +1,4 @@
-package com.hackathon.sus.prenatal_agenda;
+package br.com.hackathon.sus.prenatal_agenda;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
