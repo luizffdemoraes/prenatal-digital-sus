@@ -1,0 +1,325 @@
+{
+	"info": {
+		"_postman_id": "prenatal-agenda-collection",
+		"name": "Prenatal Agenda API",
+		"description": "Collection para testar a API de agenda e consultas do sistema Prenatal Digital SUS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Verificar Status da API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Verifica o status de saúde da aplicação. Não requer autenticação."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Agenda Médico",
+			"item": [
+				{
+					"name": "Criar Agenda do Médico",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"medicoId\": 1,\n    \"unidadeId\": 1,\n    \"diasAtendimento\": [\"SEGUNDA\", \"TERCA\", \"QUARTA\", \"QUINTA\", \"SEXTA\"],\n    \"horarioInicio\": \"08:00\",\n    \"horarioFim\": \"17:00\",\n    \"duracaoConsultaMinutos\": 30\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/agendas/medico",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"agendas",
+								"medico"
+							]
+						},
+						"description": "Cria a agenda semanal de um médico. Requer permissão ROLE_DOCTOR.\n\nDias disponíveis: SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO, DOMINGO"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Agenda por Médico",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/agendas/medico/{{medico_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"agendas",
+								"medico",
+								"{{medico_id}}"
+							]
+						},
+						"description": "Busca a agenda de um médico específico. Requer permissão ROLE_DOCTOR ou ROLE_NURSE."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Consultas",
+			"item": [
+				{
+					"name": "Agendar Consulta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"consulta_id\", jsonData.id);",
+									"    console.log(\"Consulta agendada com ID: \" + jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gestanteId\": 1,\n    \"medicoId\": 1,\n    \"unidadeId\": 1,\n    \"data\": \"2024-12-20\",\n    \"horario\": \"09:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/consultas/agendar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"consultas",
+								"agendar"
+							]
+						},
+						"description": "Agenda uma nova consulta. Requer permissão ROLE_PATIENT ou ROLE_NURSE.\n\nValidações:\n- Data não pode ser no passado\n- Horário deve estar dentro da agenda do médico\n- Médico deve atender no dia da semana\n- Horário não pode estar ocupado"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Consulta",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/consultas/{{consulta_id}}/cancelar?motivo=GESTANTE_DESISTIU",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"consultas",
+								"{{consulta_id}}",
+								"cancelar"
+							],
+							"query": [
+								{
+									"key": "motivo",
+									"value": "GESTANTE_DESISTIU",
+									"description": "Motivos disponíveis: GESTANTE_DESISTIU, MEDICO_INDISPONIVEL, EMERGENCIA, OUTRO"
+								}
+							]
+						},
+						"description": "Cancela uma consulta agendada. Requer permissão ROLE_PATIENT, ROLE_NURSE ou ROLE_DOCTOR.\n\nMotivos disponíveis:\n- GESTANTE_DESISTIU\n- MEDICO_INDISPONIVEL\n- EMERGENCIA\n- OUTRO"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gestantes",
+			"item": [
+				{
+					"name": "Listar Consultas da Gestante",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/gestantes/{{gestante_id}}/consultas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"gestantes",
+								"{{gestante_id}}",
+								"consultas"
+							]
+						},
+						"description": "Lista todas as consultas de uma gestante. Requer permissão ROLE_PATIENT, ROLE_NURSE ou ROLE_DOCTOR."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Disponibilidade",
+			"item": [
+				{
+					"name": "Consultar Horários Disponíveis",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/disponibilidade?medicoId={{medico_id}}&data={{data_consulta}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"disponibilidade"
+							],
+							"query": [
+								{
+									"key": "medicoId",
+									"value": "{{medico_id}}",
+									"description": "ID do médico"
+								},
+								{
+									"key": "data",
+									"value": "{{data_consulta}}",
+									"description": "Data no formato yyyy-MM-dd (ex: 2024-12-20)"
+								}
+							]
+						},
+						"description": "Consulta os horários disponíveis de um médico em uma data específica. Requer autenticação.\n\nRetorna uma lista de horários disponíveis baseado na agenda do médico e consultas já agendadas."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string",
+			"description": "Token JWT obtido do serviço de autenticação (prenatal-auth)"
+		},
+		{
+			"key": "medico_id",
+			"value": "1",
+			"type": "string",
+			"description": "ID do médico"
+		},
+		{
+			"key": "gestante_id",
+			"value": "1",
+			"type": "string",
+			"description": "ID da gestante"
+		},
+		{
+			"key": "consulta_id",
+			"value": "",
+			"type": "string",
+			"description": "ID da consulta (preenchido automaticamente após agendamento)"
+		},
+		{
+			"key": "unidade_id",
+			"value": "1",
+			"type": "string",
+			"description": "ID da unidade de saúde"
+		},
+		{
+			"key": "data_consulta",
+			"value": "2024-12-20",
+			"type": "string",
+			"description": "Data da consulta no formato yyyy-MM-dd"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	}
+}
