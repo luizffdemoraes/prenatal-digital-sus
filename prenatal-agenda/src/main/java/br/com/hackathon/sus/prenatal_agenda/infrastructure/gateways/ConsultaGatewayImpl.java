@@ -56,4 +56,9 @@ public class ConsultaGatewayImpl implements ConsultaGateway {
                 .map(ConsultaMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public boolean existeAgendamentoPorMedico(Long medicoId) {
+        return repository.existsByMedicoIdAndStatus(medicoId, StatusConsulta.AGENDADA);
+    }
 }

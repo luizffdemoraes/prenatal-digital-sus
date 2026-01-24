@@ -17,4 +17,6 @@ public interface ConsultaRepository extends JpaRepository<ConsultaEntity, Long> 
     
     List<ConsultaEntity> findByMedicoIdAndDataAndStatus(
             Long medicoId, LocalDate data, StatusConsulta status);
+
+    boolean existsByMedicoIdAndStatus(Long medicoId, StatusConsulta status);
 }

@@ -28,4 +28,9 @@ public interface ConsultaGateway {
      * Busca todas as consultas agendadas de um médico em uma data
      */
     List<Consulta> buscarConsultasAgendadasPorMedicoEData(Long medicoId, LocalDate data);
+
+    /**
+     * Indica se existe ao menos uma consulta com status AGENDADA para o médico.
+     */
+    boolean existeAgendamentoPorMedico(Long medicoId);
 }

@@ -23,11 +23,15 @@ public class DependencyInjectionConfig {
     @Bean
     public AgendaMedicoController agendaMedicoController(
             CriarAgendaMedicoUseCase criarAgendaMedicoUseCase,
+            AtualizarAgendaMedicoUseCase atualizarAgendaMedicoUseCase,
+            ExcluirAgendaMedicoUseCase excluirAgendaMedicoUseCase,
             BuscarAgendaMedicoUseCase buscarAgendaMedicoUseCase,
             MedicoResolver medicoResolver
     ) {
         return new AgendaMedicoController(
                 criarAgendaMedicoUseCase,
+                atualizarAgendaMedicoUseCase,
+                excluirAgendaMedicoUseCase,
                 buscarAgendaMedicoUseCase,
                 medicoResolver
         );
@@ -35,10 +39,10 @@ public class DependencyInjectionConfig {
 
     @Bean
     public ConsultaController consultaController(
-            AgendarConsultaPorIdentificacaoUseCase agendarPorIdentificacaoUseCase,
+            AgendarConsultaUseCase agendarConsultaUseCase,
             CancelarConsultaUseCase cancelarConsultaUseCase
     ) {
-        return new ConsultaController(agendarPorIdentificacaoUseCase, cancelarConsultaUseCase);
+        return new ConsultaController(agendarConsultaUseCase, cancelarConsultaUseCase);
     }
 
     @Bean
@@ -81,23 +85,33 @@ public class DependencyInjectionConfig {
         return new BuscarAgendaMedicoUseCaseImp(agendaMedicoGateway);
     }
 
-    // Use Cases - Consulta
     @Bean
-    public AgendarConsultaUseCase agendarConsultaUseCase(
-            ConsultaGateway consultaGateway,
-            AgendaMedicoGateway agendaMedicoGateway
+    public AtualizarAgendaMedicoUseCase atualizarAgendaMedicoUseCase(
+            AgendaMedicoGateway agendaMedicoGateway,
+            MedicoResolver medicoResolver
     ) {
-        return new AgendarConsultaUseCaseImp(consultaGateway, agendaMedicoGateway);
+        return new AtualizarAgendaMedicoUseCaseImp(agendaMedicoGateway, medicoResolver);
     }
 
     @Bean
-    public AgendarConsultaPorIdentificacaoUseCase agendarConsultaPorIdentificacaoUseCase(
+    public ExcluirAgendaMedicoUseCase excluirAgendaMedicoUseCase(
+            AgendaMedicoGateway agendaMedicoGateway,
+            ConsultaGateway consultaGateway,
+            MedicoResolver medicoResolver
+    ) {
+        return new ExcluirAgendaMedicoUseCaseImp(agendaMedicoGateway, consultaGateway, medicoResolver);
+    }
+
+    // Use Cases - Consulta
+    @Bean
+    public AgendarConsultaUseCase agendarConsultaUseCase(
             GestanteResolver gestanteResolver,
             MedicoResolver medicoResolver,
-            AgendarConsultaUseCase agendarConsultaUseCase
+            ConsultaGateway consultaGateway,
+            AgendaMedicoGateway agendaMedicoGateway
     ) {
-        return new AgendarConsultaPorIdentificacaoUseCaseImp(
-                gestanteResolver, medicoResolver, agendarConsultaUseCase);
+        return new AgendarConsultaUseCaseImp(
+                gestanteResolver, medicoResolver, consultaGateway, agendaMedicoGateway);
     }
 
     @Bean

@@ -34,4 +34,9 @@ public class AgendaMedicoGatewayImpl implements AgendaMedicoGateway {
         return repository.findByMedicoId(medicoId)
                 .map(AgendaMedicoMapper::toDomain);
     }
+
+    @Override
+    public void excluirPorId(Long id) {
+        repository.deleteById(id);
+    }
 }

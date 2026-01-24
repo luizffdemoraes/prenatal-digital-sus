@@ -46,9 +46,11 @@ public class SecurityConfig {
                         // Health check - público (sem auth), para checar se a aplicação está de pé
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         
-                        // Agenda do médico - Enfermeiras e Médicos: criar; todos: consultar agendas dos médicos
+                        // Agenda do médico - Enfermeiras e Médicos: criar, alterar, excluir; todos: consultar
                         .requestMatchers(HttpMethod.POST, "/api/agendas/medico").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE")
                         .requestMatchers(HttpMethod.GET, "/api/agendas/medico/*").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE", "ROLE_PATIENT")
+                        .requestMatchers(HttpMethod.PUT, "/api/agendas/medico/*").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/agendas/medico/*").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE")
                         
                         // Agendamento de consultas - gestantes e enfermeiros podem agendar
                         .requestMatchers(HttpMethod.POST, "/api/consultas/agendar").hasAnyAuthority("ROLE_PATIENT", "ROLE_NURSE")

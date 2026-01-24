@@ -9,10 +9,12 @@ import java.util.Optional;
  * Interface do domínio que será implementada na camada de infraestrutura
  */
 public interface AgendaMedicoGateway {
-    
+
     AgendaMedico salvar(AgendaMedico agenda);
-    
+
     Optional<AgendaMedico> buscarPorId(Long id);
-    
+
     Optional<AgendaMedico> buscarPorMedicoId(Long medicoId);
+
+    void excluirPorId(Long id);
 }

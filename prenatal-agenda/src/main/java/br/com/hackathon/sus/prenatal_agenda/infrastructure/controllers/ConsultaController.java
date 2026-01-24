@@ -2,7 +2,7 @@ package br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers;
 
 import br.com.hackathon.sus.prenatal_agenda.application.dtos.requests.AgendarConsultaRequest;
 import br.com.hackathon.sus.prenatal_agenda.application.dtos.responses.ConsultaResponse;
-import br.com.hackathon.sus.prenatal_agenda.application.usecases.AgendarConsultaPorIdentificacaoUseCase;
+import br.com.hackathon.sus.prenatal_agenda.application.usecases.AgendarConsultaUseCase;
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.CancelarConsultaUseCase;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.Consulta;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.MotivoCancelamento;
@@ -18,10 +18,10 @@ import java.net.URI;
 @RequestMapping("/api/consultas")
 public class ConsultaController {
 
-    private final AgendarConsultaPorIdentificacaoUseCase agendarConsultaUseCase;
+    private final AgendarConsultaUseCase agendarConsultaUseCase;
     private final CancelarConsultaUseCase cancelarConsultaUseCase;
 
-    public ConsultaController(AgendarConsultaPorIdentificacaoUseCase agendarConsultaUseCase,
+    public ConsultaController(AgendarConsultaUseCase agendarConsultaUseCase,
                               CancelarConsultaUseCase cancelarConsultaUseCase) {
         this.agendarConsultaUseCase = agendarConsultaUseCase;
         this.cancelarConsultaUseCase = cancelarConsultaUseCase;

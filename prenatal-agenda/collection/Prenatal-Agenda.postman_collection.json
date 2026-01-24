@@ -101,6 +101,73 @@
 						"description": "Busca a agenda de um médico pelo CRM. Requer ROLE_DOCTOR, ROLE_NURSE ou ROLE_PATIENT (gestantes consultam agendas para escolher médico). Stub: 12345 ou 123456."
 					},
 					"response": []
+				},
+				{
+					"name": "Atualizar Agenda do Médico",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"unidadeId\": 1,\n    \"diasAtendimento\": [\"SEGUNDA\", \"TERCA\", \"QUARTA\", \"QUINTA\"],\n    \"horarioInicio\": \"09:00\",\n    \"horarioFim\": \"16:00\",\n    \"duracaoConsultaMinutos\": 30\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/agendas/medico/{{crm}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"agendas",
+								"medico",
+								"{{crm}}"
+							]
+						},
+						"description": "Altera a agenda semanal do médico. Requer ROLE_DOCTOR ou ROLE_NURSE. CRM na URL. Body: unidadeId, diasAtendimento, horarioInicio, horarioFim, duracaoConsultaMinutos."
+					},
+					"response": []
+				},
+				{
+					"name": "Excluir Agenda do Médico",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/agendas/medico/{{crm}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"agendas",
+								"medico",
+								"{{crm}}"
+							]
+						},
+						"description": "Exclui a agenda do médico. Requer ROLE_DOCTOR ou ROLE_NURSE. CRM na URL. Só é permitido se não houver consultas agendadas (status AGENDADA) para o médico; caso contrário retorna 400. Retorna 204 quando excluída."
+					},
+					"response": []
 				}
 			]
 		},
