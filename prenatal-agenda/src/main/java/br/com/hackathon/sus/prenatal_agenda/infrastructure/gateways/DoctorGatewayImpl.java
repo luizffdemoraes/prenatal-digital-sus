@@ -1,6 +1,7 @@
 package br.com.hackathon.sus.prenatal_agenda.infrastructure.gateways;
 
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorGateway;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorInfo;
 
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,12 @@ public class DoctorGatewayImpl implements DoctorGateway {
             Map.entry("prenatal", 1L)
     );
 
+    private static final Map<Long, DoctorInfo> ID_TO_INFO = Map.of(
+            1L, new DoctorInfo("Dr. João", "Obstetrícia"),
+            2L, new DoctorInfo("Dr. Silva", "Obstetrícia"),
+            20L, new DoctorInfo("Dr. João", "Obstetrícia")
+    );
+
     @Override
     public Optional<Long> buscarPorCrm(String crm) {
         if (crm == null || crm.isBlank()) return Optional.empty();
@@ -47,5 +54,11 @@ public class DoctorGatewayImpl implements DoctorGateway {
     public Optional<Long> buscarPorEspecialidade(String especialidade, Long unidadeId) {
         if (especialidade == null || especialidade.isBlank()) return Optional.empty();
         return Optional.ofNullable(POR_ESPECIALIDADE.get(especialidade.trim().toLowerCase()));
+    }
+
+    @Override
+    public Optional<DoctorInfo> findById(Long id) {
+        if (id == null) return Optional.empty();
+        return Optional.ofNullable(ID_TO_INFO.get(id));
     }
 }

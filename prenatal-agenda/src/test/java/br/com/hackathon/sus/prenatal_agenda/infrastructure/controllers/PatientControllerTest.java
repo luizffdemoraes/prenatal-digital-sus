@@ -2,6 +2,8 @@ package br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers;
 
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.FindAppointmentsByPatientUseCase;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.Appointment;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorGateway;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorInfo;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.PatientGateway;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.handler.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,10 +36,12 @@ class PatientControllerTest {
     private FindAppointmentsByPatientUseCase findAppointmentsByPatientUseCase;
     @Mock
     private PatientGateway patientGateway;
+    @Mock
+    private DoctorGateway doctorGateway;
 
     @BeforeEach
     void setUp() {
-        PatientController controller = new PatientController(findAppointmentsByPatientUseCase, patientGateway);
+        PatientController controller = new PatientController(findAppointmentsByPatientUseCase, patientGateway, doctorGateway);
         mvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -55,12 +59,17 @@ class PatientControllerTest {
             c.setId(100L);
             c.setDataAgendamento(LocalDateTime.now());
             when(findAppointmentsByPatientUseCase.execute(10L)).thenReturn(List.of(c));
+            when(patientGateway.findNameById(10L)).thenReturn(Optional.of("Maria"));
+            when(doctorGateway.findById(20L)).thenReturn(Optional.of(new DoctorInfo("Dr. João", "Obstetrícia")));
 
             mvc.perform(get("/api/gestantes/consultas").param("cpf", "12345678900"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray())
                     .andExpect(jsonPath("$.length()").value(1))
-                    .andExpect(jsonPath("$[0].id").value(100));
+                    .andExpect(jsonPath("$[0].id").value(100))
+                    .andExpect(jsonPath("$[0].gestanteNome").value("Maria"))
+                    .andExpect(jsonPath("$[0].medicoNome").value("Dr. João"))
+                    .andExpect(jsonPath("$[0].especialidade").value("Obstetrícia"));
         }
 
         @Test
@@ -84,12 +93,16 @@ class PatientControllerTest {
             c.setId(50L);
             c.setDataAgendamento(LocalDateTime.now());
             when(findAppointmentsByPatientUseCase.execute(5L)).thenReturn(List.of(c));
+            when(patientGateway.findNameById(5L)).thenReturn(Optional.of("Joana"));
+            when(doctorGateway.findById(20L)).thenReturn(Optional.of(new DoctorInfo("Dr. João", "Obstetrícia")));
 
             mvc.perform(get("/api/gestantes/5/consultas"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray())
                     .andExpect(jsonPath("$[0].id").value(50))
-                    .andExpect(jsonPath("$[0].gestanteId").value(5));
+                    .andExpect(jsonPath("$[0].gestanteNome").value("Joana"))
+                    .andExpect(jsonPath("$[0].medicoNome").value("Dr. João"))
+                    .andExpect(jsonPath("$[0].especialidade").value("Obstetrícia"));
         }
 
         @Test

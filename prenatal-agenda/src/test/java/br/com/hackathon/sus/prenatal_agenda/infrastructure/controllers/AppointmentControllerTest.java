@@ -4,6 +4,9 @@ import br.com.hackathon.sus.prenatal_agenda.application.usecases.CancelAppointme
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.CreateAppointmentUseCase;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.Appointment;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.CancellationReason;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorGateway;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorInfo;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.PatientGateway;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.handler.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,10 +40,15 @@ class AppointmentControllerTest {
     private CreateAppointmentUseCase createAppointmentUseCase;
     @Mock
     private CancelAppointmentUseCase cancelAppointmentUseCase;
+    @Mock
+    private PatientGateway patientGateway;
+    @Mock
+    private DoctorGateway doctorGateway;
 
     @BeforeEach
     void setUp() {
-        AppointmentController controller = new AppointmentController(createAppointmentUseCase, cancelAppointmentUseCase);
+        AppointmentController controller = new AppointmentController(
+                createAppointmentUseCase, cancelAppointmentUseCase, patientGateway, doctorGateway);
         mvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -61,6 +70,8 @@ class AppointmentControllerTest {
             salva.setId(100L);
             salva.setDataAgendamento(LocalDateTime.now());
             when(createAppointmentUseCase.execute(any(), eq(1L))).thenReturn(salva);
+            when(patientGateway.findNameById(10L)).thenReturn(Optional.of("Maria"));
+            when(doctorGateway.findById(20L)).thenReturn(Optional.of(new DoctorInfo("Dr. João", "Obstetrícia")));
 
             mvc.perform(post("/api/consultas/agendar")
                             .header("X-Unidade-Id", "1")
@@ -69,7 +80,10 @@ class AppointmentControllerTest {
                     .andExpect(status().isCreated())
                     .andExpect(header().string("Location", org.hamcrest.Matchers.containsString("/api/consultas")))
                     .andExpect(jsonPath("$.id").value(100))
-                    .andExpect(jsonPath("$.status").value("AGENDADA"));
+                    .andExpect(jsonPath("$.status").value("AGENDADA"))
+                    .andExpect(jsonPath("$.gestanteNome").value("Maria"))
+                    .andExpect(jsonPath("$.medicoNome").value("Dr. João"))
+                    .andExpect(jsonPath("$.especialidade").value("Obstetrícia"));
 
             verify(createAppointmentUseCase).execute(any(), eq(1L));
         }

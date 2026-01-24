@@ -9,4 +9,6 @@ public interface DoctorGateway {
     Optional<Long> buscarPorNome(String nome, Long unidadeId);
 
     Optional<Long> buscarPorEspecialidade(String especialidade, Long unidadeId);
+
+    Optional<DoctorInfo> findById(Long id);
 }

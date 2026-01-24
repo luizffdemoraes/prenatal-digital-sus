@@ -5,4 +5,6 @@ import java.util.Optional;
 public interface PatientGateway {
 
     Optional<Long> buscarPorCpf(String cpf);
+
+    Optional<String> findNameById(Long id);
 }

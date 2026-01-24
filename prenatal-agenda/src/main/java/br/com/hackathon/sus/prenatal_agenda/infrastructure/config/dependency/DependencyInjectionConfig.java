@@ -36,9 +36,11 @@ public class DependencyInjectionConfig {
     @Bean
     public AppointmentController appointmentController(
             CreateAppointmentUseCase createAppointmentUseCase,
-            CancelAppointmentUseCase cancelAppointmentUseCase
+            CancelAppointmentUseCase cancelAppointmentUseCase,
+            PatientGateway patientGateway,
+            DoctorGateway doctorGateway
     ) {
-        return new AppointmentController(createAppointmentUseCase, cancelAppointmentUseCase);
+        return new AppointmentController(createAppointmentUseCase, cancelAppointmentUseCase, patientGateway, doctorGateway);
     }
 
     @Bean
@@ -49,9 +51,10 @@ public class DependencyInjectionConfig {
     @Bean
     public PatientController patientController(
             FindAppointmentsByPatientUseCase findAppointmentsByPatientUseCase,
-            PatientGateway patientGateway
+            PatientGateway patientGateway,
+            DoctorGateway doctorGateway
     ) {
-        return new PatientController(findAppointmentsByPatientUseCase, patientGateway);
+        return new PatientController(findAppointmentsByPatientUseCase, patientGateway, doctorGateway);
     }
 
     // Gateways

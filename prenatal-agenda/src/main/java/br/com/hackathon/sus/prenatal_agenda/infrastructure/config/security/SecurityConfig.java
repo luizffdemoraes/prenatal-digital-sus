@@ -1,5 +1,8 @@
 package br.com.hackathon.sus.prenatal_agenda.infrastructure.config.security;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,9 +18,6 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * Configuração de segurança para o módulo de Agenda

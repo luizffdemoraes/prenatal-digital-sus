@@ -5,6 +5,8 @@ import br.com.hackathon.sus.prenatal_agenda.application.dtos.responses.Appointme
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.CancelAppointmentUseCase;
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.CreateAppointmentUseCase;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.CancellationReason;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorGateway;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.PatientGateway;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.config.mapper.AppointmentMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,17 @@ public class AppointmentController {
 
     private final CreateAppointmentUseCase createAppointmentUseCase;
     private final CancelAppointmentUseCase cancelAppointmentUseCase;
+    private final PatientGateway patientGateway;
+    private final DoctorGateway doctorGateway;
 
     public AppointmentController(CreateAppointmentUseCase createAppointmentUseCase,
-                                 CancelAppointmentUseCase cancelAppointmentUseCase) {
+                                 CancelAppointmentUseCase cancelAppointmentUseCase,
+                                 PatientGateway patientGateway,
+                                 DoctorGateway doctorGateway) {
         this.createAppointmentUseCase = createAppointmentUseCase;
         this.cancelAppointmentUseCase = cancelAppointmentUseCase;
+        this.patientGateway = patientGateway;
+        this.doctorGateway = doctorGateway;
     }
 
     @PostMapping("/agendar")
@@ -31,7 +39,11 @@ public class AppointmentController {
             @Valid @RequestBody CreateAppointmentRequest request,
             @RequestHeader("X-Unidade-Id") Long unidadeId) {
         var saved = createAppointmentUseCase.execute(request, unidadeId);
-        AppointmentResponse response = AppointmentMapper.toResponse(saved);
+        String patientName = patientGateway.findNameById(saved.getGestanteId()).orElse("");
+        var doctorInfo = doctorGateway.findById(saved.getMedicoId()).orElse(null);
+        String doctorName = doctorInfo != null ? doctorInfo.name() : "";
+        String specialty = doctorInfo != null ? doctorInfo.specialty() : "";
+        AppointmentResponse response = AppointmentMapper.toResponse(saved, patientName, doctorName, specialty);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(response.id())

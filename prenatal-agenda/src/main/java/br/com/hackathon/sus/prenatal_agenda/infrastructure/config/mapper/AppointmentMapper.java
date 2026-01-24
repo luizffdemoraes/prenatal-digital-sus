@@ -22,12 +22,19 @@ public class AppointmentMapper {
         );
     }
 
-    public static AppointmentResponse toResponse(Appointment domain) {
+    /**
+     * Monta o response com nome da paciente, do médico e especialidade (resolvidos pelos gateways).
+     */
+    public static AppointmentResponse toResponse(Appointment domain,
+                                                String patientName,
+                                                String doctorName,
+                                                String specialty) {
         if (domain == null) return null;
         return new AppointmentResponse(
                 domain.getId(),
-                domain.getGestanteId(),
-                domain.getMedicoId(),
+                patientName != null ? patientName : "",
+                doctorName != null ? doctorName : "",
+                specialty != null ? specialty : "",
                 domain.getUnidadeId(),
                 domain.getData(),
                 domain.getHorario(),

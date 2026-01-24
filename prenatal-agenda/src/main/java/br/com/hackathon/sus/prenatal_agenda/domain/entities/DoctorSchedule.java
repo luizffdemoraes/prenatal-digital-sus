@@ -21,6 +21,8 @@ public class DoctorSchedule {
                           LocalTime horarioInicio, LocalTime horarioFim, Integer duracaoConsultaMinutos) {
         this.medicoId = medicoId;
         this.unidadeId = unidadeId;
+        if (diasAtendimento == null || diasAtendimento.isEmpty())
+            throw new IllegalArgumentException("Pelo menos um dia da semana deve ser informado");
         this.diasAtendimento = new HashSet<>(diasAtendimento);
         this.horarioInicio = horarioInicio;
         this.horarioFim = horarioFim;
@@ -33,6 +35,8 @@ public class DoctorSchedule {
         this.id = id;
         this.medicoId = medicoId;
         this.unidadeId = unidadeId;
+        if (diasAtendimento == null || diasAtendimento.isEmpty())
+            throw new IllegalArgumentException("Pelo menos um dia da semana deve ser informado");
         this.diasAtendimento = new HashSet<>(diasAtendimento);
         this.horarioInicio = horarioInicio;
         this.horarioFim = horarioFim;
