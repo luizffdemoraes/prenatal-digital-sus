@@ -136,7 +136,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"gestanteId\": 1,\n    \"medicoId\": 1,\n    \"unidadeId\": 1,\n    \"data\": \"2024-12-20\",\n    \"horario\": \"09:00\"\n}",
+							"raw": "{\n    \"gestanteCpf\": \"111.111.111-11\",\n    \"especialidade\": \"Obstetrícia\",\n    \"unidadeNome\": \"UBS Centro\",\n    \"data\": \"2026-01-28\",\n    \"horario\": \"09:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -154,7 +154,7 @@
 								"agendar"
 							]
 						},
-						"description": "Agenda uma nova consulta. Requer permissão ROLE_PATIENT ou ROLE_NURSE.\n\nValidações:\n- Data não pode ser no passado\n- Horário deve estar dentro da agenda do médico\n- Médico deve atender no dia da semana\n- Horário não pode estar ocupado"
+						"description": "Agenda uma consulta. Requer ROLE_PATIENT ou ROLE_NURSE.\n\nAceita o que a gestante conhece OU IDs:\n- Gestante: gestanteId OU gestanteCpf OU gestanteEmail\n- Médico: medicoId OU medicoNome OU especialidade\n- Unidade: unidadeId OU unidadeNome\n- data, horario (obrigatórios)\n\nEx. com IDs: { \"gestanteId\": 1, \"medicoId\": 1, \"unidadeId\": 1, \"data\": \"2026-01-28\", \"horario\": \"09:00\" }\n\nStub (dev): CPF 111.111.111-11 ou 11111111111; especialidade Obstetrícia/Obstetra/Prenatal ou nome Dr. João/Silva; UBS Centro/Centro → 1."
 					},
 					"response": []
 				},

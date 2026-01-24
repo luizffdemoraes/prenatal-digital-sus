@@ -1,21 +1,10 @@
 package br.com.hackathon.sus.prenatal_agenda.infrastructure.config.mapper;
 
-import br.com.hackathon.sus.prenatal_agenda.application.dtos.requests.AgendarConsultaRequest;
 import br.com.hackathon.sus.prenatal_agenda.application.dtos.responses.ConsultaResponse;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.Consulta;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.persistence.entity.ConsultaEntity;
 
 public class ConsultaMapper {
-
-    public static Consulta toDomain(AgendarConsultaRequest request) {
-        return new Consulta(
-                request.gestanteId(),
-                request.medicoId(),
-                request.unidadeId(),
-                request.data(),
-                request.horario()
-        );
-    }
 
     public static Consulta toDomain(ConsultaEntity entity) {
         if (entity == null) {

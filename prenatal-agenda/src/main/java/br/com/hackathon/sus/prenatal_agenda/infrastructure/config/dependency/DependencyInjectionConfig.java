@@ -3,6 +3,9 @@ package br.com.hackathon.sus.prenatal_agenda.infrastructure.config.dependency;
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.*;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.AgendaMedicoGateway;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.ConsultaGateway;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.GestanteResolver;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.MedicoResolver;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.UnidadeResolver;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.AgendaMedicoController;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.ConsultaController;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.DisponibilidadeController;
@@ -31,13 +34,10 @@ public class DependencyInjectionConfig {
 
     @Bean
     public ConsultaController consultaController(
-            AgendarConsultaUseCase agendarConsultaUseCase,
+            AgendarConsultaPorIdentificacaoUseCase agendarPorIdentificacaoUseCase,
             CancelarConsultaUseCase cancelarConsultaUseCase
     ) {
-        return new ConsultaController(
-                agendarConsultaUseCase,
-                cancelarConsultaUseCase
-        );
+        return new ConsultaController(agendarPorIdentificacaoUseCase, cancelarConsultaUseCase);
     }
 
     @Bean
@@ -83,6 +83,17 @@ public class DependencyInjectionConfig {
             AgendaMedicoGateway agendaMedicoGateway
     ) {
         return new AgendarConsultaUseCaseImp(consultaGateway, agendaMedicoGateway);
+    }
+
+    @Bean
+    public AgendarConsultaPorIdentificacaoUseCase agendarConsultaPorIdentificacaoUseCase(
+            GestanteResolver gestanteResolver,
+            MedicoResolver medicoResolver,
+            UnidadeResolver unidadeResolver,
+            AgendarConsultaUseCase agendarConsultaUseCase
+    ) {
+        return new AgendarConsultaPorIdentificacaoUseCaseImp(
+                gestanteResolver, medicoResolver, unidadeResolver, agendarConsultaUseCase);
     }
 
     @Bean

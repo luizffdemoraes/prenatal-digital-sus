@@ -43,8 +43,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
-                        // Agenda do médico - apenas médicos podem criar/consultar
-                        .requestMatchers(HttpMethod.POST, "/api/agendas/medico").hasAuthority("ROLE_DOCTOR")
+                        // Health check - público (sem auth), para checar se a aplicação está de pé
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        
+                        // Agenda do médico - médico ou enfermeiro podem criar; médico ou enfermeiro podem consultar
+                        .requestMatchers(HttpMethod.POST, "/api/agendas/medico").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE")
                         .requestMatchers(HttpMethod.GET, "/api/agendas/medico/**").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE")
                         
                         // Agendamento de consultas - gestantes e enfermeiros podem agendar
@@ -54,13 +57,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/disponibilidade").authenticated()
                         
                         // Listar consultas da gestante - gestante própria, enfermeiro ou médico
-                        .requestMatchers(HttpMethod.GET, "/api/gestantes/**/consultas").hasAnyAuthority("ROLE_PATIENT", "ROLE_NURSE", "ROLE_DOCTOR")
+                        .requestMatchers(HttpMethod.GET, "/api/gestantes/*/consultas").hasAnyAuthority("ROLE_PATIENT", "ROLE_NURSE", "ROLE_DOCTOR")
                         
                         // Cancelar consulta - gestante própria, enfermeiro ou médico
-                        .requestMatchers(HttpMethod.DELETE, "/api/consultas/**/cancelar").hasAnyAuthority("ROLE_PATIENT", "ROLE_NURSE", "ROLE_DOCTOR")
-                        
-                        // Health check - público
-                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/consultas/*/cancelar").hasAnyAuthority("ROLE_PATIENT", "ROLE_NURSE", "ROLE_DOCTOR")
                         
                         // Todas as outras requisições precisam estar autenticadas
                         .anyRequest().authenticated()
