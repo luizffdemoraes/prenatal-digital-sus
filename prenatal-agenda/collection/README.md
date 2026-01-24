@@ -24,7 +24,8 @@ Esta collection contém todas as rotas da API de Agenda e Consultas do sistema P
 2. Configure as variáveis conforme necessário:
    - `base_url`: URL base da API (padrão: `http://localhost:8080`)
    - `access_token`: Token JWT obtido do serviço de autenticação
-   - `medico_id`: ID do médico para testes
+   - `crm`: CRM do médico (ex.: 12345), usado em disponibilidade e agendas
+   - `medico_id`: ID do médico (legado; preferir `crm` quando possível)
    - `gestante_id`: ID da gestante para testes
    - `data_consulta`: Data no formato `yyyy-MM-dd`
 
@@ -60,7 +61,7 @@ Antes de usar as rotas protegidas, você precisa obter um token JWT:
 - **GET** `/api/gestantes/{id}/consultas` - Listar consultas da gestante (ROLE_PATIENT, ROLE_NURSE, ROLE_DOCTOR)
 
 ### Disponibilidade
-- **GET** `/api/disponibilidade?medicoId={id}&data={yyyy-MM-dd}` - Consultar horários disponíveis (autenticado)
+- **GET** `/api/disponibilidade?crm={crm}&data={yyyy-MM-dd}` - Consultar horários disponíveis (autenticado). Parâmetro `crm` (não medicoId). Resposta: medicoNome, especialidade, data, horariosDisponiveis.
 
 ## 🔐 Permissões por Endpoint
 
@@ -110,8 +111,18 @@ Authorization: Bearer <token>
 ### 3. Consultar Disponibilidade
 
 ```
-GET /api/disponibilidade?medicoId=1&data=2024-12-20
+GET /api/disponibilidade?crm=12345&data=2026-01-28
 Authorization: Bearer <token>
+```
+
+Exemplo de resposta:
+```json
+{
+  "medicoNome": "Dr. João",
+  "especialidade": "Obstetrícia",
+  "data": "2026-01-28",
+  "horariosDisponiveis": ["08:00", "08:30", "09:00", "09:30", "10:00"]
+}
 ```
 
 ### 4. Cancelar Consulta

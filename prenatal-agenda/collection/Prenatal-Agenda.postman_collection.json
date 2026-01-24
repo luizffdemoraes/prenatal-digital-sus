@@ -349,7 +349,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/disponibilidade?medicoId={{medico_id}}&data={{data_consulta}}",
+							"raw": "{{base_url}}/api/disponibilidade?crm={{crm}}&data={{data_consulta}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -359,18 +359,18 @@
 							],
 							"query": [
 								{
-									"key": "medicoId",
-									"value": "{{medico_id}}",
-									"description": "ID do médico"
+									"key": "crm",
+									"value": "{{crm}}",
+									"description": "CRM do médico (ex.: 12345)"
 								},
 								{
 									"key": "data",
 									"value": "{{data_consulta}}",
-									"description": "Data no formato yyyy-MM-dd (ex: 2024-12-20)"
+									"description": "Data no formato yyyy-MM-dd (ex: 2026-01-28)"
 								}
 							]
 						},
-						"description": "Consulta os horários disponíveis de um médico em uma data. ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT.\n\nmedicoId: use o id retornado em GET /api/agendas/medico/{{crm}} (campo medicoId) se tiver apenas o CRM."
+						"description": "Consulta os horários disponíveis de um médico em uma data. ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT.\n\n- crm: CRM do médico (identificação por CRM, não por ID).\n- data: yyyy-MM-dd.\n\nResposta: medicoNome, especialidade, data, horariosDisponiveis[]. Ex.: {\"medicoNome\":\"Dr. João\",\"especialidade\":\"Obstetrícia\",\"data\":\"2026-01-28\",\"horariosDisponiveis\":[\"08:00\",\"08:30\",...]}\n\n404 se CRM não encontrado."
 					},
 					"response": []
 				}

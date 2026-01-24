@@ -44,8 +44,11 @@ public class DependencyInjectionConfig {
     }
 
     @Bean
-    public AvailabilityController availabilityController(ListAvailabilityUseCase listAvailabilityUseCase) {
-        return new AvailabilityController(listAvailabilityUseCase);
+    public AvailabilityController availabilityController(
+            ListAvailabilityUseCase listAvailabilityUseCase,
+            DoctorGateway doctorGateway
+    ) {
+        return new AvailabilityController(listAvailabilityUseCase, doctorGateway);
     }
 
     @Bean
