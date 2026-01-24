@@ -1,18 +1,14 @@
 package br.com.hackathon.sus.prenatal_agenda.infrastructure.config.dependency;
 
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.*;
-import br.com.hackathon.sus.prenatal_agenda.domain.gateways.AgendaMedicoGateway;
-import br.com.hackathon.sus.prenatal_agenda.domain.gateways.ConsultaGateway;
-import br.com.hackathon.sus.prenatal_agenda.domain.gateways.GestanteResolver;
-import br.com.hackathon.sus.prenatal_agenda.domain.gateways.MedicoResolver;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.AgendaMedicoController;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.ConsultaController;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.DisponibilidadeController;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.GestanteController;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.gateways.AgendaMedicoGatewayImpl;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.gateways.ConsultaGatewayImpl;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.persistence.repository.AgendaMedicoRepository;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.persistence.repository.ConsultaRepository;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.*;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.AppointmentController;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.AvailabilityController;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.DoctorScheduleController;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.PatientController;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.gateways.*;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.persistence.repository.AppointmentRepository;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.persistence.repository.DoctorScheduleRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,114 +17,121 @@ public class DependencyInjectionConfig {
 
     // Controllers
     @Bean
-    public AgendaMedicoController agendaMedicoController(
-            CriarAgendaMedicoUseCase criarAgendaMedicoUseCase,
-            AtualizarAgendaMedicoUseCase atualizarAgendaMedicoUseCase,
-            ExcluirAgendaMedicoUseCase excluirAgendaMedicoUseCase,
-            BuscarAgendaMedicoUseCase buscarAgendaMedicoUseCase,
-            MedicoResolver medicoResolver
+    public DoctorScheduleController doctorScheduleController(
+            CreateDoctorScheduleUseCase createDoctorScheduleUseCase,
+            UpdateDoctorScheduleUseCase updateDoctorScheduleUseCase,
+            DeleteDoctorScheduleUseCase deleteDoctorScheduleUseCase,
+            FindDoctorScheduleUseCase findDoctorScheduleUseCase,
+            DoctorGateway doctorGateway
     ) {
-        return new AgendaMedicoController(
-                criarAgendaMedicoUseCase,
-                atualizarAgendaMedicoUseCase,
-                excluirAgendaMedicoUseCase,
-                buscarAgendaMedicoUseCase,
-                medicoResolver
+        return new DoctorScheduleController(
+                createDoctorScheduleUseCase,
+                updateDoctorScheduleUseCase,
+                deleteDoctorScheduleUseCase,
+                findDoctorScheduleUseCase,
+                doctorGateway
         );
     }
 
     @Bean
-    public ConsultaController consultaController(
-            AgendarConsultaUseCase agendarConsultaUseCase,
-            CancelarConsultaUseCase cancelarConsultaUseCase
+    public AppointmentController appointmentController(
+            CreateAppointmentUseCase createAppointmentUseCase,
+            CancelAppointmentUseCase cancelAppointmentUseCase
     ) {
-        return new ConsultaController(agendarConsultaUseCase, cancelarConsultaUseCase);
+        return new AppointmentController(createAppointmentUseCase, cancelAppointmentUseCase);
     }
 
     @Bean
-    public DisponibilidadeController disponibilidadeController(
-            ConsultarDisponibilidadeUseCase consultarDisponibilidadeUseCase
-    ) {
-        return new DisponibilidadeController(consultarDisponibilidadeUseCase);
+    public AvailabilityController availabilityController(ListAvailabilityUseCase listAvailabilityUseCase) {
+        return new AvailabilityController(listAvailabilityUseCase);
     }
 
     @Bean
-    public GestanteController gestanteController(
-            BuscarConsultasPorGestanteUseCase buscarConsultasPorGestanteUseCase,
-            GestanteResolver gestanteResolver
+    public PatientController patientController(
+            FindAppointmentsByPatientUseCase findAppointmentsByPatientUseCase,
+            PatientGateway patientGateway
     ) {
-        return new GestanteController(buscarConsultasPorGestanteUseCase, gestanteResolver);
+        return new PatientController(findAppointmentsByPatientUseCase, patientGateway);
     }
 
     // Gateways
     @Bean
-    public AgendaMedicoGateway agendaMedicoGateway(AgendaMedicoRepository repository) {
-        return new AgendaMedicoGatewayImpl(repository);
+    public DoctorScheduleGateway doctorScheduleGateway(DoctorScheduleRepository repository) {
+        return new DoctorScheduleGatewayImpl(repository);
     }
 
     @Bean
-    public ConsultaGateway consultaGateway(ConsultaRepository repository) {
-        return new ConsultaGatewayImpl(repository);
+    public AppointmentGateway appointmentGateway(AppointmentRepository repository) {
+        return new AppointmentGatewayImpl(repository);
     }
 
-    // Use Cases - Agenda
     @Bean
-    public CriarAgendaMedicoUseCase criarAgendaMedicoUseCase(
-            AgendaMedicoGateway agendaMedicoGateway,
-            MedicoResolver medicoResolver
+    public DoctorGateway doctorGateway() {
+        return new DoctorGatewayImpl();
+    }
+
+    @Bean
+    public PatientGateway patientGateway() {
+        return new PatientGatewayImpl();
+    }
+
+    // Use Cases - DoctorSchedule
+    @Bean
+    public CreateDoctorScheduleUseCase createDoctorScheduleUseCase(
+            DoctorScheduleGateway doctorScheduleGateway,
+            DoctorGateway doctorGateway
     ) {
-        return new CriarAgendaMedicoUseCaseImp(agendaMedicoGateway, medicoResolver);
+        return new CreateDoctorScheduleUseCaseImp(doctorScheduleGateway, doctorGateway);
     }
 
     @Bean
-    public BuscarAgendaMedicoUseCase buscarAgendaMedicoUseCase(AgendaMedicoGateway agendaMedicoGateway) {
-        return new BuscarAgendaMedicoUseCaseImp(agendaMedicoGateway);
+    public FindDoctorScheduleUseCase findDoctorScheduleUseCase(DoctorScheduleGateway doctorScheduleGateway) {
+        return new FindDoctorScheduleUseCaseImp(doctorScheduleGateway);
     }
 
     @Bean
-    public AtualizarAgendaMedicoUseCase atualizarAgendaMedicoUseCase(
-            AgendaMedicoGateway agendaMedicoGateway,
-            MedicoResolver medicoResolver
+    public UpdateDoctorScheduleUseCase updateDoctorScheduleUseCase(
+            DoctorScheduleGateway doctorScheduleGateway,
+            DoctorGateway doctorGateway
     ) {
-        return new AtualizarAgendaMedicoUseCaseImp(agendaMedicoGateway, medicoResolver);
+        return new UpdateDoctorScheduleUseCaseImp(doctorScheduleGateway, doctorGateway);
     }
 
     @Bean
-    public ExcluirAgendaMedicoUseCase excluirAgendaMedicoUseCase(
-            AgendaMedicoGateway agendaMedicoGateway,
-            ConsultaGateway consultaGateway,
-            MedicoResolver medicoResolver
+    public DeleteDoctorScheduleUseCase deleteDoctorScheduleUseCase(
+            DoctorScheduleGateway doctorScheduleGateway,
+            AppointmentGateway appointmentGateway,
+            DoctorGateway doctorGateway
     ) {
-        return new ExcluirAgendaMedicoUseCaseImp(agendaMedicoGateway, consultaGateway, medicoResolver);
+        return new DeleteDoctorScheduleUseCaseImp(doctorScheduleGateway, appointmentGateway, doctorGateway);
     }
 
-    // Use Cases - Consulta
+    // Use Cases - Appointment
     @Bean
-    public AgendarConsultaUseCase agendarConsultaUseCase(
-            GestanteResolver gestanteResolver,
-            MedicoResolver medicoResolver,
-            ConsultaGateway consultaGateway,
-            AgendaMedicoGateway agendaMedicoGateway
+    public CreateAppointmentUseCase createAppointmentUseCase(
+            PatientGateway patientGateway,
+            DoctorGateway doctorGateway,
+            AppointmentGateway appointmentGateway,
+            DoctorScheduleGateway doctorScheduleGateway
     ) {
-        return new AgendarConsultaUseCaseImp(
-                gestanteResolver, medicoResolver, consultaGateway, agendaMedicoGateway);
+        return new CreateAppointmentUseCaseImp(patientGateway, doctorGateway, appointmentGateway, doctorScheduleGateway);
     }
 
     @Bean
-    public BuscarConsultasPorGestanteUseCase buscarConsultasPorGestanteUseCase(ConsultaGateway consultaGateway) {
-        return new BuscarConsultasPorGestanteUseCaseImp(consultaGateway);
+    public FindAppointmentsByPatientUseCase findAppointmentsByPatientUseCase(AppointmentGateway appointmentGateway) {
+        return new FindAppointmentsByPatientUseCaseImp(appointmentGateway);
     }
 
     @Bean
-    public CancelarConsultaUseCase cancelarConsultaUseCase(ConsultaGateway consultaGateway) {
-        return new CancelarConsultaUseCaseImp(consultaGateway);
+    public CancelAppointmentUseCase cancelAppointmentUseCase(AppointmentGateway appointmentGateway) {
+        return new CancelAppointmentUseCaseImp(appointmentGateway);
     }
 
     @Bean
-    public ConsultarDisponibilidadeUseCase consultarDisponibilidadeUseCase(
-            AgendaMedicoGateway agendaMedicoGateway,
-            ConsultaGateway consultaGateway
+    public ListAvailabilityUseCase listAvailabilityUseCase(
+            DoctorScheduleGateway doctorScheduleGateway,
+            AppointmentGateway appointmentGateway
     ) {
-        return new ConsultarDisponibilidadeUseCaseImp(agendaMedicoGateway, consultaGateway);
+        return new ListAvailabilityUseCaseImp(doctorScheduleGateway, appointmentGateway);
     }
 }
