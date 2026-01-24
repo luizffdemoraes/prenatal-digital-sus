@@ -5,7 +5,6 @@ import br.com.hackathon.sus.prenatal_agenda.domain.gateways.AgendaMedicoGateway;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.ConsultaGateway;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.GestanteResolver;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.MedicoResolver;
-import br.com.hackathon.sus.prenatal_agenda.domain.gateways.UnidadeResolver;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.AgendaMedicoController;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.ConsultaController;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.controllers.DisponibilidadeController;
@@ -24,11 +23,13 @@ public class DependencyInjectionConfig {
     @Bean
     public AgendaMedicoController agendaMedicoController(
             CriarAgendaMedicoUseCase criarAgendaMedicoUseCase,
-            BuscarAgendaMedicoUseCase buscarAgendaMedicoUseCase
+            BuscarAgendaMedicoUseCase buscarAgendaMedicoUseCase,
+            MedicoResolver medicoResolver
     ) {
         return new AgendaMedicoController(
                 criarAgendaMedicoUseCase,
-                buscarAgendaMedicoUseCase
+                buscarAgendaMedicoUseCase,
+                medicoResolver
         );
     }
 
@@ -49,9 +50,10 @@ public class DependencyInjectionConfig {
 
     @Bean
     public GestanteController gestanteController(
-            BuscarConsultasPorGestanteUseCase buscarConsultasPorGestanteUseCase
+            BuscarConsultasPorGestanteUseCase buscarConsultasPorGestanteUseCase,
+            GestanteResolver gestanteResolver
     ) {
-        return new GestanteController(buscarConsultasPorGestanteUseCase);
+        return new GestanteController(buscarConsultasPorGestanteUseCase, gestanteResolver);
     }
 
     // Gateways
@@ -67,8 +69,11 @@ public class DependencyInjectionConfig {
 
     // Use Cases - Agenda
     @Bean
-    public CriarAgendaMedicoUseCase criarAgendaMedicoUseCase(AgendaMedicoGateway agendaMedicoGateway) {
-        return new CriarAgendaMedicoUseCaseImp(agendaMedicoGateway);
+    public CriarAgendaMedicoUseCase criarAgendaMedicoUseCase(
+            AgendaMedicoGateway agendaMedicoGateway,
+            MedicoResolver medicoResolver
+    ) {
+        return new CriarAgendaMedicoUseCaseImp(agendaMedicoGateway, medicoResolver);
     }
 
     @Bean
@@ -89,11 +94,10 @@ public class DependencyInjectionConfig {
     public AgendarConsultaPorIdentificacaoUseCase agendarConsultaPorIdentificacaoUseCase(
             GestanteResolver gestanteResolver,
             MedicoResolver medicoResolver,
-            UnidadeResolver unidadeResolver,
             AgendarConsultaUseCase agendarConsultaUseCase
     ) {
         return new AgendarConsultaPorIdentificacaoUseCaseImp(
-                gestanteResolver, medicoResolver, unidadeResolver, agendarConsultaUseCase);
+                gestanteResolver, medicoResolver, agendarConsultaUseCase);
     }
 
     @Bean

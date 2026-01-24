@@ -12,6 +12,9 @@
 				{
 					"name": "Verificar Status da API",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -24,7 +27,7 @@
 								"health"
 							]
 						},
-						"description": "Verifica o status de saúde da aplicação. Não requer autenticação."
+						"description": "Verifica o status de saúde da aplicação. Rota pública — não requer autenticação (sem Bearer)."
 					},
 					"response": []
 				}
@@ -50,7 +53,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"medicoId\": 1,\n    \"unidadeId\": 1,\n    \"diasAtendimento\": [\"SEGUNDA\", \"TERCA\", \"QUARTA\", \"QUINTA\", \"SEXTA\"],\n    \"horarioInicio\": \"08:00\",\n    \"horarioFim\": \"17:00\",\n    \"duracaoConsultaMinutos\": 30\n}",
+							"raw": "{\n    \"crm\": \"12345\",\n    \"medicoNome\": \"Dr. João Silva\",\n    \"especialidade\": \"Obstetrícia\",\n    \"unidadeId\": 1,\n    \"diasAtendimento\": [\"SEGUNDA\", \"TERCA\", \"QUARTA\", \"QUINTA\", \"SEXTA\"],\n    \"horarioInicio\": \"08:00\",\n    \"horarioFim\": \"17:00\",\n    \"duracaoConsultaMinutos\": 30\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -68,12 +71,12 @@
 								"medico"
 							]
 						},
-						"description": "Cria a agenda semanal de um médico. Requer permissão ROLE_DOCTOR.\n\nDias disponíveis: SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO, DOMINGO"
+						"description": "Cria a agenda semanal de um médico. Requer ROLE_DOCTOR ou ROLE_NURSE.\n\n- crm, medicoNome, especialidade: obrigatórios (médico identificado por CRM).\n- unidadeId, diasAtendimento, horarioInicio, horarioFim, duracaoConsultaMinutos.\n\nStub: CRM 12345 ou 123456 → medico_id=1. Dias: SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO, DOMINGO."
 					},
 					"response": []
 				},
 				{
-					"name": "Buscar Agenda por Médico",
+					"name": "Buscar Agenda por Médico (CRM)",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -84,7 +87,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/agendas/medico/{{medico_id}}",
+							"raw": "{{base_url}}/api/agendas/medico/{{crm}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -92,10 +95,10 @@
 								"api",
 								"agendas",
 								"medico",
-								"{{medico_id}}"
+								"{{crm}}"
 							]
 						},
-						"description": "Busca a agenda de um médico específico. Requer permissão ROLE_DOCTOR ou ROLE_NURSE."
+						"description": "Busca a agenda de um médico pelo CRM. Requer ROLE_DOCTOR, ROLE_NURSE ou ROLE_PATIENT (gestantes consultam agendas para escolher médico). Stub: 12345 ou 123456."
 					},
 					"response": []
 				}
@@ -132,11 +135,16 @@
 								"key": "Authorization",
 								"value": "Bearer {{access_token}}",
 								"type": "text"
+							},
+							{
+								"key": "X-Unidade-Id",
+								"value": "{{unidade_id}}",
+								"description": "ID da UBS que está realizando o agendamento"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"gestanteCpf\": \"111.111.111-11\",\n    \"especialidade\": \"Obstetrícia\",\n    \"unidadeNome\": \"UBS Centro\",\n    \"data\": \"2026-01-28\",\n    \"horario\": \"09:00\"\n}",
+							"raw": "{\n    \"gestanteNome\": \"Maria Silva\",\n    \"gestanteCpf\": \"111.111.111-11\",\n    \"especialidade\": \"Obstetrícia\",\n    \"data\": \"2026-01-28\",\n    \"horario\": \"09:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -154,7 +162,7 @@
 								"agendar"
 							]
 						},
-						"description": "Agenda uma consulta. Requer ROLE_PATIENT ou ROLE_NURSE.\n\nAceita o que a gestante conhece OU IDs:\n- Gestante: gestanteId OU gestanteCpf OU gestanteEmail\n- Médico: medicoId OU medicoNome OU especialidade\n- Unidade: unidadeId OU unidadeNome\n- data, horario (obrigatórios)\n\nEx. com IDs: { \"gestanteId\": 1, \"medicoId\": 1, \"unidadeId\": 1, \"data\": \"2026-01-28\", \"horario\": \"09:00\" }\n\nStub (dev): CPF 111.111.111-11 ou 11111111111; especialidade Obstetrícia/Obstetra/Prenatal ou nome Dr. João/Silva; UBS Centro/Centro → 1."
+						"description": "Agenda uma consulta (MVP). Requer ROLE_PATIENT ou ROLE_NURSE.\n\n- Header X-Unidade-Id: UBS que realiza o agendamento (obrigatório).\n- Gestante: gestanteNome e gestanteCpf (obrigatórios).\n- Médico: medicoNome OU especialidade OU crm (um deles).\n- data, horario (obrigatórios).\n\nStub: CPF 111.111.111-11; especialidade Obstetrícia/Obstetra/Prenatal ou nome Dr. João/Silva ou CRM 12345 → 1."
 					},
 					"response": []
 				},
@@ -198,7 +206,40 @@
 			"name": "Gestantes",
 			"item": [
 				{
-					"name": "Listar Consultas da Gestante",
+					"name": "Consultar Consultas por CPF (própria agenda)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/gestantes/consultas?cpf={{cpf}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"gestantes",
+								"consultas"
+							],
+							"query": [
+								{
+									"key": "cpf",
+									"value": "{{cpf}}",
+									"description": "CPF da gestante (própria agenda)"
+								}
+							]
+						},
+						"description": "Consulta a própria agenda (consultas agendadas) da gestante por CPF. Gestantes, Enfermeiras e Médicos. Stub: 111.111.111-11 ou 11111111111."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Consultas por gestanteId",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -220,7 +261,7 @@
 								"consultas"
 							]
 						},
-						"description": "Lista todas as consultas de uma gestante. Requer permissão ROLE_PATIENT, ROLE_NURSE ou ROLE_DOCTOR."
+						"description": "Lista consultas por ID da gestante (apoio). Preferir 'Consultar por CPF' quando a gestante não souber o ID. ROLE_PATIENT, ROLE_NURSE, ROLE_DOCTOR."
 					},
 					"response": []
 				}
@@ -262,7 +303,7 @@
 								}
 							]
 						},
-						"description": "Consulta os horários disponíveis de um médico em uma data específica. Requer autenticação.\n\nRetorna uma lista de horários disponíveis baseado na agenda do médico e consultas já agendadas."
+						"description": "Consulta os horários disponíveis de um médico em uma data. ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT.\n\nmedicoId: use o id retornado em GET /api/agendas/medico/{{crm}} (campo medicoId) se tiver apenas o CRM."
 					},
 					"response": []
 				}
@@ -285,13 +326,25 @@
 			"key": "medico_id",
 			"value": "1",
 			"type": "string",
-			"description": "ID do médico"
+			"description": "ID do médico (legado; preferir crm para agendas)"
+		},
+		{
+			"key": "crm",
+			"value": "12345",
+			"type": "string",
+			"description": "CRM do médico (ex.: 12345; stub → medico_id=1)"
+		},
+		{
+			"key": "cpf",
+			"value": "111.111.111-11",
+			"type": "string",
+			"description": "CPF da gestante (stub → gestante_id=1)"
 		},
 		{
 			"key": "gestante_id",
 			"value": "1",
 			"type": "string",
-			"description": "ID da gestante"
+			"description": "ID da gestante (quando já conhecido)"
 		},
 		{
 			"key": "consulta_id",

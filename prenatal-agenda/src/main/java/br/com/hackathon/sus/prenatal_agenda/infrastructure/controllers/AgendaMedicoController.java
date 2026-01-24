@@ -4,7 +4,7 @@ import br.com.hackathon.sus.prenatal_agenda.application.dtos.requests.CriarAgend
 import br.com.hackathon.sus.prenatal_agenda.application.dtos.responses.AgendaMedicoResponse;
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.BuscarAgendaMedicoUseCase;
 import br.com.hackathon.sus.prenatal_agenda.application.usecases.CriarAgendaMedicoUseCase;
-import br.com.hackathon.sus.prenatal_agenda.domain.entities.AgendaMedico;
+import br.com.hackathon.sus.prenatal_agenda.domain.gateways.MedicoResolver;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.config.mapper.AgendaMedicoMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,30 +19,33 @@ public class AgendaMedicoController {
 
     private final CriarAgendaMedicoUseCase criarAgendaMedicoUseCase;
     private final BuscarAgendaMedicoUseCase buscarAgendaMedicoUseCase;
+    private final MedicoResolver medicoResolver;
 
     public AgendaMedicoController(CriarAgendaMedicoUseCase criarAgendaMedicoUseCase,
-                                 BuscarAgendaMedicoUseCase buscarAgendaMedicoUseCase) {
+                                  BuscarAgendaMedicoUseCase buscarAgendaMedicoUseCase,
+                                  MedicoResolver medicoResolver) {
         this.criarAgendaMedicoUseCase = criarAgendaMedicoUseCase;
         this.buscarAgendaMedicoUseCase = buscarAgendaMedicoUseCase;
+        this.medicoResolver = medicoResolver;
     }
 
     @PostMapping("/medico")
     public ResponseEntity<AgendaMedicoResponse> criarAgenda(@Valid @RequestBody CriarAgendaMedicoRequest request) {
-        AgendaMedico agenda = AgendaMedicoMapper.toDomain(request);
-        AgendaMedico agendaSalva = criarAgendaMedicoUseCase.execute(agenda);
+        var agendaSalva = criarAgendaMedicoUseCase.execute(request);
         AgendaMedicoResponse response = AgendaMedicoMapper.toResponse(agendaSalva);
-        
+
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(response.id())
+                .path("/{crm}")
+                .buildAndExpand(request.crm())
                 .toUri();
-        
+
         return ResponseEntity.created(uri).body(response);
     }
 
-    @GetMapping("/medico/{medicoId}")
-    public ResponseEntity<AgendaMedicoResponse> buscarPorMedico(@PathVariable Long medicoId) {
-        return buscarAgendaMedicoUseCase.execute(medicoId)
+    @GetMapping("/medico/{crm}")
+    public ResponseEntity<AgendaMedicoResponse> buscarPorMedico(@PathVariable String crm) {
+        return medicoResolver.buscarPorCrm(crm)
+                .flatMap(medicoId -> buscarAgendaMedicoUseCase.execute(medicoId))
                 .map(agenda -> ResponseEntity.ok(AgendaMedicoMapper.toResponse(agenda)))
                 .orElse(ResponseEntity.notFound().build());
     }

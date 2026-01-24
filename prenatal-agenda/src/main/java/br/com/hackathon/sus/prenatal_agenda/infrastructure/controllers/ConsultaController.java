@@ -28,14 +28,14 @@ public class ConsultaController {
     }
 
     /**
-     * Agenda uma consulta. Aceita IDs ou o que a gestante conhece:
-     * Gestante: gestanteId OU gestanteCpf OU gestanteEmail
-     * Médico: medicoId OU medicoNome OU especialidade
-     * Unidade: unidadeId OU unidadeNome
+     * Agenda uma consulta. A UBS que realiza o agendamento envia X-Unidade-Id.
+     * Gestante: nome e CPF. Médico: nome OU especialidade OU CRM.
      */
     @PostMapping("/agendar")
-    public ResponseEntity<ConsultaResponse> agendar(@Valid @RequestBody AgendarConsultaRequest request) {
-        Consulta consultaSalva = agendarConsultaUseCase.execute(request);
+    public ResponseEntity<ConsultaResponse> agendar(
+            @Valid @RequestBody AgendarConsultaRequest request,
+            @RequestHeader("X-Unidade-Id") Long unidadeId) {
+        Consulta consultaSalva = agendarConsultaUseCase.execute(request, unidadeId);
         ConsultaResponse response = ConsultaMapper.toResponse(consultaSalva);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

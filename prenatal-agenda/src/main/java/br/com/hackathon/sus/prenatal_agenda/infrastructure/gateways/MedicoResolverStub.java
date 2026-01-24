@@ -8,12 +8,17 @@ import java.util.Optional;
 
 /**
  * Stub para desenvolvimento. Em produção, trocar por implementação que chama
- * o serviço de profissionais (ex.: por nome ou especialidade).
+ * o serviço de profissionais (por CRM, nome ou especialidade).
  * <p>
- * Mapeamento: "Dr. João", "Dr. Silva", "Obstetrícia", "OBSTETRICA" → 1.
+ * Mapeamento: CRM 12345; Dr. João, Silva; Obstetrícia, Obstetra, Prenatal → 1.
  */
 @Component
 public class MedicoResolverStub implements MedicoResolver {
+
+    private static final Map<String, Long> POR_CRM = Map.ofEntries(
+            Map.entry("12345", 1L),
+            Map.entry("123456", 1L)
+    );
 
     private static final Map<String, Long> POR_NOME = Map.ofEntries(
             Map.entry("dr. joão", 1L),
@@ -30,6 +35,13 @@ public class MedicoResolverStub implements MedicoResolver {
             Map.entry("obstetra", 1L),
             Map.entry("prenatal", 1L)
     );
+
+    @Override
+    public Optional<Long> buscarPorCrm(String crm) {
+        if (crm == null || crm.isBlank()) return Optional.empty();
+        String normalized = crm.trim().replaceAll("\\D", "");
+        return Optional.ofNullable(POR_CRM.get(normalized));
+    }
 
     @Override
     public Optional<Long> buscarPorNome(String nome, Long unidadeId) {

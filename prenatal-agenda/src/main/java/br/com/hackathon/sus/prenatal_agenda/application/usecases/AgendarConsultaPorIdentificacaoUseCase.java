@@ -5,5 +5,8 @@ import br.com.hackathon.sus.prenatal_agenda.domain.entities.Consulta;
 
 public interface AgendarConsultaPorIdentificacaoUseCase {
 
-    Consulta execute(AgendarConsultaRequest request);
+    /**
+     * @param unidadeId id da UBS que está realizando o agendamento (vem do header X-Unidade-Id)
+     */
+    Consulta execute(AgendarConsultaRequest request, Long unidadeId);
 }

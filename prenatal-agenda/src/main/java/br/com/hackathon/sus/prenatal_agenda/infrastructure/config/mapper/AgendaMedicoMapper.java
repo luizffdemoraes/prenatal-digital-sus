@@ -1,22 +1,10 @@
 package br.com.hackathon.sus.prenatal_agenda.infrastructure.config.mapper;
 
-import br.com.hackathon.sus.prenatal_agenda.application.dtos.requests.CriarAgendaMedicoRequest;
 import br.com.hackathon.sus.prenatal_agenda.application.dtos.responses.AgendaMedicoResponse;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.AgendaMedico;
 import br.com.hackathon.sus.prenatal_agenda.infrastructure.persistence.entity.AgendaMedicoEntity;
 
 public class AgendaMedicoMapper {
-
-    public static AgendaMedico toDomain(CriarAgendaMedicoRequest request) {
-        return new AgendaMedico(
-                request.medicoId(),
-                request.unidadeId(),
-                request.diasAtendimento(),
-                request.horarioInicio(),
-                request.horarioFim(),
-                request.duracaoConsultaMinutos()
-        );
-    }
 
     public static AgendaMedico toDomain(AgendaMedicoEntity entity) {
         if (entity == null) {

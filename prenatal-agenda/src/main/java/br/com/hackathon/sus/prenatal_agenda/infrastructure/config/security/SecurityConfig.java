@@ -46,17 +46,19 @@ public class SecurityConfig {
                         // Health check - público (sem auth), para checar se a aplicação está de pé
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         
-                        // Agenda do médico - médico ou enfermeiro podem criar; médico ou enfermeiro podem consultar
+                        // Agenda do médico - Enfermeiras e Médicos: criar; todos: consultar agendas dos médicos
                         .requestMatchers(HttpMethod.POST, "/api/agendas/medico").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE")
-                        .requestMatchers(HttpMethod.GET, "/api/agendas/medico/**").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE")
+                        .requestMatchers(HttpMethod.GET, "/api/agendas/medico/*").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE", "ROLE_PATIENT")
                         
                         // Agendamento de consultas - gestantes e enfermeiros podem agendar
                         .requestMatchers(HttpMethod.POST, "/api/consultas/agendar").hasAnyAuthority("ROLE_PATIENT", "ROLE_NURSE")
                         
-                        // Consultar disponibilidade - qualquer usuário autenticado
-                        .requestMatchers(HttpMethod.GET, "/api/disponibilidade").authenticated()
+                        // Consultar horários disponíveis - Enfermeiras, Médicos, Gestantes
+                        .requestMatchers(HttpMethod.GET, "/api/disponibilidade").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE", "ROLE_PATIENT")
                         
-                        // Listar consultas da gestante - gestante própria, enfermeiro ou médico
+                        // Listar consultas por CPF (própria agenda da gestante) - Gestantes, Enfermeiras, Médicos
+                        .requestMatchers(HttpMethod.GET, "/api/gestantes/consultas").hasAnyAuthority("ROLE_PATIENT", "ROLE_NURSE", "ROLE_DOCTOR")
+                        // Listar consultas por gestanteId - Enfermeiras, Médicos (apoio)
                         .requestMatchers(HttpMethod.GET, "/api/gestantes/*/consultas").hasAnyAuthority("ROLE_PATIENT", "ROLE_NURSE", "ROLE_DOCTOR")
                         
                         // Cancelar consulta - gestante própria, enfermeiro ou médico
