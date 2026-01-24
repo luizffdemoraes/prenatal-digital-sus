@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "prenatal-auth-collection",
+		"_postman_id": "9931f394-f2bc-424f-bd7c-97d7735834bf",
 		"name": "Prenatal Auth API",
 		"description": "Collection para testar a API de autenticação do sistema Prenatal Digital SUS",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12426144"
 	},
 	"item": [
 		{
@@ -34,7 +35,7 @@
 			"name": "Autenticação",
 			"item": [
 				{
-					"name": "Obter Token OAuth2",
+					"name": "Obter Token OAuth2 Paciente",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -47,7 +48,9 @@
 									"pm.environment.set(\"basic_auth_token\", basicAuth);",
 									"console.log(\"Basic Auth token gerado automaticamente\");"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
 							}
 						},
 						{
@@ -60,11 +63,28 @@
 									"    console.log(\"Token salvo: \" + jsonData.access_token);",
 									"}"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "myclientsecret",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "myclientid",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -87,12 +107,12 @@
 								},
 								{
 									"key": "username",
-									"value": "{{username}}",
+									"value": "joao.silva",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "{{password}}",
+									"value": "senha123",
 									"type": "text"
 								},
 								{
@@ -122,7 +142,83 @@
 			"name": "Usuários",
 			"item": [
 				{
-					"name": "Criar Usuário",
+					"name": "Criar Usuário Paciente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"João Silva\",\n    \"email\": \"joao.silva@example.com\",\n    \"login\": \"joao.silva\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"Rua das Flores\",\n        \"numero\": 123,\n        \"cidade\": \"São Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01234-567\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"usuarios"
+							]
+						},
+						"description": "Cria um novo usuário no sistema. Os perfis disponíveis são: ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT"
+					},
+					"response": []
+				},
+				{
+					"name": "Criar Usuário Enfermeira",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"João Silva\",\n    \"email\": \"joao.silva@example.com\",\n    \"login\": \"joao.silva\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"Rua das Flores\",\n        \"numero\": 123,\n        \"cidade\": \"São Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01234-567\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"usuarios"
+							]
+						},
+						"description": "Cria um novo usuário no sistema. Os perfis disponíveis são: ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT"
+					},
+					"response": []
+				},
+				{
+					"name": "Criar Usuário Medico",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -162,6 +258,16 @@
 				{
 					"name": "Buscar Usuário por ID",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -188,6 +294,16 @@
 				{
 					"name": "Atualizar Usuário",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [
 							{
@@ -227,6 +343,16 @@
 				{
 					"name": "Atualizar Senha",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -309,8 +435,5 @@
 			"type": "string",
 			"description": "Token Basic Auth gerado automaticamente (client_id:client_secret em base64)"
 		}
-	],
-	"auth": {
-		"type": "noauth"
-	}
+	]
 }

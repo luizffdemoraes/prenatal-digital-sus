@@ -2,7 +2,6 @@ package br.com.hackathon.sus.prenatal_auth.infrastructure.config.security.custom
 
 
 import br.com.hackathon.sus.prenatal_auth.infrastructure.persistence.entity.UserEntity;
-import br.com.hackathon.sus.prenatal_auth.infrastructure.persistence.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -36,7 +35,6 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 	private final UserDetailsService userDetailsService;
 	private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 	private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
 	private String username = "";
 	private String password = "";
 	private Set<String> authorizedScopes = new HashSet<>();
@@ -45,8 +43,7 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 	public CustomPasswordAuthenticationProvider(OAuth2AuthorizationService authorizationService,
                                                 OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator,
                                                 UserDetailsService userDetailsService,
-                                                PasswordEncoder passwordEncoder,
-                                                UserRepository userRepository) {
+                                                PasswordEncoder passwordEncoder) {
         Assert.notNull(authorizationService, "authorizationService cannot be null");
 		Assert.notNull(tokenGenerator, "TokenGenerator cannot be null");
 		Assert.notNull(userDetailsService, "UserDetailsService cannot be null");
@@ -55,7 +52,6 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		this.tokenGenerator = tokenGenerator;
 		this.userDetailsService = userDetailsService;
 		this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
 	}
 	
 	@Override
@@ -74,7 +70,7 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 			throw new OAuth2AuthenticationException("Credenciais inválidas");
 		}
 				
-		if (!passwordEncoder.matches(password, user.getPassword()) || !user.getUsername().equals(username)) {
+		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new OAuth2AuthenticationException("Credenciais inválidas");
 		}
 		
@@ -83,13 +79,12 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 				.filter(scope -> registeredClient.getScopes().contains(scope))
 				.collect(Collectors.toSet());
 
-        UserEntity userEntity = userRepository.findByEmail(username)
-                .orElseThrow(() -> new OAuth2AuthenticationException("Credenciais inválidas"));
+        UserEntity userEntity = (UserEntity) user;
         Long userId = userEntity.getId().longValue();
 		
 		//-----------Create a new Security Context Holder Context----------
 		OAuth2ClientAuthenticationToken oAuth2ClientAuthenticationToken = (OAuth2ClientAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-		CustomUserAuthorities customPasswordUser = new CustomUserAuthorities(username, userId, user.getAuthorities());
+		CustomUserAuthorities customPasswordUser = new CustomUserAuthorities(user.getUsername(), userId, user.getAuthorities());
 		oAuth2ClientAuthenticationToken.setDetails(customPasswordUser);
 		
 		var newcontext = SecurityContextHolder.createEmptyContext();

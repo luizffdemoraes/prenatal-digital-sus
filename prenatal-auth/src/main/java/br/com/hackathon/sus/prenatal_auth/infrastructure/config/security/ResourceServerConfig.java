@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,6 +36,21 @@ public class ResourceServerConfig {
 
         http.securityMatcher(PathRequest.toH2Console()).csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+        return http.build();
+    }
+
+    /**
+     * Rotas públicas (sem JWT): cadastro de usuário.
+     * Ordem 2 garante que essa cadeia seja avaliada antes do resource server (3),
+     * evitando que o filtro JWT tente validar "Authorization: Bearer" vazio/inválido.
+     */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain publicEndpointsFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher(new AntPathRequestMatcher("/v1/usuarios", "POST"));
+        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
     }
 

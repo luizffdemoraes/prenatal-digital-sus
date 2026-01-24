@@ -5,7 +5,6 @@ package br.com.hackathon.sus.prenatal_auth.infrastructure.config.security;
 import br.com.hackathon.sus.prenatal_auth.infrastructure.config.security.custom.CustomPasswordAuthenticationConverter;
 import br.com.hackathon.sus.prenatal_auth.infrastructure.config.security.custom.CustomPasswordAuthenticationProvider;
 import br.com.hackathon.sus.prenatal_auth.infrastructure.config.security.custom.CustomUserAuthorities;
-import br.com.hackathon.sus.prenatal_auth.infrastructure.persistence.repository.UserRepository;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -44,6 +43,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -67,14 +67,11 @@ public class AuthorizationServerConfig {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
 
     public AuthorizationServerConfig(UserDetailsService userDetailsService,
-                                     PasswordEncoder passwordEncoder,
-                                     UserRepository userRepository) {
+                                     PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
     }
 
     // ============================================================
@@ -101,7 +98,7 @@ public class AuthorizationServerConfig {
 
         http.authenticationProvider(
                 new CustomPasswordAuthenticationProvider(
-                        authorizationService(), tokenGenerator(jwkSource(rsaKeyPair())), userDetailsService, this.passwordEncoder, this.userRepository)
+                        authorizationService(), tokenGenerator(jwkSource(rsaKeyPair())), userDetailsService, this.passwordEncoder)
         );
 
         return http.build();
@@ -157,37 +154,36 @@ public class AuthorizationServerConfig {
     }
 
     // ============================================================
-    // 🔑 3. Chave RSA fixa carregada de arquivos PEM
+    // 🔑 3. Chave RSA: de arquivos PEM (se existirem) ou gerada em memória para dev/local
     // ============================================================
     @Bean
     @Profile("!test")
     public KeyPair rsaKeyPair() throws Exception {
-        String privateKeyPEM;
-        String publicKeyPEM;
-
         try (InputStream privateStream = getClass().getClassLoader().getResourceAsStream("rsa/private-key.pem");
              InputStream publicStream = getClass().getClassLoader().getResourceAsStream("rsa/public-key.pem")) {
 
-            if (privateStream == null || publicStream == null) {
-                throw new IllegalStateException("RSA keys not found in classpath (rsa/private-key.pem, rsa/public-key.pem)");
+            if (privateStream != null && publicStream != null) {
+                String privateKeyPEM = new String(privateStream.readAllBytes())
+                        .replaceAll("-----BEGIN (.*)-----", "")
+                        .replaceAll("-----END (.*)-----", "")
+                        .replaceAll("\\s", "");
+
+                String publicKeyPEM = new String(publicStream.readAllBytes())
+                        .replaceAll("-----BEGIN (.*)-----", "")
+                        .replaceAll("-----END (.*)-----", "")
+                        .replaceAll("\\s", "");
+
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                RSAPrivateKey privateKey = (RSAPrivateKey) keyFactory.generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyPEM)));
+                RSAPublicKey publicKey = (RSAPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyPEM)));
+                return new KeyPair(publicKey, privateKey);
             }
-
-            privateKeyPEM = new String(privateStream.readAllBytes())
-                    .replaceAll("-----BEGIN (.*)-----", "")
-                    .replaceAll("-----END (.*)-----", "")
-                    .replaceAll("\\s", "");
-
-            publicKeyPEM = new String(publicStream.readAllBytes())
-                    .replaceAll("-----BEGIN (.*)-----", "")
-                    .replaceAll("-----END (.*)-----", "")
-                    .replaceAll("\\s", "");
         }
 
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        RSAPrivateKey privateKey = (RSAPrivateKey) keyFactory.generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKeyPEM)));
-        RSAPublicKey publicKey = (RSAPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyPEM)));
-
-        return new KeyPair(publicKey, privateKey);
+        // Sem arquivos PEM: gera chave em memória (adequado para dev/local)
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(2048);
+        return keyPairGenerator.generateKeyPair();
     }
 
     @Bean

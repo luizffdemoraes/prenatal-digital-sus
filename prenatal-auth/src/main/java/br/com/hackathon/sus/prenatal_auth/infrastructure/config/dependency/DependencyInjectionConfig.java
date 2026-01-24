@@ -80,6 +80,7 @@ public class DependencyInjectionConfig {
     @Primary
     public UserDetailsService userDetailsService(UserRepository userRepository) {
         return username -> userRepository.findByEmail(username)
+                .or(() -> userRepository.findByLogin(username))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 }
