@@ -1,4 +1,4 @@
--- Criar schema
+-- Schema unificado (init do zero). Executar após reset da base.
 CREATE SCHEMA IF NOT EXISTS agenda;
 
 -- ======================
