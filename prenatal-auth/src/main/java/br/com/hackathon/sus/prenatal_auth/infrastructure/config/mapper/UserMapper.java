@@ -17,7 +17,8 @@ public class UserMapper {
                 request.email(),
                 request.login(),
                 request.password(),
-                AddressMapper.toDomain(request.address()));
+                AddressMapper.toDomain(request.address()),
+                request.cpf());
 
         user.addRole(new Role(null, request.role()));
 
@@ -32,7 +33,8 @@ public class UserMapper {
                 entity.getEmail(),
                 entity.getLogin(),
                 entity.getPassword(),
-                AddressMapper.toDomain(entity.getAddress())
+                AddressMapper.toDomain(entity.getAddress()),
+                entity.getCpf()
         );
 
         entity.getRoleEntities().forEach(roleEntity ->
@@ -63,6 +65,7 @@ public class UserMapper {
         );
         entity.setId(user.getId());
         entity.setLastUpdateDate(user.getLastUpdateDate());
+        entity.setCpf(user.getCpf());
         user.getRoles().forEach(role -> {
             RoleEntity roleEntity = new RoleEntity();
             roleEntity.setId(role.getId());

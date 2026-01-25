@@ -1,0 +1,37 @@
+package com.hackathon.sus.prenatal_prontuario.application.usecases;
+
+import com.hackathon.sus.prenatal_prontuario.application.dtos.requests.UpdateMedicalRecordRequest;
+import com.hackathon.sus.prenatal_prontuario.domain.entities.MedicalRecord;
+import com.hackathon.sus.prenatal_prontuario.domain.entities.MedicalRecordHistory;
+import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordGateway;
+import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordHistoryGateway;
+import com.hackathon.sus.prenatal_prontuario.infrastructure.exceptions.ResourceNotFoundException;
+
+public class UpdateMedicalRecordUseCaseImp implements UpdateMedicalRecordUseCase {
+
+    private final MedicalRecordGateway medicalRecordGateway;
+    private final MedicalRecordHistoryGateway historyGateway;
+
+    public UpdateMedicalRecordUseCaseImp(MedicalRecordGateway medicalRecordGateway,
+                                         MedicalRecordHistoryGateway historyGateway) {
+        this.medicalRecordGateway = medicalRecordGateway;
+        this.historyGateway = historyGateway;
+    }
+
+    @Override
+    public MedicalRecord execute(String cpf, UpdateMedicalRecordRequest request, String professionalUserId) {
+        MedicalRecord m = medicalRecordGateway.findByCpf(cpf)
+                .orElseThrow(() -> new ResourceNotFoundException("Prontuário não encontrado para o CPF informado."));
+
+        m.updateClinicalData(request.vitaminUse(), request.aspirinUse(), request.notes());
+        MedicalRecord updated = medicalRecordGateway.update(m);
+
+        historyGateway.register(new MedicalRecordHistory(
+                updated.getId(),
+                professionalUserId != null ? professionalUserId : "sistema",
+                "Dados clínicos atualizados"
+        ));
+
+        return updated;
+    }
+}

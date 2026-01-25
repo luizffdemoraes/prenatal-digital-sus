@@ -8,11 +8,13 @@ public class CustomUserAuthorities {
 
 	private String username;
     private Long userId;
+	private String cpf;
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public CustomUserAuthorities(String username, Long userId, Collection<? extends GrantedAuthority> authorities) {
+	public CustomUserAuthorities(String username, Long userId, String cpf, Collection<? extends GrantedAuthority> authorities) {
 		this.username = username;
         this.userId = userId;
+        this.cpf = cpf;
         this.authorities = authorities;
 	}
 
@@ -23,6 +25,10 @@ public class CustomUserAuthorities {
     public Long getUserId() {
         return userId;
     }
+
+	public String getCpf() {
+		return cpf;
+	}
 
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;

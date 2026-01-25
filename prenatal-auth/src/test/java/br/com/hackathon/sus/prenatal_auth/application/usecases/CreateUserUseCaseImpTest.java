@@ -66,6 +66,7 @@ class CreateUserUseCaseImpTest {
     @Test
     void execute_shouldCreateAdminUser_whenEmailEndsWithRestaurantsync() {
         when(userGateway.existsUserByEmail(userRequestAdmin.getEmail())).thenReturn(false);
+        when(userGateway.existsByCpf(userRequestAdmin.getCpf())).thenReturn(false);
         when(roleGateway.findByAuthority("ROLE_DOCTOR")).thenReturn(Optional.of(roleAdmin));
 
         when(userGateway.saveUser(ArgumentMatchers.any(User.class))).thenAnswer(invocation -> {
@@ -86,6 +87,7 @@ class CreateUserUseCaseImpTest {
     @Test
     void execute_shouldCreateClientUser_whenEmailDoesNotEndWithRestaurantsync() {
         when(userGateway.existsUserByEmail(userRequestClient.getEmail())).thenReturn(false);
+        when(userGateway.existsByCpf(userRequestClient.getCpf())).thenReturn(false);
         when(roleGateway.findByAuthority("ROLE_PATIENT")).thenReturn(Optional.of(roleClient));
 
         when(userGateway.saveUser(ArgumentMatchers.any(User.class))).thenAnswer(invocation -> {
@@ -114,8 +116,20 @@ class CreateUserUseCaseImpTest {
     }
 
     @Test
+    void execute_shouldThrowException_whenCpfAlreadyRegistered() {
+        when(userGateway.existsUserByEmail(userRequestAdmin.getEmail())).thenReturn(false);
+        when(userGateway.existsByCpf(userRequestAdmin.getCpf())).thenReturn(true);
+
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> createUserUseCaseImp.execute(userRequestAdmin));
+        assertEquals("user.cpf.exists", exception.getMessage());
+        assertEquals("user.cpf.exists", exception.getMessageKey());
+    }
+
+    @Test
     void execute_shouldThrowException_whenRoleNotFound() {
         when(userGateway.existsUserByEmail(userRequestAdmin.getEmail())).thenReturn(false);
+        when(userGateway.existsByCpf(userRequestAdmin.getCpf())).thenReturn(false);
         when(roleGateway.findByAuthority("ROLE_DOCTOR")).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

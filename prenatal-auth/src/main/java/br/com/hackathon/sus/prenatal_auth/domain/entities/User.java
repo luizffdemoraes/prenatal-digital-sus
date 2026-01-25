@@ -10,27 +10,30 @@ public class User {
     private String name;
     private String email;
     private String login;
+    private String cpf;
     private String password;
     private Date lastUpdateDate;
     private Address address;
     private Set<Role> roles = new HashSet<>();
 
-    public User(String name, String email, String login, String password, Address address) {
+    public User(String name, String email, String login, String password, Address address, String cpf) {
         this.name = name;
         this.email = email;
         this.login = login;
         this.password = password;
         this.address = address;
+        this.cpf = cpf;
         this.lastUpdateDate = new Date();
     }
 
-    public User(Integer id, String name, String email, String login, String password, Address address) {
+    public User(Integer id, String name, String email, String login, String password, Address address, String cpf) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.login = login;
         this.password = password;
         this.address = address;
+        this.cpf = cpf;
         this.lastUpdateDate = new Date();
     }
 
@@ -53,6 +56,10 @@ public class User {
     public String getLogin() { return login; }
 
     public void setLogin(String login) { this.login = login; }
+
+    public String getCpf() { return cpf; }
+
+    public void setCpf(String cpf) { this.cpf = cpf; }
 
     public String getPassword() { return password; }
 

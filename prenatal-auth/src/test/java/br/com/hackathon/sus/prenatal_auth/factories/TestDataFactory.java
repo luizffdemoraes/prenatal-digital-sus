@@ -16,6 +16,7 @@ public class TestDataFactory {
                 "John Doe",
                 "johndoe@example.com",
                 "johndoe",
+                "12345678901",
                 "senha123",
                 "ROLE_PATIENT",
                 createAddressRequest()
@@ -24,11 +25,11 @@ public class TestDataFactory {
 
     public static AddressRequest createAddressRequest() {
         return new AddressRequest(
-                "Rua Exemplo",
-                587L,
-                "São Paulo",
-                "SP",
-                "12345-678"
+                "R. Maria Marciana Dos Santos, Zona Rural Capão",
+                628L,
+                "Nova Serrana",
+                "MG",
+                "35519-000"
         );
     }
 
@@ -38,6 +39,7 @@ public class TestDataFactory {
                 "John Doe",
                 "johndoe@example.com",
                 "johndoe",
+                "12345678901",
                 new Date(),
                 createAddressResponse()
         );
@@ -69,7 +71,8 @@ public class TestDataFactory {
                 "user@test.com",
                 "testLogin",
                 "testPassword",
-                createAddress()
+                createAddress(),
+                "12345678901"
         );
         user.setId(1);
         user.setLastUpdateDate(new Date());

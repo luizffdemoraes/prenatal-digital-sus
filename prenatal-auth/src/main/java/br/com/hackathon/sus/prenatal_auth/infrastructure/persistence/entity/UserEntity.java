@@ -23,6 +23,9 @@ public class UserEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String login;
 
+    @Column(unique = true, length = 11)
+    private String cpf;
+
     @Column(nullable = false)
     private String password;
 
@@ -83,6 +86,14 @@ public class UserEntity implements UserDetails {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getPassword() {

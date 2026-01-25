@@ -27,6 +27,11 @@ public record UserRequest(
         @NotBlank(message = "{user.login.required}")
         String login,
 
+        @JsonProperty("cpf")
+        @NotBlank(message = "{user.cpf.required}")
+        @Pattern(regexp = "^\\d{11}$", message = "{user.cpf.invalid}")
+        String cpf,
+
         @JsonProperty("senha")
         @NotBlank(message = "{user.password.required}")
         String password,
@@ -43,13 +48,4 @@ public record UserRequest(
         @Valid
         @NotNull(message = "{address.required}")
         AddressRequest address) {
-
-    public UserRequest(String name, String email, String login, String password, String role, AddressRequest address) {
-        this.name = name;
-        this.email = email;
-        this.login = login;
-        this.password = password;
-        this.role = role;
-        this.address = address;
-    }
 }

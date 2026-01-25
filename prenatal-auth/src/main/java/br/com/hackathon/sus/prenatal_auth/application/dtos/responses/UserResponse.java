@@ -15,6 +15,8 @@ public record UserResponse(
         String email,
         @JsonProperty("login")
         String login,
+        @JsonProperty("cpf")
+        String cpf,
         @JsonProperty("dataUltimaAtualizacao")
         Date lastUpdateDate,
         @JsonProperty("endereco")
@@ -25,6 +27,7 @@ public record UserResponse(
                 user.getName(),
                 user.getEmail(),
                 user.getLogin(),
+                user.getCpf(),
                 user.getLastUpdateDate(),
                 new AddressResponse(user.getAddress())
         );

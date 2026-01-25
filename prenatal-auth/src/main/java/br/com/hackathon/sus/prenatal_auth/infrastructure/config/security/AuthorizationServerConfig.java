@@ -234,7 +234,8 @@ public class AuthorizationServerConfig {
                 context.getClaims()
                         .claim("authorities", authorities)
                         .claim("username", user.getUsername())
-                        .claim("user_id", user.getUserId());
+                        .claim("user_id", user.getUserId())
+                        .claim("cpf", user.getCpf());
             }
         };
     }

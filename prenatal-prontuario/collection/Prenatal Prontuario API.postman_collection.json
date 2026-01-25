@@ -1,0 +1,137 @@
+{
+	"info": {
+		"_postman_id": "a7b3c4d5-e6f7-4850-9a1b-2c3d4e5f6a7b",
+		"name": "Prenatal Prontuário API",
+		"description": "Collection para testar a API de prontuários do Prenatal Digital SUS. Requer JWT do prenatal-auth (Bearer {{access_token}}).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Verificar Status da API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/health",
+							"host": ["{{base_url}}"],
+							"path": ["actuator", "health"]
+						},
+						"description": "Verifica o status de saúde da aplicação. Não requer autenticação."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Prontuários",
+			"item": [
+				{
+					"name": "Criar prontuário (primeira consulta)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cpf\": \"12345678900\",\n  \"nomeCompleto\": \"Maria da Silva\",\n  \"dataNascimento\": \"1992-04-15\",\n  \"dataUltimaMenstruacao\": \"2025-01-10\",\n  \"dataConsulta\": \"2025-02-15\",\n  \"tipoGestacao\": \"UNICA\",\n  \"numeroGestacoesAnteriores\": 1,\n  \"numeroPartos\": 1,\n  \"numeroAbortos\": 0,\n  \"gestacaoAltoRisco\": false,\n  \"motivoAltoRisco\": null,\n  \"fatoresRisco\": [],\n  \"usoVitaminas\": true,\n  \"usoAAS\": false,\n  \"observacoes\": \"Primeira consulta realizada na unidade.\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/prontuarios",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "prontuarios"]
+						},
+						"description": "Cria o prontuário na primeira consulta. Obrigatório: cpf (11 dígitos), dataUltimaMenstruacao. Idade gestacional = semanas entre dataUltimaMenstruacao e dataConsulta (ou hoje se dataConsulta omitida); deve ser 1–44. dataConsulta (opcional): para retroativo/testes. Um prontuário por CPF. Acesso: ENFERMEIRO, MEDICO, NURSE, DOCTOR."
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar prontuário por CPF",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/prontuarios/cpf/{{cpf}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "prontuarios", "cpf", "{{cpf}}"]
+						},
+						"description": "Busca prontuário por CPF (11 dígitos). Gestante: apenas o próprio (JWT com claim cpf). Profissionais: qualquer CPF."
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar dados clínicos",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usoVitaminas\": true,\n  \"usoAAS\": true,\n  \"observacoes\": \"Gestação evoluindo bem\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/prontuarios/cpf/{{cpf}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "prontuarios", "cpf", "{{cpf}}"]
+						},
+						"description": "Atualiza usoVitaminas, usoAAS, observacoes. Campos null não alteram. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuário."
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar fatores de risco",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fatoresRisco\": [\"HIPERTENSAO\", \"OBESIDADE\"]\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/prontuarios/cpf/{{cpf}}/fatores-risco",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "prontuarios", "cpf", "{{cpf}}", "fatores-risco"]
+						},
+						"description": "Substitui a lista de fatores de risco. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuário."
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar histórico do prontuário",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/prontuarios/cpf/{{cpf}}/historico",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "prontuarios", "cpf", "{{cpf}}", "historico"]
+						},
+						"description": "Retorna data, profissionalUserId e alteracao. Gestante: apenas o próprio (JWT claim cpf). Path: CPF do prontuário."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{ "key": "base_url", "value": "http://localhost:8082", "type": "string" },
+		{ "key": "access_token", "value": "", "type": "string", "description": "JWT obtido no prenatal-auth (oauth2/token)" },
+		{ "key": "cpf", "value": "12345678900", "type": "string", "description": "CPF da gestante (11 dígitos, usado em GET/PUT/PATCH/histórico por CPF)" }
+	]
+}

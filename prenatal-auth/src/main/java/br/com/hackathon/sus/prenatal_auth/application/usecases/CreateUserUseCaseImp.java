@@ -23,6 +23,9 @@ public class CreateUserUseCaseImp implements CreateUserUseCase {
         if (userGateway.existsUserByEmail(user.getEmail())) {
             throw new BusinessException("user.email.exists", new Object[0]);
         }
+        if (userGateway.existsByCpf(user.getCpf())) {
+            throw new BusinessException("user.cpf.exists", new Object[0]);
+        }
         // Sempre pega o authority do "request"
         String authority = user.getRoles().iterator().next().getAuthority();
         Role role = roleGateway.findByAuthority(authority)

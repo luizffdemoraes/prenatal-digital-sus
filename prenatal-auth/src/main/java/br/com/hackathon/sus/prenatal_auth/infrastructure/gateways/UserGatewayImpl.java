@@ -53,6 +53,16 @@ public class UserGatewayImpl implements UserGateway {
     }
 
     @Override
+    public boolean existsByCpf(String cpf) {
+        return cpf != null && this.userRepository.existsByCpf(cpf);
+    }
+
+    @Override
+    public boolean existsByCpfExcludingId(String cpf, Integer excludeId) {
+        return cpf != null && this.userRepository.existsByCpfAndIdNot(cpf, excludeId);
+    }
+
+    @Override
     public User findUserById(Integer id) {
         return findUserOrThrow(id);
     }
@@ -70,6 +80,10 @@ public class UserGatewayImpl implements UserGateway {
         user.setName(userRequest.getName() != null ? userRequest.getName() : user.getName());
         user.setEmail(userRequest.getEmail() != null ? userRequest.getEmail() : user.getEmail());
         user.setLogin(userRequest.getLogin() != null ? userRequest.getLogin() : user.getLogin());
+        if (userRequest.getCpf() != null && !userRequest.getCpf().equals(user.getCpf()) && existsByCpfExcludingId(userRequest.getCpf(), id)) {
+            throw new BusinessException("user.cpf.exists", new Object[0]);
+        }
+        user.setCpf(userRequest.getCpf() != null ? userRequest.getCpf() : user.getCpf());
         user.setAddress(userRequest.getAddress() != null ? userRequest.getAddress() : user.getAddress());
         user.setLastUpdateDate(new Date());
 

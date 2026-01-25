@@ -107,7 +107,7 @@
 								},
 								{
 									"key": "username",
-									"value": "joao.silva",
+									"value": "maria.silva@example.com",
 									"type": "text"
 								},
 								{
@@ -132,7 +132,99 @@
 								"token"
 							]
 						},
-						"description": "Obtém um token de acesso OAuth2 usando o grant type 'password'. O token será automaticamente salvo na variável de ambiente 'access_token'."
+						"description": "Obtém token OAuth2 para o paciente Maria da Silva (email: maria.silva@example.com). O token é salvo em 'access_token'."
+					},
+					"response": []
+				},
+				{
+					"name": "Obter Token OAuth2 Enfermeira",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const clientId = pm.environment.get(\"client_id\");",
+									"const clientSecret = pm.environment.get(\"client_secret\");",
+									"const basicAuth = btoa(clientId + \":\" + clientSecret);",
+									"pm.environment.set(\"basic_auth_token\", basicAuth);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": { "type": "basic", "basic": [ { "key": "password", "value": "myclientsecret", "type": "string" }, { "key": "username", "value": "myclientid", "type": "string" } ] },
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }, { "key": "Authorization", "value": "Basic {{basic_auth_token}}", "type": "text" } ],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{ "key": "grant_type", "value": "password", "type": "text" },
+								{ "key": "username", "value": "ana.costa@sus.com.br", "type": "text" },
+								{ "key": "password", "value": "senha123", "type": "text" },
+								{ "key": "scope", "value": "read write", "type": "text" }
+							]
+						},
+						"url": { "raw": "{{base_url}}/oauth2/token", "host": ["{{base_url}}"], "path": ["oauth2", "token"] },
+						"description": "Obtém token OAuth2 para a enfermeira Ana Costa (email: ana.costa@sus.com.br). O token é salvo em 'access_token'."
+					},
+					"response": []
+				},
+				{
+					"name": "Obter Token OAuth2 Medico",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const clientId = pm.environment.get(\"client_id\");",
+									"const clientSecret = pm.environment.get(\"client_secret\");",
+									"const basicAuth = btoa(clientId + \":\" + clientSecret);",
+									"pm.environment.set(\"basic_auth_token\", basicAuth);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": { "type": "basic", "basic": [ { "key": "password", "value": "myclientsecret", "type": "string" }, { "key": "username", "value": "myclientid", "type": "string" } ] },
+						"method": "POST",
+						"header": [ { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }, { "key": "Authorization", "value": "Basic {{basic_auth_token}}", "type": "text" } ],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{ "key": "grant_type", "value": "password", "type": "text" },
+								{ "key": "username", "value": "pedro.souza@sus.com.br", "type": "text" },
+								{ "key": "password", "value": "senha123", "type": "text" },
+								{ "key": "scope", "value": "read write", "type": "text" }
+							]
+						},
+						"url": { "raw": "{{base_url}}/oauth2/token", "host": ["{{base_url}}"], "path": ["oauth2", "token"] },
+						"description": "Obtém token OAuth2 para o médico Dr. Pedro Souza (email: pedro.souza@sus.com.br). O token é salvo em 'access_token'."
 					},
 					"response": []
 				}
@@ -158,7 +250,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nome\": \"João Silva\",\n    \"email\": \"joao.silva@example.com\",\n    \"login\": \"joao.silva\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"Rua das Flores\",\n        \"numero\": 123,\n        \"cidade\": \"São Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01234-567\"\n    }\n}",
+							"raw": "{\n    \"nome\": \"Maria da Silva\",\n    \"email\": \"maria.silva@example.com\",\n    \"login\": \"maria.silva\",\n    \"cpf\": \"12345678900\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -175,7 +267,7 @@
 								"usuarios"
 							]
 						},
-						"description": "Cria um novo usuário no sistema. Os perfis disponíveis são: ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT"
+						"description": "Cria um novo usuário paciente no sistema. CPF obrigatório (11 dígitos)."
 					},
 					"response": []
 				},
@@ -196,7 +288,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nome\": \"João Silva\",\n    \"email\": \"joao.silva@example.com\",\n    \"login\": \"joao.silva\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"Rua das Flores\",\n        \"numero\": 123,\n        \"cidade\": \"São Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01234-567\"\n    }\n}",
+							"raw": "{\n    \"nome\": \"Ana Costa\",\n    \"email\": \"ana.costa@sus.com.br\",\n    \"login\": \"ana.costa\",\n    \"cpf\": \"12345678902\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_NURSE\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -213,7 +305,7 @@
 								"usuarios"
 							]
 						},
-						"description": "Cria um novo usuário no sistema. Os perfis disponíveis são: ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT"
+						"description": "Cria um novo usuário enfermeira (ROLE_NURSE). CPF obrigatório (11 dígitos). Use o token de um usuário já existente (ex.: médico ou admin) para criar."
 					},
 					"response": []
 				},
@@ -234,7 +326,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nome\": \"João Silva\",\n    \"email\": \"joao.silva@example.com\",\n    \"login\": \"joao.silva\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"Rua das Flores\",\n        \"numero\": 123,\n        \"cidade\": \"São Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01234-567\"\n    }\n}",
+							"raw": "{\n    \"nome\": \"Dr. Pedro Souza\",\n    \"email\": \"pedro.souza@sus.com.br\",\n    \"login\": \"pedro.souza\",\n    \"cpf\": \"12345678903\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_DOCTOR\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -251,7 +343,7 @@
 								"usuarios"
 							]
 						},
-						"description": "Cria um novo usuário no sistema. Os perfis disponíveis são: ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT"
+						"description": "Cria um novo usuário médico (ROLE_DOCTOR). CPF obrigatório (11 dígitos). Para o primeiro médico, use um token de usuário criado via migration/seed ou crie-o sem auth se a API permitir em dev."
 					},
 					"response": []
 				},
