@@ -39,6 +39,7 @@ public class CreateMedicalRecordUseCaseImp implements CreateMedicalRecordUseCase
                 request.vitaminUse(),
                 request.aspirinUse(),
                 request.notes(),
+                request.deliveryType(),
                 request.consultationDate()
         );
 

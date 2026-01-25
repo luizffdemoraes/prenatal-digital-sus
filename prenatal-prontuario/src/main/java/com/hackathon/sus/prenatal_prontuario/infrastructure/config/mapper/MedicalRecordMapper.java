@@ -32,33 +32,13 @@ public final class MedicalRecordMapper {
                 e.getVitaminUse(),
                 e.getAspirinUse(),
                 e.getNotes(),
+                e.getDeliveryType(),
                 e.getCreatedAt()
         );
     }
 
     public static MedicalRecordResponse toResponse(MedicalRecord m) {
-        if (m == null) return null;
-        return new MedicalRecordResponse(
-                m.getId(),
-                m.getCpf(),
-                m.getFullName(),
-                m.getDateOfBirth(),
-                m.getPregnantWomanId(),
-                m.getAppointmentId(),
-                m.getLastMenstrualPeriod(),
-                m.getGestationalAgeWeeks(),
-                m.getPregnancyType(),
-                m.getPreviousPregnancies(),
-                m.getPreviousDeliveries(),
-                m.getPreviousAbortions(),
-                m.getHighRiskPregnancy(),
-                m.getHighRiskReason(),
-                m.getRiskFactors() != null ? new ArrayList<>(m.getRiskFactors()) : new ArrayList<>(),
-                m.getVitaminUse(),
-                m.getAspirinUse(),
-                m.getNotes(),
-                m.getCreatedAt()
-        );
+        return MedicalRecordResponse.from(m);
     }
 
     public static MedicalRecordEntity fromDomain(MedicalRecord m) {
@@ -82,6 +62,7 @@ public final class MedicalRecordMapper {
         e.setVitaminUse(m.getVitaminUse());
         e.setAspirinUse(m.getAspirinUse());
         e.setNotes(m.getNotes());
+        e.setDeliveryType(m.getDeliveryType());
         e.setCreatedAt(m.getCreatedAt());
         return e;
     }
@@ -99,6 +80,7 @@ public final class MedicalRecordMapper {
         e.setVitaminUse(m.getVitaminUse() != null ? m.getVitaminUse() : false);
         e.setAspirinUse(m.getAspirinUse() != null ? m.getAspirinUse() : false);
         e.setNotes(m.getNotes());
+        e.setDeliveryType(m.getDeliveryType());
         e.getRiskFactors().clear();
         e.getRiskFactors().addAll(m.getRiskFactors() != null ? m.getRiskFactors() : List.of());
     }

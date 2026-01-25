@@ -1,21 +1,37 @@
--- Schema e tabelas do Prontuário Service
+-- Schema e tabelas do Prontuário Service (unificado: init + CPF/dados obstétricos + tipo de parto)
+
 CREATE SCHEMA IF NOT EXISTS prontuario;
 
--- Prontuário (um por gestação, criado na primeira consulta)
+-- Prontuário (um por gestação, criado na primeira consulta; identificação por CPF ou gestante_id/consulta_id)
 CREATE TABLE prontuario.prontuario
 (
-    id                         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    gestante_id                UUID         NOT NULL,
-    consulta_id                UUID         NOT NULL,
-    idade_gestacional_semanas  INTEGER      NOT NULL,
-    tipo_gestacao              VARCHAR(20)  NOT NULL DEFAULT 'UNICA',
-    uso_vitaminas              BOOLEAN      NOT NULL DEFAULT FALSE,
-    uso_aas                    BOOLEAN      NOT NULL DEFAULT FALSE,
-    observacoes                TEXT,
-    criado_em                  TIMESTAMP    NOT NULL DEFAULT NOW(),
+    id                          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    cpf                         VARCHAR(11),
+    nome_completo               VARCHAR(255),
+    data_nascimento             DATE,
+    gestante_id                 UUID,
+    consulta_id                 UUID,
+    data_ultima_menstruacao     DATE,
+    idade_gestacional_semanas   INTEGER      NOT NULL,
+    tipo_gestacao               VARCHAR(20)  NOT NULL DEFAULT 'UNICA',
+    numero_gestacoes_anteriores INTEGER      NOT NULL DEFAULT 0,
+    numero_partos               INTEGER      NOT NULL DEFAULT 0,
+    numero_abortos              INTEGER      NOT NULL DEFAULT 0,
+    gestacao_alto_risco         BOOLEAN      NOT NULL DEFAULT FALSE,
+    motivo_alto_risco           TEXT,
+    uso_vitaminas               BOOLEAN      NOT NULL DEFAULT FALSE,
+    uso_aas                     BOOLEAN      NOT NULL DEFAULT FALSE,
+    observacoes                 TEXT,
+    tipo_parto                  VARCHAR(20),
+    criado_em                   TIMESTAMP    NOT NULL DEFAULT NOW(),
     CONSTRAINT chk_idade_gestacional CHECK (idade_gestacional_semanas >= 1 AND idade_gestacional_semanas <= 44),
     CONSTRAINT chk_tipo_gestacao CHECK (tipo_gestacao IN ('UNICA', 'GEMELAR'))
 );
+
+COMMENT ON COLUMN prontuario.prontuario.tipo_parto IS 'PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO';
+
+-- Um prontuário por CPF (quando cpf preenchido)
+CREATE UNIQUE INDEX idx_prontuario_cpf_unique ON prontuario.prontuario (cpf) WHERE cpf IS NOT NULL;
 
 -- Fatores de risco (N-N com prontuário)
 CREATE TABLE prontuario.prontuario_fatores_risco

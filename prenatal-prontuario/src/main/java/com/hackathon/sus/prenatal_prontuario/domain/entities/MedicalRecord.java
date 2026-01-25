@@ -31,6 +31,7 @@ public class MedicalRecord {
     private Boolean vitaminUse;
     private Boolean aspirinUse;
     private String notes;
+    private DeliveryType deliveryType;
     private LocalDateTime createdAt;
 
     /**
@@ -41,7 +42,7 @@ public class MedicalRecord {
             String cpf, String fullName, LocalDate dateOfBirth, LocalDate lastMenstrualPeriod,
             PregnancyType pregnancyType, Integer previousPregnancies, Integer previousDeliveries, Integer previousAbortions,
             Boolean highRiskPregnancy, String highRiskReason, List<RiskFactor> riskFactors,
-            Boolean vitaminUse, Boolean aspirinUse, String notes, LocalDate referenceDate) {
+            Boolean vitaminUse, Boolean aspirinUse, String notes, DeliveryType deliveryType, LocalDate referenceDate) {
         if (cpf == null || cpf.isBlank()) throw new IllegalArgumentException("CPF é obrigatório");
         if (lastMenstrualPeriod == null) throw new IllegalArgumentException("dataUltimaMenstruacao é obrigatória");
         LocalDate ref = referenceDate != null ? referenceDate : LocalDate.now();
@@ -69,6 +70,7 @@ public class MedicalRecord {
                 vitaminUse != null ? vitaminUse : false,
                 aspirinUse != null ? aspirinUse : false,
                 notes,
+                deliveryType,
                 LocalDateTime.now()
         );
     }
@@ -79,7 +81,7 @@ public class MedicalRecord {
                          LocalDate lastMenstrualPeriod, Integer gestationalAgeWeeks, PregnancyType pregnancyType,
                          Integer previousPregnancies, Integer previousDeliveries, Integer previousAbortions,
                          Boolean highRiskPregnancy, String highRiskReason, List<RiskFactor> riskFactors,
-                         Boolean vitaminUse, Boolean aspirinUse, String notes, LocalDateTime createdAt) {
+                         Boolean vitaminUse, Boolean aspirinUse, String notes, DeliveryType deliveryType, LocalDateTime createdAt) {
         this.id = id;
         this.cpf = cpf;
         this.fullName = fullName;
@@ -98,6 +100,7 @@ public class MedicalRecord {
         this.vitaminUse = vitaminUse != null ? vitaminUse : false;
         this.aspirinUse = aspirinUse != null ? aspirinUse : false;
         this.notes = notes;
+        this.deliveryType = deliveryType;
         this.createdAt = createdAt != null ? createdAt : LocalDateTime.now();
         validate();
     }
@@ -108,10 +111,11 @@ public class MedicalRecord {
         }
     }
 
-    public void updateClinicalData(Boolean vitaminUse, Boolean aspirinUse, String notes) {
+    public void updateClinicalData(Boolean vitaminUse, Boolean aspirinUse, String notes, DeliveryType deliveryType) {
         if (vitaminUse != null) this.vitaminUse = vitaminUse;
         if (aspirinUse != null) this.aspirinUse = aspirinUse;
         if (notes != null) this.notes = notes;
+        if (deliveryType != null) this.deliveryType = deliveryType;
     }
 
     public void updateRiskFactors(List<RiskFactor> riskFactors) {
@@ -140,5 +144,6 @@ public class MedicalRecord {
     public Boolean getVitaminUse() { return vitaminUse; }
     public Boolean getAspirinUse() { return aspirinUse; }
     public String getNotes() { return notes; }
+    public DeliveryType getDeliveryType() { return deliveryType; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

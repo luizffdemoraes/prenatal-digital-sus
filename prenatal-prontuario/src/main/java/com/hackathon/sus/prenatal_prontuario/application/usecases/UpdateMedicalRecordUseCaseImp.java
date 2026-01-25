@@ -23,7 +23,7 @@ public class UpdateMedicalRecordUseCaseImp implements UpdateMedicalRecordUseCase
         MedicalRecord m = medicalRecordGateway.findByCpf(cpf)
                 .orElseThrow(() -> new ResourceNotFoundException("Prontuário não encontrado para o CPF informado."));
 
-        m.updateClinicalData(request.vitaminUse(), request.aspirinUse(), request.notes());
+        m.updateClinicalData(request.vitaminUse(), request.aspirinUse(), request.notes(), request.deliveryType());
         MedicalRecord updated = medicalRecordGateway.update(m);
 
         historyGateway.register(new MedicalRecordHistory(

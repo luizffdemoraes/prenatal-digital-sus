@@ -1,7 +1,9 @@
 package com.hackathon.sus.prenatal_prontuario.infrastructure.persistence.entity;
 
+import com.hackathon.sus.prenatal_prontuario.domain.entities.DeliveryType;
 import com.hackathon.sus.prenatal_prontuario.domain.entities.PregnancyType;
 import com.hackathon.sus.prenatal_prontuario.domain.entities.RiskFactor;
+import com.hackathon.sus.prenatal_prontuario.infrastructure.persistence.entity.converter.DeliveryTypeConverter;
 import com.hackathon.sus.prenatal_prontuario.infrastructure.persistence.entity.converter.PregnancyTypeConverter;
 import jakarta.persistence.*;
 
@@ -74,6 +76,10 @@ public class MedicalRecordEntity {
     @Column(name = "observacoes", columnDefinition = "TEXT")
     private String notes;
 
+    @Convert(converter = DeliveryTypeConverter.class)
+    @Column(name = "tipo_parto")
+    private DeliveryType deliveryType;
+
     @Column(name = "criado_em", nullable = false)
     private LocalDateTime createdAt;
 
@@ -116,6 +122,8 @@ public class MedicalRecordEntity {
     public void setAspirinUse(Boolean aspirinUse) { this.aspirinUse = aspirinUse; }
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+    public DeliveryType getDeliveryType() { return deliveryType; }
+    public void setDeliveryType(DeliveryType deliveryType) { this.deliveryType = deliveryType; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

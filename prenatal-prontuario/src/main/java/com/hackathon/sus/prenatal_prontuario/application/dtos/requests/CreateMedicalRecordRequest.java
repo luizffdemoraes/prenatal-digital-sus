@@ -1,6 +1,7 @@
 package com.hackathon.sus.prenatal_prontuario.application.dtos.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hackathon.sus.prenatal_prontuario.domain.entities.DeliveryType;
 import com.hackathon.sus.prenatal_prontuario.domain.entities.PregnancyType;
 import com.hackathon.sus.prenatal_prontuario.domain.entities.RiskFactor;
 import jakarta.validation.constraints.NotBlank;
@@ -61,6 +62,9 @@ public record CreateMedicalRecordRequest(
 
         @JsonProperty("observacoes")
         String notes,
+
+        @JsonProperty("tipoParto")
+        DeliveryType deliveryType,
 
         /** Opcional. Se informada, a idade gestacional é calculada entre dataUltimaMenstruacao e esta data. Útil para retroativo e testes. */
         @JsonProperty("dataConsulta")
