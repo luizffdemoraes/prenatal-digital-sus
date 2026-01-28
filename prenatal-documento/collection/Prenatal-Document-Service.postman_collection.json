@@ -1,0 +1,323 @@
+{
+	"info": {
+		"_postman_id": "prenatal-document-service-collection",
+		"name": "Prenatal Document Service",
+		"description": "Collection para o serviço de gerenciamento de documentos médicos (exames e ultrassons em PDF) da plataforma de pré-natal do SUS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "prenatal-document-service"
+	},
+	"item": [
+		{
+			"name": "Documents",
+			"item": [
+				{
+					"name": "Upload Document",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set(\"documentId\", response.id);",
+									"    pm.environment.set(\"prenatalRecordId\", response.prenatalRecordId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"description": "Arquivo PDF (máximo 10MB)"
+								},
+								{
+									"key": "documentType",
+									"value": "EXAM",
+									"type": "text",
+									"description": "Tipo de documento: EXAM ou ULTRASOUND"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/prenatal-records/:id/documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"prenatal-records",
+								":id",
+								"documents"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID do registro pré-natal"
+								}
+							]
+						},
+						"description": "Upload de documento (exame ou ultrassom) em PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Validações:**\n- Apenas arquivos PDF\n- Tamanho máximo: 10MB\n- Tipos: EXAM ou ULTRASOUND"
+					},
+					"response": []
+				},
+				{
+					"name": "List Active Documents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/prenatal-records/:id/documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"prenatal-records",
+								":id",
+								"documents"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID do registro pré-natal"
+								}
+							]
+						},
+						"description": "Lista todos os documentos ativos de um registro pré-natal.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR"
+					},
+					"response": []
+				},
+				{
+					"name": "Download Document",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/:id/download",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								":id",
+								"download"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{documentId}}",
+									"description": "ID do documento (UUID)"
+								}
+							]
+						},
+						"description": "Faz download de um documento PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Response:** Arquivo PDF binário"
+					},
+					"response": []
+				},
+				{
+					"name": "Inactivate Document",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/:id/inactivate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								":id",
+								"inactivate"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{documentId}}",
+									"description": "ID do documento (UUID)"
+								}
+							]
+						},
+						"description": "Inativa um documento (soft delete). O documento não será mais listado, mas permanece no banco de dados.\n\n**Roles permitidas:** NURSE, DOCTOR\n\n**Response:** 204 No Content"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Document Permanently",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/:id/permanent",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								":id",
+								"permanent"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{documentId}}",
+									"description": "ID do documento (UUID)"
+								}
+							]
+						},
+						"description": "Exclui permanentemente um documento (hard delete). Remove o arquivo do S3 e os metadados do banco de dados.\n\n**Roles permitidas:** NURSE, DOCTOR\n\n**Response:** 204 No Content\n\n**⚠️ ATENÇÃO:** Esta ação é irreversível!"
+					},
+					"response": []
+				},
+				{
+					"name": "Request Document Deletion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/:id/request-delete",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								":id",
+								"request-delete"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{documentId}}",
+									"description": "ID do documento (UUID)"
+								}
+							]
+						},
+						"description": "Solicita a exclusão de um documento. Cria uma solicitação que precisa ser aprovada por um profissional (NURSE ou DOCTOR).\n\n**Roles permitidas:** PATIENT\n\n**Response:** 202 Accepted"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gerenciamento de documentos médicos"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Endpoint de health check da aplicação (não requer autenticação)"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de monitoramento"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwtToken",
+			"value": "",
+			"type": "string",
+			"description": "Token JWT obtido do serviço de autenticação (http://localhost:8079/oauth2/token)"
+		},
+		{
+			"key": "documentId",
+			"value": "",
+			"type": "string",
+			"description": "ID do documento (UUID) - preenchido automaticamente após upload"
+		},
+		{
+			"key": "prenatalRecordId",
+			"value": "1",
+			"type": "string",
+			"description": "ID do registro pré-natal"
+		}
+	]
+}
