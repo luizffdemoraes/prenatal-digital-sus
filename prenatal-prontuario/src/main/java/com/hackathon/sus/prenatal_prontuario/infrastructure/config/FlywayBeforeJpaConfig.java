@@ -11,6 +11,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ public class FlywayBeforeJpaConfig implements BeanFactoryPostProcessor {
     private static final String ENTITY_MANAGER_FACTORY = "entityManagerFactory";
 
     @Bean(name = FLYWAY_RUNNER)
+    @Profile("!test")
     public FlywayRunner flywayRunner(
             DataSource dataSource,
             @Value("${spring.flyway.locations:classpath:db.migration}") String locations,

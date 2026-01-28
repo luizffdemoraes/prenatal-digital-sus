@@ -28,7 +28,7 @@ public class UpdateRiskFactorsUseCaseImp implements UpdateRiskFactorsUseCase {
 
         historyGateway.register(new MedicalRecordHistory(
                 updated.getId(),
-                professionalUserId != null ? professionalUserId : "sistema",
+                (professionalUserId != null && !professionalUserId.isBlank()) ? professionalUserId : "sistema",
                 "Fatores de risco atualizados"
         ));
 

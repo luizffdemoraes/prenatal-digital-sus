@@ -47,7 +47,7 @@ public class CreateMedicalRecordUseCaseImp implements CreateMedicalRecordUseCase
 
         historyGateway.register(new MedicalRecordHistory(
                 saved.getId(),
-                professionalUserId != null ? professionalUserId : "sistema",
+                (professionalUserId != null && !professionalUserId.isBlank()) ? professionalUserId : "sistema",
                 "Prontuário criado na primeira consulta"
         ));
 

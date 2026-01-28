@@ -28,7 +28,7 @@ public class UpdateMedicalRecordUseCaseImp implements UpdateMedicalRecordUseCase
 
         historyGateway.register(new MedicalRecordHistory(
                 updated.getId(),
-                professionalUserId != null ? professionalUserId : "sistema",
+                (professionalUserId != null && !professionalUserId.isBlank()) ? professionalUserId : "sistema",
                 "Dados clínicos atualizados"
         ));
 
