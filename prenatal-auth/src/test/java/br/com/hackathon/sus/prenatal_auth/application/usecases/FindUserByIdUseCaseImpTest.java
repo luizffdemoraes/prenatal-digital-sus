@@ -48,7 +48,7 @@ class FindUserByIdUseCaseImpTest {
 
         assertNotNull(response);
         assertEquals(1, response.getId());
-        assertEquals("Rua Exemplo", response.getAddress().getStreet());
+        assertEquals("R. Maria Marciana Dos Santos, Zona Rural Capão", response.getAddress().getStreet());
         verify(userGateway).findUserById(1);
         verify(userGateway).validateSelf(user.getId());
     }
