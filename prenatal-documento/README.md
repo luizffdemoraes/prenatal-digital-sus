@@ -31,23 +31,25 @@ O projeto segue os princípios de **Clean Architecture** (Arquitetura Hexagonal)
 
 ### 1. Iniciar serviços com Docker Compose
 
+Certifique-se de que o **outro docker-compose** (com o PostgreSQL compartilhado) já está em execução. Depois, neste projeto:
+
 ```bash
 docker-compose up -d
 ```
 
-Isso iniciará:
-- **PostgreSQL** na porta `5432`
+Isso iniciará apenas os serviços de armazenamento (o banco de dados é compartilhado por outro docker-compose):
 - **LocalStack** na porta `4566` (S3)
+- **s3-init**: criação do bucket `prenatal-documents` no S3 (vinculado aos documentos do prontuário)
 
 ### 2. Configurar variáveis de ambiente (opcional)
 
 As configurações padrão estão em `application.properties`. Para desenvolvimento local, você pode criar um `application-local.properties`:
 
 ```properties
-# Database
-spring.datasource.url=jdbc:postgresql://localhost:5432/prenatal_documento
+# Database (compartilhado – use a URL do outro docker-compose)
+spring.datasource.url=jdbc:postgresql://localhost:5432/prenatal_digital_sus
 spring.datasource.username=postgres
-spring.datasource.password=postgres
+spring.datasource.password=password
 
 # AWS S3 (LocalStack)
 aws.s3.endpoint-url=http://localhost:4566
@@ -66,7 +68,7 @@ security.jwt.jwks-uri=http://localhost:8079/oauth2/jwks
 ./mvnw spring-boot:run
 ```
 
-A aplicação estará disponível em `http://localhost:8080`
+A aplicação estará disponível em `http://localhost:8081`
 
 ## 📡 Endpoints
 
@@ -222,10 +224,12 @@ As migrações do Flyway estão em `src/main/resources/db/migration/`. A primeir
 
 ## 🐳 Docker Compose
 
-O `docker-compose.yml` inclui:
+O `docker-compose.yml` deste projeto inclui **apenas**:
 
-- **PostgreSQL 15**: Banco de dados
-- **LocalStack**: Emulação do AWS S3
+- **LocalStack**: Emulação do AWS S3 para armazenar arquivos vinculados ao prontuário
+- **s3-init**: Serviço que cria o bucket `prenatal-documents` assim que o LocalStack fica saudável
+
+O **banco de dados** é compartilhado e fornecido por outro docker-compose (não faz parte deste arquivo).
 
 Para parar os serviços:
 
@@ -257,7 +261,7 @@ docker ps | grep localstack
 ```
 
 ### Erro ao criar bucket
-O bucket é criado automaticamente na inicialização. Se falhar, verifique os logs da aplicação.
+O bucket `prenatal-documents` é criado pelo serviço `s3-init` no Docker Compose (após o LocalStack subir). A aplicação também tenta criá-lo na subida. Se falhar, verifique: `docker-compose logs s3-init` e os logs da aplicação.
 
 ### Erro de autenticação
 Verifique se o token JWT está válido e contém as roles necessárias (`ROLE_PATIENT`, `ROLE_NURSE` ou `ROLE_DOCTOR`).

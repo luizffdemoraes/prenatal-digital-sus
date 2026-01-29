@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "prenatal-document-service-collection",
-		"name": "Prenatal Document Service",
+		"_postman_id": "prenatal-documento-service-collection",
+		"name": "Prenatal Documento Service",
 		"description": "Collection para o serviço de gerenciamento de documentos médicos (exames e ultrassons em PDF) da plataforma de pré-natal do SUS",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "prenatal-document-service"
+		"_exporter_id": "prenatal-documento-service"
 	},
 	"item": [
 		{

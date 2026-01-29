@@ -1,23 +1,8 @@
-version: '3.8'
+# Apenas LocalStack (S3) para armazenar arquivos vinculados ao prontuário.
+# O banco de dados é compartilhado e fornecido por outro docker-compose.
+# Aplicação usa localhost:4566 para S3; conexão com o banco via config/outro compose.
 
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: prenatal-documento-postgres
-    environment:
-      POSTGRES_DB: prenatal_documento
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   localstack:
     image: localstack/localstack:latest
     container_name: prenatal-documento-localstack
@@ -26,18 +11,35 @@ services:
       - "4510-4559:4510-4559"
     environment:
       - SERVICES=s3
-      - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
-      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DEBUG=0
+      - PERSISTENCE=1
+      - DATA_DIR=/var/lib/localstack/data
     volumes:
       - localstack_data:/var/lib/localstack
-      - "/var/run/docker.sock:/var/run/docker.sock"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
-      interval: 10s
+      test: ["CMD-SHELL", "curl -sf http://localhost:4566/_localstack/health || exit 1"]
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 15s
+
+  # Cria o bucket S3 usado pelo serviço de documentos (prontuário).
+  s3-init:
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    container_name: prenatal-documento-s3-init
+    depends_on:
+      localstack:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+        aws --endpoint-url=http://localstack:4566 s3 mb s3://prenatal-documents --region us-east-1 2>/dev/null || true
+        aws --endpoint-url=http://localstack:4566 s3 ls
+        echo 'Bucket s3://prenatal-documents pronto.'
+      "
+    environment:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
 
 volumes:
-  postgres_data:
   localstack_data:
