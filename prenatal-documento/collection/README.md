@@ -27,7 +27,7 @@ A collection possui variáveis que podem ser configuradas:
 - `baseUrl`: URL base da API (padrão: `http://localhost:8080`)
 - `jwtToken`: Token JWT para autenticação
 - `documentId`: ID do documento (preenchido automaticamente após upload)
-- `prenatalRecordId`: ID do registro pré-natal (padrão: `1`)
+- `patientCpf`: CPF da paciente - apenas números (ex.: `12345678901`)
 
 #### Opção 1: Usar variáveis da collection
 
@@ -94,7 +94,7 @@ Copie o `access_token` da resposta e cole na variável `jwtToken` do environment
 1. Abra a requisição **Upload Document** na pasta **Documents**
 2. Na aba **Body**, selecione um arquivo PDF no campo `file`
 3. Defina o `documentType` como `EXAM` ou `ULTRASOUND`
-4. Atualize o `:id` na URL com o ID do registro pré-natal
+4. Atualize o `:cpf` na URL com o CPF da paciente (apenas números)
 5. Clique em **Send**
 
 **Nota:** Após o upload bem-sucedido, o `documentId` será salvo automaticamente na variável da collection.
@@ -167,7 +167,7 @@ Authorization: Bearer {jwtToken}
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "prenatalRecordId": 1,
+  "patientCpf": "12345678901",
   "fileName": "abc123.pdf",
   "originalFileName": "exame-sangue.pdf",
   "contentType": "application/pdf",
@@ -185,7 +185,7 @@ Authorization: Bearer {jwtToken}
 [
   {
     "id": "550e8400-e29b-41d4-a716-446655440000",
-    "prenatalRecordId": 1,
+    "patientCpf": "12345678901",
     "fileName": "abc123.pdf",
     "originalFileName": "exame-sangue.pdf",
     "contentType": "application/pdf",
@@ -241,7 +241,7 @@ Você pode adicionar mais testes clicando na aba **Tests** de cada requisição.
 - Verifique se o `documentType` é `EXAM` ou `ULTRASOUND`
 
 ### Erro 404 Not Found
-- Verifique se o `documentId` ou `prenatalRecordId` estão corretos
+- Verifique se o `documentId` ou `patientCpf` estão corretos
 - Verifique se a aplicação está rodando em `http://localhost:8080`
 
 ## 📚 Referências

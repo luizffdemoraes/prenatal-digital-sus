@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class MedicalDocument {
     private UUID id;
-    private Long prenatalRecordId;
+    private String patientCpf;
     private String fileName;
     private String originalFileName;
     private String contentType;
@@ -24,10 +24,10 @@ public class MedicalDocument {
         this.createdAt = LocalDateTime.now();
     }
 
-    public MedicalDocument(Long prenatalRecordId, String fileName, String originalFileName,
+    public MedicalDocument(String patientCpf, String fileName, String originalFileName,
                           String contentType, Long fileSize, DocumentType documentType, String storagePath) {
         this();
-        this.prenatalRecordId = prenatalRecordId;
+        this.patientCpf = patientCpf;
         this.fileName = fileName;
         this.originalFileName = originalFileName;
         this.contentType = contentType;
@@ -44,12 +44,12 @@ public class MedicalDocument {
         this.id = id;
     }
 
-    public Long getPrenatalRecordId() {
-        return prenatalRecordId;
+    public String getPatientCpf() {
+        return patientCpf;
     }
 
-    public void setPrenatalRecordId(Long prenatalRecordId) {
-        this.prenatalRecordId = prenatalRecordId;
+    public void setPatientCpf(String patientCpf) {
+        this.patientCpf = patientCpf;
     }
 
     public String getFileName() {

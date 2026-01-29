@@ -9,6 +9,6 @@ import java.util.UUID;
 public interface MedicalDocumentRepository {
     MedicalDocument save(MedicalDocument document);
     Optional<MedicalDocument> findById(UUID id);
-    List<MedicalDocument> findByPrenatalRecordIdAndActiveTrue(Long prenatalRecordId);
+    List<MedicalDocument> findByPatientCpfAndActiveTrue(String patientCpf);
     void delete(MedicalDocument document);
 }

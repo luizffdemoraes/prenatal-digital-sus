@@ -1,6 +1,7 @@
+-- Tabela de documentos medicos (exames e ultrassons) vinculados ao CPF da paciente
 CREATE TABLE medical_documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    prenatal_record_id BIGINT NOT NULL,
+    patient_cpf VARCHAR(14) NOT NULL,
     file_name VARCHAR(255) NOT NULL,
     original_file_name VARCHAR(255) NOT NULL,
     content_type VARCHAR(100) NOT NULL,
@@ -13,6 +14,6 @@ CREATE TABLE medical_documents (
     deleted_at TIMESTAMP
 );
 
-CREATE INDEX idx_medical_documents_prenatal_record_id ON medical_documents(prenatal_record_id);
+CREATE INDEX idx_medical_documents_patient_cpf ON medical_documents(patient_cpf);
 CREATE INDEX idx_medical_documents_active ON medical_documents(active);
 CREATE INDEX idx_medical_documents_storage_path ON medical_documents(storage_path);

@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -46,25 +45,25 @@ public class DocumentController {
         this.mapper = mapper;
     }
 
-    @PostMapping(value = "/prenatal-records/{id}/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/prenatal-records/{cpf}/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('PATIENT', 'NURSE', 'DOCTOR')")
     public ResponseEntity<DocumentResponse> upload(
-            @PathVariable Long id,
+            @PathVariable String cpf,
             @RequestParam("file") MultipartFile file,
             @RequestParam("documentType") @NotBlank String documentType) {
 
-        MedicalDocument document = uploadUseCase.upload(id, file, documentType);
+        MedicalDocument document = uploadUseCase.upload(cpf, file, documentType);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(mapper.toResponse(document));
     }
 
-    @GetMapping("/prenatal-records/{id}/documents")
+    @GetMapping("/prenatal-records/{cpf}/documents")
     @PreAuthorize("hasAnyRole('PATIENT', 'NURSE', 'DOCTOR')")
-    public ResponseEntity<List<DocumentResponse>> list(@PathVariable Long id) {
-        List<MedicalDocument> documents = listUseCase.listActiveByPrenatalRecord(id);
+    public ResponseEntity<List<DocumentResponse>> list(@PathVariable String cpf) {
+        List<MedicalDocument> documents = listUseCase.listActiveByPatientCpf(cpf);
         List<DocumentResponse> responses = documents.stream()
                 .map(mapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(responses);
     }
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class DocumentMapper {
 
     public DocumentResponse toResponse(MedicalDocument document) {
-        return new DocumentResponse(document);
+        return DocumentResponse.from(document);
     }
 }
 

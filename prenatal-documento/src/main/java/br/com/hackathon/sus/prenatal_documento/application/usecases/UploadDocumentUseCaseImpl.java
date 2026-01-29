@@ -28,12 +28,12 @@ public class UploadDocumentUseCaseImpl implements UploadDocumentUseCase {
 
     @Override
     @Transactional
-    public MedicalDocument upload(Long prenatalRecordId, MultipartFile file, String documentType) {
+    public MedicalDocument upload(String patientCpf, MultipartFile file, String documentType) {
         validateFile(file);
 
         try {
             DocumentType type = DocumentType.valueOf(documentType.toUpperCase());
-            String storagePath = generateStoragePath(prenatalRecordId, file.getOriginalFilename());
+            String storagePath = generateStoragePath(patientCpf, file.getOriginalFilename());
 
             String uploadedPath = storagePort.upload(
                     storagePath,
@@ -43,7 +43,7 @@ public class UploadDocumentUseCaseImpl implements UploadDocumentUseCase {
             );
 
             MedicalDocument document = new MedicalDocument(
-                    prenatalRecordId,
+                    patientCpf,
                     extractFileName(storagePath),
                     file.getOriginalFilename(),
                     file.getContentType(),
@@ -78,14 +78,14 @@ public class UploadDocumentUseCaseImpl implements UploadDocumentUseCase {
         }
     }
 
-    private String generateStoragePath(Long prenatalRecordId, String originalFileName) {
+    private String generateStoragePath(String patientCpf, String originalFileName) {
         String safeFileName = originalFileName != null ? originalFileName : "arquivo.pdf";
         String timestamp = String.valueOf(System.currentTimeMillis());
         String extension = safeFileName.contains(".")
                 ? safeFileName.substring(safeFileName.lastIndexOf("."))
                 : "";
-        String fileName = UUID.randomUUID() + extension;
-        return String.format("prenatal-records/%d/%s/%s", prenatalRecordId, timestamp, fileName);
+        String fileName = java.util.UUID.randomUUID() + extension;
+        return String.format("prenatal-records/%s/%s/%s", patientCpf, timestamp, fileName);
     }
 
     private String extractFileName(String storagePath) {

@@ -16,8 +16,8 @@ public class ListDocumentsUseCaseImpl implements ListDocumentsUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MedicalDocument> listActiveByPrenatalRecord(Long prenatalRecordId) {
-        return repository.findByPrenatalRecordIdAndActiveTrue(prenatalRecordId);
+    public List<MedicalDocument> listActiveByPatientCpf(String patientCpf) {
+        return repository.findByPatientCpfAndActiveTrue(patientCpf);
     }
 }
 

@@ -36,8 +36,8 @@ public class MedicalDocumentRepositoryImpl implements MedicalDocumentRepository 
     }
 
     @Override
-    public List<MedicalDocument> findByPrenatalRecordIdAndActiveTrue(Long prenatalRecordId) {
-        return jpaRepository.findByPrenatalRecordIdAndActiveTrue(prenatalRecordId)
+    public List<MedicalDocument> findByPatientCpfAndActiveTrue(String patientCpf) {
+        return jpaRepository.findByPatientCpfAndActiveTrue(patientCpf)
                 .stream()
                 .map(this::toDomain)
                 .collect(Collectors.toList());
@@ -52,7 +52,7 @@ public class MedicalDocumentRepositoryImpl implements MedicalDocumentRepository 
     private MedicalDocumentEntity toEntity(MedicalDocument domain) {
         MedicalDocumentEntity entity = new MedicalDocumentEntity();
         entity.setId(domain.getId());
-        entity.setPrenatalRecordId(domain.getPrenatalRecordId());
+        entity.setPatientCpf(domain.getPatientCpf());
         entity.setFileName(domain.getFileName());
         entity.setOriginalFileName(domain.getOriginalFileName());
         entity.setContentType(domain.getContentType());
@@ -69,7 +69,7 @@ public class MedicalDocumentRepositoryImpl implements MedicalDocumentRepository 
     private MedicalDocument toDomain(MedicalDocumentEntity entity) {
         MedicalDocument domain = new MedicalDocument();
         domain.setId(entity.getId());
-        domain.setPrenatalRecordId(entity.getPrenatalRecordId());
+        domain.setPatientCpf(entity.getPatientCpf());
         domain.setFileName(entity.getFileName());
         domain.setOriginalFileName(entity.getOriginalFileName());
         domain.setContentType(entity.getContentType());

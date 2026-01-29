@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface JpaMedicalDocumentRepository extends JpaRepository<MedicalDocumentEntity, UUID> {
-    List<MedicalDocumentEntity> findByPrenatalRecordIdAndActiveTrue(Long prenatalRecordId);
+    List<MedicalDocumentEntity> findByPatientCpfAndActiveTrue(String patientCpf);
 }

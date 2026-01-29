@@ -15,8 +15,8 @@ public class MedicalDocumentEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "prenatal_record_id", nullable = false)
-    private Long prenatalRecordId;
+    @Column(name = "patient_cpf", nullable = false, length = 14)
+    private String patientCpf;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
@@ -59,12 +59,12 @@ public class MedicalDocumentEntity {
         this.id = id;
     }
 
-    public Long getPrenatalRecordId() {
-        return prenatalRecordId;
+    public String getPatientCpf() {
+        return patientCpf;
     }
 
-    public void setPrenatalRecordId(Long prenatalRecordId) {
-        this.prenatalRecordId = prenatalRecordId;
+    public void setPatientCpf(String patientCpf) {
+        this.patientCpf = patientCpf;
     }
 
     public String getFileName() {

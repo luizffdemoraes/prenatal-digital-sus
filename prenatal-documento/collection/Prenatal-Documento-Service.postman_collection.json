@@ -54,21 +54,21 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/prenatal-records/:id/documents",
+							"raw": "{{baseUrl}}/api/prenatal-records/:cpf/documents",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"prenatal-records",
-								":id",
+								":cpf",
 								"documents"
 							],
 							"variable": [
 								{
-									"key": "id",
-									"value": "1",
-									"description": "ID do registro pré-natal"
+									"key": "cpf",
+									"value": "{{patientCpf}}",
+									"description": "CPF da paciente (apenas números)"
 								}
 							]
 						},
@@ -314,10 +314,10 @@
 			"description": "ID do documento (UUID) - preenchido automaticamente após upload"
 		},
 		{
-			"key": "prenatalRecordId",
-			"value": "1",
+			"key": "patientCpf",
+			"value": "12345678901",
 			"type": "string",
-			"description": "ID do registro pré-natal"
+			"description": "CPF da paciente (apenas números) - exemplo"
 		}
 	]
 }
