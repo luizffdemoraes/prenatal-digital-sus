@@ -18,9 +18,9 @@ import java.util.List;
  */
 public record CreateMedicalRecordRequest(
         @JsonProperty("cpf")
-        @NotBlank(message = "cpf é obrigatório")
-        @Size(min = 11, max = 11, message = "CPF deve conter 11 dígitos")
-        @Pattern(regexp = "\\d{11}", message = "CPF deve conter apenas números")
+        @NotBlank(message = "{medicalRecord.cpf.required}")
+        @Size(min = 11, max = 11, message = "{medicalRecord.cpf.size}")
+        @Pattern(regexp = "\\d{11}", message = "{medicalRecord.cpf.pattern}")
         String cpf,
 
         @JsonProperty("nomeCompleto")
@@ -30,7 +30,7 @@ public record CreateMedicalRecordRequest(
         LocalDate dateOfBirth,
 
         @JsonProperty("dataUltimaMenstruacao")
-        @NotNull(message = "dataUltimaMenstruacao é obrigatória")
+        @NotNull(message = "{medicalRecord.lastMenstrualPeriod.required}")
         LocalDate lastMenstrualPeriod,
 
         @JsonProperty("tipoGestacao")
