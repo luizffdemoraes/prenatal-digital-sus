@@ -24,7 +24,6 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.util.Assert;
 
 import java.security.Principal;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,10 +34,6 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 	private final UserDetailsService userDetailsService;
 	private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 	private final PasswordEncoder passwordEncoder;
-	private String username = "";
-	private String password = "";
-	private Set<String> authorizedScopes = new HashSet<>();
-
 
 	public CustomPasswordAuthenticationProvider(OAuth2AuthorizationService authorizationService,
                                                 OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator,
@@ -60,21 +55,21 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		CustomPasswordAuthenticationToken customPasswordAuthenticationToken = (CustomPasswordAuthenticationToken) authentication;
 		OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(customPasswordAuthenticationToken);
 		RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
-		username = customPasswordAuthenticationToken.getUsername();
-		password = customPasswordAuthenticationToken.getPassword();	
-		
-		UserDetails user = null;
+		String username = customPasswordAuthenticationToken.getUsername();
+		String password = customPasswordAuthenticationToken.getPassword();
+
+		UserDetails user;
 		try {
 			user = userDetailsService.loadUserByUsername(username);
 		} catch (UsernameNotFoundException e) {
 			throw new OAuth2AuthenticationException("Credenciais inválidas");
 		}
-				
+
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new OAuth2AuthenticationException("Credenciais inválidas");
 		}
-		
-		authorizedScopes = user.getAuthorities().stream()
+
+		Set<String> authorizedScopes = user.getAuthorities().stream()
 				.map(scope -> scope.getAuthority())
 				.filter(scope -> registeredClient.getScopes().contains(scope))
 				.collect(Collectors.toSet());
@@ -119,9 +114,9 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER,
 				generatedAccessToken.getTokenValue(), generatedAccessToken.getIssuedAt(),
 				generatedAccessToken.getExpiresAt(), tokenContext.getAuthorizedScopes());
-		if (generatedAccessToken instanceof ClaimAccessor) {
-			authorizationBuilder.token(accessToken, (metadata) ->
-					metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME, ((ClaimAccessor) generatedAccessToken).getClaims()));
+		if (generatedAccessToken instanceof ClaimAccessor claimAccessor) {
+			authorizationBuilder.token(accessToken, metadata ->
+					metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME, claimAccessor.getClaims()));
 		} else {
 			authorizationBuilder.accessToken(accessToken);
 		}
@@ -138,12 +133,8 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 	}
 
 	private static OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(Authentication authentication) {
-		
-		OAuth2ClientAuthenticationToken clientPrincipal = null;
-		if (OAuth2ClientAuthenticationToken.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-			clientPrincipal = (OAuth2ClientAuthenticationToken) authentication.getPrincipal();
-		}
-		if (clientPrincipal != null && clientPrincipal.isAuthenticated()) {
+		if (authentication.getPrincipal() instanceof OAuth2ClientAuthenticationToken clientPrincipal
+				&& clientPrincipal.isAuthenticated()) {
 			return clientPrincipal;
 		}
 		throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_CLIENT);

@@ -40,7 +40,9 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -158,7 +160,7 @@ public class AuthorizationServerConfig {
     // ============================================================
     @Bean
     @Profile("!test")
-    public KeyPair rsaKeyPair() throws Exception {
+    public KeyPair rsaKeyPair() throws IOException, GeneralSecurityException {
         try (InputStream privateStream = getClass().getClassLoader().getResourceAsStream("rsa/private-key.pem");
              InputStream publicStream = getClass().getClassLoader().getResourceAsStream("rsa/public-key.pem")) {
 
@@ -213,7 +215,7 @@ public class AuthorizationServerConfig {
     }
 
     @Bean
-    public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator(JWKSource<SecurityContext> jwkSource) {
+    public OAuth2TokenGenerator<OAuth2Token> tokenGenerator(JWKSource<SecurityContext> jwkSource) {
         NimbusJwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource);
         JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
         jwtGenerator.setJwtCustomizer(tokenCustomizer());
