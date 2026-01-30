@@ -1,5 +1,9 @@
 package br.com.hackathon.sus.prenatal_documento.infrastructure.config;
 
+import java.util.Arrays;
+
+import javax.sql.DataSource;
+
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +16,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
-import javax.sql.DataSource;
-import java.util.Arrays;
 
 @Configuration
 public class FlywayBeforeJpaConfig implements BeanFactoryPostProcessor {
@@ -73,6 +74,8 @@ public class FlywayBeforeJpaConfig implements BeanFactoryPostProcessor {
                     .dataSource(dataSource)
                     .locations(locations)
                     .schemas(schemas.trim().split(",\\s*"))
+                    .createSchemas(true)
+                    .table("documento_flyway_schema_history")
                     .baselineOnMigrate(baselineOnMigrate)
                     .baselineVersion(baselineVersion)
                     .validateOnMigrate(validateOnMigrate)

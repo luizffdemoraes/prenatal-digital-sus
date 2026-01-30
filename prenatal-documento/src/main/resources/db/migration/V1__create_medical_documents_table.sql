@@ -1,5 +1,7 @@
--- Tabela de documentos medicos (exames e ultrassons) vinculados ao CPF da paciente
-CREATE TABLE medical_documents (
+-- Garante o schema e cria a tabela de documentos medicos (exames e ultrassons) vinculados ao CPF da paciente
+CREATE SCHEMA IF NOT EXISTS documento;
+
+CREATE TABLE documento.medical_documents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     patient_cpf VARCHAR(14) NOT NULL,
     file_name VARCHAR(255) NOT NULL,
@@ -14,6 +16,6 @@ CREATE TABLE medical_documents (
     deleted_at TIMESTAMP
 );
 
-CREATE INDEX idx_medical_documents_patient_cpf ON medical_documents(patient_cpf);
-CREATE INDEX idx_medical_documents_active ON medical_documents(active);
-CREATE INDEX idx_medical_documents_storage_path ON medical_documents(storage_path);
+CREATE INDEX idx_medical_documents_patient_cpf ON documento.medical_documents(patient_cpf);
+CREATE INDEX idx_medical_documents_active ON documento.medical_documents(active);
+CREATE INDEX idx_medical_documents_storage_path ON documento.medical_documents(storage_path);
