@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
@@ -85,7 +86,8 @@ class CreateUserUseCaseImpTest {
     }
 
     @Test
-    void execute_shouldCreateClientUser_whenEmailDoesNotEndWithRestaurantsync() {
+    @DisplayName("Deve criar usuário cliente quando e-mail não termina com restaurantsync")
+    void shouldCreateClientUserWhenEmailDoesNotEndWithRestaurantsync() {
         when(userGateway.existsUserByEmail(userRequestClient.getEmail())).thenReturn(false);
         when(userGateway.existsByCpf(userRequestClient.getCpf())).thenReturn(false);
         when(roleGateway.findByAuthority("ROLE_PATIENT")).thenReturn(Optional.of(roleClient));
@@ -106,7 +108,8 @@ class CreateUserUseCaseImpTest {
     }
 
     @Test
-    void execute_shouldThrowException_whenEmailAlreadyRegistered() {
+    @DisplayName("Deve lançar exceção quando e-mail já cadastrado")
+    void shouldThrowExceptionWhenEmailAlreadyRegistered() {
         when(userGateway.existsUserByEmail(userRequestAdmin.getEmail())).thenReturn(true);
 
         BusinessException exception = assertThrows(BusinessException.class,
@@ -127,7 +130,8 @@ class CreateUserUseCaseImpTest {
     }
 
     @Test
-    void execute_shouldThrowException_whenRoleNotFound() {
+    @DisplayName("Deve lançar exceção quando role não encontrada")
+    void shouldThrowExceptionWhenRoleNotFound() {
         when(userGateway.existsUserByEmail(userRequestAdmin.getEmail())).thenReturn(false);
         when(userGateway.existsByCpf(userRequestAdmin.getCpf())).thenReturn(false);
         when(roleGateway.findByAuthority("ROLE_DOCTOR")).thenReturn(Optional.empty());

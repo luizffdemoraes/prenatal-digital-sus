@@ -12,6 +12,7 @@ import br.com.hackathon.sus.prenatal_auth.factories.TestDataFactory;
 import br.com.hackathon.sus.prenatal_auth.infrastructure.config.mapper.UserMapper;
 import br.com.hackathon.sus.prenatal_auth.infrastructure.persistence.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -68,7 +69,8 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testCreateUserSuccess() throws Exception {
+    @DisplayName("Deve criar usuário com sucesso")
+    void shouldCreateUserSuccessfully() throws Exception {
         // usa TestDataFactory do projeto para criar request (mesmo padrão do exemplo)
         UserRequest createRequest = TestDataFactory.createUserRequest();
         User userDomain = UserMapper.toDomain(createRequest);
@@ -89,7 +91,8 @@ class UserControllerTest {
     }
 
     @Test
-    void testCreateUserBadRequest() throws Exception {
+    @DisplayName("Deve retornar 422 quando corpo da requisição é inválido")
+    void shouldReturnUnprocessableEntityWhenRequestBodyIsInvalid() throws Exception {
         mockMvc.perform(post("/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
@@ -97,7 +100,8 @@ class UserControllerTest {
     }
 
     @Test
-    void testFindUserByIdSuccess() throws Exception {
+    @DisplayName("Deve buscar usuário por ID com sucesso")
+    void shouldFindUserByIdSuccessfully() throws Exception {
         Integer userId = 1;
         User userDomain = UserMapper.toDomain(TestDataFactory.createUserRequest());
 
@@ -128,7 +132,8 @@ class UserControllerTest {
     }
 
     @Test
-    void testUpdatePasswordSuccess() throws Exception {
+    @DisplayName("Deve atualizar senha com sucesso")
+    void shouldUpdatePasswordSuccessfully() throws Exception {
         Integer userId = 1;
         PasswordRequest passwordRequest = new PasswordRequest("novaSenha123");
 

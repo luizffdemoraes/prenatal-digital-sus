@@ -1,5 +1,6 @@
 package com.hackathon.sus.prenatal_prontuario.domain.entities;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -11,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class MedicalRecordTest {
 
     @Test
-    void deveCriarProntuarioAPartirDaPrimeiraConsulta() {
+    @DisplayName("Deve criar prontuário a partir da primeira consulta")
+    void shouldCreateRecordFromFirstAppointment() {
         // Arrange
         String cpf = "12345678901";
         LocalDate lastMenstrualPeriod = LocalDate.now().minusWeeks(20);
@@ -57,7 +59,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoCpfEhNulo() {
+    @DisplayName("Deve lançar exceção quando CPF é nulo")
+    void shouldThrowExceptionWhenCpfIsNull() {
         // Arrange
         LocalDate lastMenstrualPeriod = LocalDate.now().minusWeeks(20);
 
@@ -86,7 +89,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoCpfEhVazio() {
+    @DisplayName("Deve lançar exceção quando CPF é vazio")
+    void shouldThrowExceptionWhenCpfIsEmpty() {
         // Arrange
         LocalDate lastMenstrualPeriod = LocalDate.now().minusWeeks(20);
 
@@ -115,7 +119,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoDataUltimaMenstruacaoEhNula() {
+    @DisplayName("Deve lançar exceção quando data da última menstruação é nula")
+    void shouldThrowExceptionWhenLastMenstrualPeriodIsNull() {
         // Arrange
         String cpf = "12345678901";
 
@@ -144,7 +149,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoIdadeGestacionalEhMenorQue1() {
+    @DisplayName("Deve lançar exceção quando idade gestacional é menor que 1")
+    void shouldThrowExceptionWhenGestationalAgeIsLessThan1() {
         // Arrange
         String cpf = "12345678901";
         LocalDate lastMenstrualPeriod = LocalDate.now().minusWeeks(50);
@@ -175,7 +181,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoIdadeGestacionalEhMaiorQue44() {
+    @DisplayName("Deve lançar exceção quando idade gestacional é maior que 44")
+    void shouldThrowExceptionWhenGestationalAgeIsGreaterThan44() {
         // Arrange
         String cpf = "12345678901";
         LocalDate lastMenstrualPeriod = LocalDate.now().minusDays(5);
@@ -206,7 +213,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveUsarValoresPadraoQuandoParametrosOpcionaisSaoNulos() {
+    @DisplayName("Deve usar valores padrão quando parâmetros opcionais são nulos")
+    void shouldUseDefaultValuesWhenOptionalParamsAreNull() {
         // Arrange
         String cpf = "12345678901";
         LocalDate lastMenstrualPeriod = LocalDate.now().minusWeeks(20);
@@ -243,7 +251,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveAtualizarDadosClinicos() {
+    @DisplayName("Deve atualizar dados clínicos")
+    void shouldUpdateClinicalData() {
         // Arrange
         MedicalRecord record = new MedicalRecord(
                 UUID.randomUUID(),
@@ -279,7 +288,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveAtualizarApenasCamposInformados() {
+    @DisplayName("Deve atualizar apenas campos informados")
+    void shouldUpdateOnlyInformedFields() {
         // Arrange
         MedicalRecord record = new MedicalRecord(
                 UUID.randomUUID(),
@@ -351,7 +361,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveLimparFatoresDeRiscoQuandoListaVazia() {
+    @DisplayName("Deve limpar fatores de risco quando lista vazia")
+    void shouldClearRiskFactorsWhenListIsEmpty() {
         // Arrange
         MedicalRecord record = new MedicalRecord(
                 UUID.randomUUID(),
@@ -384,7 +395,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveRetornarCopiaImutavelDosFatoresDeRisco() {
+    @DisplayName("Deve retornar cópia imutável dos fatores de risco")
+    void shouldReturnImmutableCopyOfRiskFactors() {
         // Arrange
         MedicalRecord record = new MedicalRecord(
                 UUID.randomUUID(),
@@ -417,7 +429,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveUsarDataDeReferenciaQuandoInformada() {
+    @DisplayName("Deve usar data de referência quando informada")
+    void shouldUseReferenceDateWhenProvided() {
         // Arrange
         String cpf = "12345678901";
         LocalDate referenceDate = LocalDate.of(2024, 6, 1);
@@ -448,7 +461,8 @@ class MedicalRecordTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoIdadeGestacionalEhInvalidaNoConstrutor() {
+    @DisplayName("Deve lançar exceção quando idade gestacional é inválida no construtor")
+    void shouldThrowExceptionWhenGestationalAgeIsInvalidInConstructor() {
         // Arrange
         UUID id = UUID.randomUUID();
 

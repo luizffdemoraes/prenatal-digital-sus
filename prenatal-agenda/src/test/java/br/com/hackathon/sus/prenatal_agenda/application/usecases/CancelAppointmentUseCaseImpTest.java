@@ -37,8 +37,8 @@ class CancelAppointmentUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve lançar exceção quando consulta não encontrada")
-    void deveLancarQuandoConsultaNaoEncontrada() {
+    @DisplayName("Deve lançar exceção quando consulta não encontrada")
+    void shouldThrowWhenAppointmentNotFound() {
         when(appointmentGateway.buscarPorId(CONSULTA_ID)).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () ->
@@ -46,8 +46,8 @@ class CancelAppointmentUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve cancelar consulta com sucesso e salvar")
-    void deveCancelarComSucesso() {
+    @DisplayName("Deve cancelar consulta com sucesso e salvar")
+    void shouldCancelSuccessfully() {
         Appointment consulta = new Appointment(10L, 20L, 30L, LocalDate.now().plusDays(1), LocalTime.of(9, 0));
         consulta.setId(CONSULTA_ID);
         when(appointmentGateway.buscarPorId(CONSULTA_ID)).thenReturn(Optional.of(consulta));

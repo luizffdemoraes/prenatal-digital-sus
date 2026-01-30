@@ -1,5 +1,25 @@
 package br.com.hackathon.sus.prenatal_agenda.application.usecases;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import br.com.hackathon.sus.prenatal_agenda.application.dtos.requests.CreateAppointmentRequest;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.Appointment;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.DoctorSchedule;
@@ -8,24 +28,6 @@ import br.com.hackathon.sus.prenatal_agenda.domain.gateways.AppointmentGateway;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorGateway;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorScheduleGateway;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.PatientGateway;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CreateAppointmentUseCaseImp")
@@ -61,15 +63,15 @@ class CreateAppointmentUseCaseImpTest {
     class Validacoes {
 
         @Test
-        @DisplayName("deve lançar exceção quando unidadeId é nulo")
-        void deveLancarQuandoUnidadeIdNulo() {
+        @DisplayName("Deve lançar exceção quando unidadeId é nulo")
+        void shouldThrowWhenUnitIdIsNull() {
             assertThrows(IllegalArgumentException.class, () ->
                     useCase.execute(REQ, null));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando CPF da gestante é vazio")
-        void deveLancarQuandoCpfVazio() {
+        @DisplayName("Deve lançar exceção quando CPF da gestante é vazio")
+        void shouldThrowWhenCpfIsEmpty() {
             CreateAppointmentRequest req = new CreateAppointmentRequest("Maria", "  ", "Dr. João", null, "CRM-X",
                     DATA, HORARIO);
 
@@ -78,8 +80,8 @@ class CreateAppointmentUseCaseImpTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando gestante não encontrada")
-        void deveLancarQuandoGestanteNaoEncontrada() {
+        @DisplayName("Deve lançar exceção quando gestante não encontrada")
+        void shouldThrowWhenPatientNotFound() {
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.empty());
 
             assertThrows(IllegalArgumentException.class, () ->
@@ -87,8 +89,8 @@ class CreateAppointmentUseCaseImpTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando nenhum identificador do médico informado")
-        void deveLancarQuandoNenhumIdentificadorMedico() {
+        @DisplayName("Deve lançar exceção quando nenhum identificador do médico informado")
+        void shouldThrowWhenNoDoctorIdentifierProvided() {
             CreateAppointmentRequest req = new CreateAppointmentRequest("Maria", "12345678900", null, null, null, DATA, HORARIO);
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.of(GESTANTE_ID));
 
@@ -102,7 +104,7 @@ class CreateAppointmentUseCaseImpTest {
     class PorCrm {
 
         @Test
-        @DisplayName("deve agendar com sucesso quando médico identificado por CRM")
+        @DisplayName("Deve agendar com sucesso quando médico identificado por CRM")
         void deveAgendarPorCrm() {
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.of(GESTANTE_ID));
             when(doctorGateway.buscarPorCrm("CRM-SP 123")).thenReturn(Optional.of(MEDICO_ID));
@@ -127,8 +129,8 @@ class CreateAppointmentUseCaseImpTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando médico não encontrado por CRM")
-        void deveLancarQuandoMedicoNaoEncontradoPorCrm() {
+        @DisplayName("Deve lançar exceção quando médico não encontrado por CRM")
+        void shouldThrowWhenDoctorNotFoundByCrm() {
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.of(GESTANTE_ID));
             when(doctorGateway.buscarPorCrm("CRM-INVALIDO")).thenReturn(Optional.empty());
 
@@ -144,7 +146,7 @@ class CreateAppointmentUseCaseImpTest {
     class RegrasAgenda {
 
         @Test
-        @DisplayName("deve lançar exceção quando agenda não encontrada para o médico")
+        @DisplayName("Deve lançar exceção quando agenda não encontrada para o médico")
         void deveLancarQuandoAgendaNaoEncontrada() {
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.of(GESTANTE_ID));
             when(doctorGateway.buscarPorCrm("CRM-SP 123")).thenReturn(Optional.of(MEDICO_ID));
@@ -155,8 +157,8 @@ class CreateAppointmentUseCaseImpTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando médico não atende no dia da semana")
-        void deveLancarQuandoMedicoNaoAtendeNoDia() {
+        @DisplayName("Deve lançar exceção quando médico não atende no dia da semana")
+        void shouldThrowWhenDoctorNotAvailableOnDay() {
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.of(GESTANTE_ID));
             when(doctorGateway.buscarPorCrm("CRM-SP 123")).thenReturn(Optional.of(MEDICO_ID));
             DoctorSchedule agenda = new DoctorSchedule(MEDICO_ID, UNIDADE_ID, Set.of(Weekday.TERCA, Weekday.QUARTA),
@@ -174,7 +176,7 @@ class CreateAppointmentUseCaseImpTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando horário fora do período")
+        @DisplayName("Deve lançar exceção quando horário fora do período")
         void deveLancarQuandoHorarioForaDoPeriodo() {
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.of(GESTANTE_ID));
             when(doctorGateway.buscarPorCrm("CRM-SP 123")).thenReturn(Optional.of(MEDICO_ID));
@@ -192,8 +194,8 @@ class CreateAppointmentUseCaseImpTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando horário já ocupado")
-        void deveLancarQuandoHorarioOcupado() {
+        @DisplayName("Deve lançar exceção quando horário já ocupado")
+        void shouldThrowWhenTimeSlotOccupied() {
             LocalDate data = LocalDate.now().plusDays(1);
             while (data.getDayOfWeek().getValue() > 5) { data = data.plusDays(1); }
             CreateAppointmentRequest req = new CreateAppointmentRequest("Maria", "12345678900", "Dr. João", "Obstetrícia", "CRM-SP 123", data, HORARIO);

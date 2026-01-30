@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -77,7 +78,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleHttpMessageNotReadable_WithJsonMappingException_ShouldReturnBadRequestWithMappingMessage() {
+    @DisplayName("Deve retornar 400 com mensagem de mapeamento quando causa é JsonMappingException")
+    void shouldReturnBadRequestWithMappingMessageWhenCauseIsJsonMappingException() {
         JsonMappingException cause = mock(JsonMappingException.class);
         HttpInputMessage inputMessage = mock(HttpInputMessage.class);
         HttpMessageNotReadableException ex = new HttpMessageNotReadableException("Error", cause, inputMessage);
@@ -91,7 +93,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleHttpMessageNotReadable_WithOtherCause_ShouldReturnBadRequestWithDefaultMessage() {
+    @DisplayName("Deve retornar 400 com mensagem padrão quando causa é outra")
+    void shouldReturnBadRequestWithDefaultMessageWhenCauseIsOther() {
         HttpInputMessage inputMessage = mock(HttpInputMessage.class);
         HttpMessageNotReadableException ex = new HttpMessageNotReadableException("Error", new RuntimeException(), inputMessage);
 
@@ -129,7 +132,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleBusinessException_ShouldReturnUnauthorizedResponse() {
+    @DisplayName("Deve retornar 401 quando BusinessException (acesso negado)")
+    void shouldReturnUnauthorizedWhenBusinessExceptionAccessDenied() {
         BusinessException ex = new BusinessException("Access denied");
 
         ResponseEntity<StandardError> response = handler.handleBusinessException(ex, request);
@@ -142,7 +146,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleBusinessException_ShouldReturnNotFoundResponse() {
+    @DisplayName("Deve retornar 404 quando BusinessException (recurso não encontrado)")
+    void shouldReturnNotFoundWhenBusinessExceptionResourceNotFound() {
         BusinessException ex = new BusinessException("Resource not found");
 
         ResponseEntity<StandardError> response = handler.handleBusinessException(ex, request);
@@ -155,7 +160,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleHttpMessageNotReadable_WhenCauseIsJsonParseException_ShouldReturnSpecificMessage() {
+    @DisplayName("Deve retornar mensagem específica quando causa é JsonParseException")
+    void shouldReturnSpecificMessageWhenCauseIsJsonParseException() {
         JsonParseException cause = new JsonParseException(null, "Mock cause");
         HttpInputMessage inputMessage = mock(HttpInputMessage.class);
         HttpMessageNotReadableException ex = new HttpMessageNotReadableException("Erro ao ler mensagem", cause, inputMessage);
@@ -170,7 +176,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleIllegalArgumentException_ShouldReturnBadRequest() {
+    @DisplayName("Deve retornar 400 quando IllegalArgumentException")
+    void shouldReturnBadRequestWhenIllegalArgumentException() {
         IllegalArgumentException ex = new IllegalArgumentException("Invalid parameter");
 
         ResponseEntity<StandardError> response = handler.handleIllegalArgument(ex, request);

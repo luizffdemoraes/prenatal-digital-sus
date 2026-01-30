@@ -41,7 +41,7 @@ class DeleteDoctorScheduleUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve lançar exceção quando médico não encontrado")
+    @DisplayName("Deve lançar exceção quando médico não encontrado")
     void deveLancarQuandoMedicoNaoEncontrado() {
         when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.empty());
 
@@ -49,8 +49,8 @@ class DeleteDoctorScheduleUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve lançar exceção quando agenda não encontrada")
-    void deveLancarQuandoAgendaNaoEncontrada() {
+    @DisplayName("Deve lançar exceção quando agenda não encontrada")
+    void shouldThrowWhenScheduleNotFound() {
         when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(MEDICO_ID));
         when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.empty());
 
@@ -58,7 +58,7 @@ class DeleteDoctorScheduleUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve lançar exceção quando existem consultas agendadas para o médico")
+    @DisplayName("Deve lançar exceção quando existem consultas agendadas para o médico")
     void deveLancarQuandoExistemConsultasAgendadas() {
         when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(MEDICO_ID));
         DoctorSchedule agenda = new DoctorSchedule(AGENDA_ID, MEDICO_ID, 2L, Set.of(Weekday.SEGUNDA), LocalTime.of(8, 0), LocalTime.of(12, 0), 30);
@@ -69,8 +69,8 @@ class DeleteDoctorScheduleUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve excluir agenda com sucesso quando não há consultas agendadas")
-    void deveExcluirComSucesso() {
+    @DisplayName("Deve excluir agenda com sucesso quando não há consultas agendadas")
+    void shouldDeleteSuccessfully() {
         when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(MEDICO_ID));
         DoctorSchedule agenda = new DoctorSchedule(AGENDA_ID, MEDICO_ID, 2L, Set.of(Weekday.SEGUNDA), LocalTime.of(8, 0), LocalTime.of(12, 0), 30);
         when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.of(agenda));

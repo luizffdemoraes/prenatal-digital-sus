@@ -70,7 +70,7 @@ class DoctorScheduleControllerTest {
     class Criar {
 
         @Test
-        @DisplayName("deve retornar 201 e Location ao criar agenda")
+        @DisplayName("Deve retornar 201 e Location ao criar agenda")
         void deveRetornar201AoCriar() throws Exception {
             DoctorSchedule agenda = new DoctorSchedule(50L, 10L, 1L, DIAS, LocalTime.of(8, 0), LocalTime.of(12, 0), 30);
             when(createDoctorScheduleUseCase.execute(any())).thenReturn(agenda);
@@ -93,8 +93,8 @@ class DoctorScheduleControllerTest {
     class Buscar {
 
         @Test
-        @DisplayName("deve retornar 200 e agenda quando encontrada")
-        void deveRetornar200QuandoEncontrada() throws Exception {
+        @DisplayName("Deve retornar 200 e agenda quando encontrada")
+        void shouldReturn200WhenFound() throws Exception {
             when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(10L));
             DoctorSchedule agenda = new DoctorSchedule(50L, 10L, 1L, DIAS, LocalTime.of(8, 0), LocalTime.of(12, 0), 30);
             when(findDoctorScheduleUseCase.execute(10L)).thenReturn(Optional.of(agenda));
@@ -106,7 +106,7 @@ class DoctorScheduleControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 404 quando médico não encontrado")
+        @DisplayName("Deve retornar 404 quando médico não encontrado")
         void deveRetornar404QuandoMedicoNaoEncontrado() throws Exception {
             when(doctorGateway.buscarPorCrm("CRM-INVALIDO")).thenReturn(Optional.empty());
 
@@ -115,8 +115,8 @@ class DoctorScheduleControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 404 quando agenda não encontrada para o médico")
-        void deveRetornar404QuandoAgendaNaoEncontrada() throws Exception {
+        @DisplayName("Deve retornar 404 quando agenda não encontrada para o médico")
+        void shouldReturn404WhenScheduleNotFound() throws Exception {
             when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(10L));
             when(findDoctorScheduleUseCase.execute(10L)).thenReturn(Optional.empty());
 
@@ -130,7 +130,7 @@ class DoctorScheduleControllerTest {
     class Atualizar {
 
         @Test
-        @DisplayName("deve retornar 200 ao atualizar")
+        @DisplayName("Deve retornar 200 ao atualizar")
         void deveRetornar200AoAtualizar() throws Exception {
             DoctorSchedule atualizada = new DoctorSchedule(50L, 10L, 1L, Set.of(Weekday.SEGUNDA, Weekday.TERCA, Weekday.QUARTA), LocalTime.of(7, 30), LocalTime.of(11, 30), 20);
             when(updateDoctorScheduleUseCase.execute(eq("CRM-X"), any())).thenReturn(atualizada);
@@ -150,8 +150,8 @@ class DoctorScheduleControllerTest {
     class Excluir {
 
         @Test
-        @DisplayName("deve retornar 204 ao excluir")
-        void deveRetornar204AoExcluir() throws Exception {
+        @DisplayName("Deve retornar 204 ao excluir")
+        void shouldReturn204WhenDeleting() throws Exception {
             doNothing().when(deleteDoctorScheduleUseCase).execute("CRM-X");
 
             mvc.perform(delete("/api/agendas/medico/CRM-X"))

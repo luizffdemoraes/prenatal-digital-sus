@@ -33,8 +33,8 @@ class FindAppointmentsByPatientUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve retornar lista de consultas da gestante")
-    void deveRetornarConsultas() {
+    @DisplayName("Deve retornar lista de consultas da gestante")
+    void shouldReturnAppointments() {
         Appointment c = new Appointment(GESTANTE_ID, 2L, 3L, LocalDate.now().plusDays(1), LocalTime.of(9, 0));
         c.setId(10L);
         when(appointmentGateway.buscarPorGestanteId(GESTANTE_ID)).thenReturn(List.of(c));
@@ -48,8 +48,8 @@ class FindAppointmentsByPatientUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve retornar lista vazia quando gestante não tem consultas")
-    void deveRetornarListaVazia() {
+    @DisplayName("Deve retornar lista vazia quando gestante não tem consultas")
+    void shouldReturnEmptyList() {
         when(appointmentGateway.buscarPorGestanteId(GESTANTE_ID)).thenReturn(List.of());
 
         List<Appointment> result = useCase.execute(GESTANTE_ID);

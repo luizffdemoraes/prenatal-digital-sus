@@ -1,25 +1,27 @@
 package br.com.hackathon.sus.prenatal_agenda.application.usecases;
 
+import java.time.LocalTime;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import br.com.hackathon.sus.prenatal_agenda.application.dtos.requests.CreateDoctorScheduleRequest;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.DoctorSchedule;
 import br.com.hackathon.sus.prenatal_agenda.domain.entities.Weekday;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorGateway;
 import br.com.hackathon.sus.prenatal_agenda.domain.gateways.DoctorScheduleGateway;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalTime;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CreateDoctorScheduleUseCaseImp")
@@ -45,8 +47,8 @@ class CreateDoctorScheduleUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve lançar exceção quando médico não encontrado por CRM")
-    void deveLancarQuandoMedicoNaoEncontrado() {
+    @DisplayName("Deve lançar exceção quando médico não encontrado por CRM")
+    void shouldThrowWhenDoctorNotFound() {
         CreateDoctorScheduleRequest request = new CreateDoctorScheduleRequest("CRM-X", "Dr. João", "Cardio", UNIDADE_ID, DIAS, INICIO, FIM, DURACAO);
         when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.empty());
 
@@ -56,7 +58,7 @@ class CreateDoctorScheduleUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve lançar exceção quando já existe agenda para o médico")
+    @DisplayName("Deve lançar exceção quando já existe agenda para o médico")
     void deveLancarQuandoAgendaJaExiste() {
         CreateDoctorScheduleRequest request = new CreateDoctorScheduleRequest("CRM-X", "Dr. João", "Cardio", UNIDADE_ID, DIAS, INICIO, FIM, DURACAO);
         when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(MEDICO_ID));
@@ -67,8 +69,8 @@ class CreateDoctorScheduleUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve criar agenda com sucesso")
-    void deveCriarComSucesso() {
+    @DisplayName("Deve criar agenda com sucesso")
+    void shouldCreateSuccessfully() {
         CreateDoctorScheduleRequest request = new CreateDoctorScheduleRequest("CRM-X", "Dr. João", "Cardio", UNIDADE_ID, DIAS, INICIO, FIM, DURACAO);
         when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(MEDICO_ID));
         when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.empty());

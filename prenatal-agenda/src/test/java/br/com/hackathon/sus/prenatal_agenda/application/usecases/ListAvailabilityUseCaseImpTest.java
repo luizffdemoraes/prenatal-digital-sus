@@ -42,8 +42,8 @@ class ListAvailabilityUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve lançar exceção quando agenda não encontrada")
-    void deveLancarQuandoAgendaNaoEncontrada() {
+    @DisplayName("Deve lançar exceção quando agenda não encontrada")
+    void shouldThrowWhenScheduleNotFound() {
         LocalDate data = LocalDate.now().plusDays(1);
         when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.empty());
 
@@ -52,8 +52,8 @@ class ListAvailabilityUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve retornar lista vazia quando médico não atende no dia")
-    void deveRetornarVazioQuandoNaoAtendeNoDia() {
+    @DisplayName("Deve retornar lista vazia quando médico não atende no dia")
+    void shouldReturnEmptyWhenDoctorNotAvailableOnDay() {
         LocalDate domingo = LocalDate.now();
         while (domingo.getDayOfWeek().getValue() != 7) { domingo = domingo.plusDays(1); }
         DoctorSchedule agenda = new DoctorSchedule(MEDICO_ID, 2L, Set.of(Weekday.SEGUNDA, Weekday.TERCA),
@@ -67,7 +67,7 @@ class ListAvailabilityUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve retornar slots disponíveis excluindo horários ocupados")
+    @DisplayName("Deve retornar slots disponíveis excluindo horários ocupados")
     void deveRetornarSlotsExcluindoOcupados() {
         LocalDate data = LocalDate.now().plusDays(1);
         while (data.getDayOfWeek().getValue() > 5) { data = data.plusDays(1); }
@@ -89,8 +89,8 @@ class ListAvailabilityUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("deve retornar todos os slots quando não há consultas agendadas")
-    void deveRetornarTodosSlotsQuandoNenhumaConsulta() {
+    @DisplayName("Deve retornar todos os slots quando não há consultas agendadas")
+    void shouldReturnAllSlotsWhenNoAppointments() {
         LocalDate data = LocalDate.now().plusDays(1);
         while (data.getDayOfWeek().getValue() > 5) { data = data.plusDays(1); }
 

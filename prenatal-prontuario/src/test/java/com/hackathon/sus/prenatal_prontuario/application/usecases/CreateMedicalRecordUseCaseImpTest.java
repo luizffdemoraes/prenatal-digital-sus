@@ -10,6 +10,7 @@ import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordGatewa
 import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordHistoryGateway;
 import com.hackathon.sus.prenatal_prontuario.infrastructure.exceptions.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -91,7 +92,8 @@ class CreateMedicalRecordUseCaseImpTest {
     }
 
     @Test
-    void deveCriarProntuarioComSucesso() {
+    @DisplayName("Deve criar prontuário com sucesso")
+    void shouldCreateRecordSuccessfully() {
         // Arrange
         when(medicalRecordGateway.existsByCpf(request.cpf())).thenReturn(false);
         when(medicalRecordGateway.save(any(MedicalRecord.class))).thenReturn(savedRecord);
@@ -118,7 +120,8 @@ class CreateMedicalRecordUseCaseImpTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoCpfJaExiste() {
+    @DisplayName("Deve lançar exceção quando CPF já existe")
+    void shouldThrowExceptionWhenCpfAlreadyExists() {
         // Arrange
         when(medicalRecordGateway.existsByCpf(request.cpf())).thenReturn(true);
 
@@ -150,7 +153,8 @@ class CreateMedicalRecordUseCaseImpTest {
     }
 
     @Test
-    void deveUsarSistemaComoUserIdQuandoProfessionalUserIdEhVazio() {
+    @DisplayName("Deve usar sistema como userId quando professionalUserId é vazio")
+    void shouldUseSystemAsUserIdWhenProfessionalUserIdIsEmpty() {
         // Arrange
         when(medicalRecordGateway.existsByCpf(request.cpf())).thenReturn(false);
         when(medicalRecordGateway.save(any(MedicalRecord.class))).thenReturn(savedRecord);

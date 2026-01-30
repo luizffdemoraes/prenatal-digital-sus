@@ -8,6 +8,7 @@ import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordGatewa
 import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordHistoryGateway;
 import com.hackathon.sus.prenatal_prontuario.infrastructure.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -74,7 +75,8 @@ class FindMedicalRecordHistoryUseCaseImpTest {
     }
 
     @Test
-    void deveRetornarHistoricoQuandoProntuarioExiste() {
+    @DisplayName("Deve retornar histórico quando prontuário existe")
+    void shouldReturnHistoryWhenRecordExists() {
         // Arrange
         when(medicalRecordGateway.findByCpf(cpf)).thenReturn(Optional.of(medicalRecord));
         when(historyGateway.listByMedicalRecordId(medicalRecord.getId())).thenReturn(historyList);
@@ -92,7 +94,8 @@ class FindMedicalRecordHistoryUseCaseImpTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoProntuarioNaoEncontrado() {
+    @DisplayName("Deve lançar exceção quando prontuário não encontrado")
+    void shouldThrowExceptionWhenRecordNotFound() {
         // Arrange
         when(medicalRecordGateway.findByCpf(cpf)).thenReturn(Optional.empty());
 
@@ -121,7 +124,8 @@ class FindMedicalRecordHistoryUseCaseImpTest {
     }
 
     @Test
-    void deveUsarIdDoProntuarioParaBuscarHistorico() {
+    @DisplayName("Deve usar ID do prontuário para buscar histórico")
+    void shouldUseRecordIdToFetchHistory() {
         // Arrange
         UUID differentId = UUID.randomUUID();
         MedicalRecord differentRecord = new MedicalRecord(

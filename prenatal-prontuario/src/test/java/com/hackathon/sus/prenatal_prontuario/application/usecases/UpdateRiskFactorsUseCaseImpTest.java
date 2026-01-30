@@ -10,6 +10,7 @@ import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordGatewa
 import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordHistoryGateway;
 import com.hackathon.sus.prenatal_prontuario.infrastructure.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -76,7 +77,8 @@ class UpdateRiskFactorsUseCaseImpTest {
     }
 
     @Test
-    void deveAtualizarFatoresDeRiscoComSucesso() {
+    @DisplayName("Deve atualizar fatores de risco com sucesso")
+    void shouldUpdateRiskFactorsSuccessfully() {
         // Arrange
         when(medicalRecordGateway.findByCpf(cpf)).thenReturn(Optional.of(existingRecord));
         when(medicalRecordGateway.update(any(MedicalRecord.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -120,7 +122,8 @@ class UpdateRiskFactorsUseCaseImpTest {
     }
 
     @Test
-    void deveUsarSistemaComoUserIdQuandoProfessionalUserIdEhNull() {
+    @DisplayName("Deve usar sistema como userId quando professionalUserId é null")
+    void shouldUseSystemAsUserIdWhenProfessionalUserIdIsNull() {
         // Arrange
         when(medicalRecordGateway.findByCpf(cpf)).thenReturn(Optional.of(existingRecord));
         when(medicalRecordGateway.update(any(MedicalRecord.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -136,7 +139,8 @@ class UpdateRiskFactorsUseCaseImpTest {
     }
 
     @Test
-    void deveLimparFatoresDeRiscoQuandoListaVazia() {
+    @DisplayName("Deve limpar fatores de risco quando lista vazia")
+    void shouldClearRiskFactorsWhenListIsEmpty() {
         // Arrange
         UpdateRiskFactorsRequest emptyRequest = new UpdateRiskFactorsRequest(List.of());
         when(medicalRecordGateway.findByCpf(cpf)).thenReturn(Optional.of(existingRecord));
@@ -150,7 +154,8 @@ class UpdateRiskFactorsUseCaseImpTest {
     }
 
     @Test
-    void deveSubstituirFatoresDeRiscoAnteriores() {
+    @DisplayName("Deve substituir fatores de risco anteriores")
+    void shouldReplacePreviousRiskFactors() {
         // Arrange
         existingRecord = new MedicalRecord(
                 UUID.randomUUID(),

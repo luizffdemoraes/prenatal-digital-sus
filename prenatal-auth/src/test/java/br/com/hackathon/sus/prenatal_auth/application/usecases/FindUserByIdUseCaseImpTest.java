@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -54,7 +55,8 @@ class FindUserByIdUseCaseImpTest {
     }
 
     @Test
-    void execute_shouldThrowBusinessException_whenNotAuthorized() {
+    @DisplayName("Deve lançar BusinessException quando não autorizado")
+    void shouldThrowBusinessExceptionWhenNotAuthorized() {
         when(userGateway.findUserById(1)).thenReturn(user);
         doThrow(new BusinessException("Não autorizado")).when(userGateway).validateSelf(user.getId());
 

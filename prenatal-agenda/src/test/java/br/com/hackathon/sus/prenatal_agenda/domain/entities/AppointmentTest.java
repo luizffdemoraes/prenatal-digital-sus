@@ -24,7 +24,7 @@ class AppointmentTest {
     class Criacao {
 
         @Test
-        @DisplayName("deve criar consulta com dados válidos")
+        @DisplayName("Deve criar consulta com dados válidos")
         void deveCriarConsultaComDadosValidos() {
             Appointment consulta = new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, DATA_FUTURA, HORARIO);
 
@@ -40,50 +40,50 @@ class AppointmentTest {
         }
 
         @Test
-        @DisplayName("deve permitir data de hoje")
-        void devePermitirDataDeHoje() {
+        @DisplayName("Deve permitir data de hoje")
+        void shouldAllowTodayDate() {
             Appointment consulta = new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, LocalDate.now(), HORARIO);
             assertEquals(AppointmentStatus.AGENDADA, consulta.getStatus());
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando gestanteId é nulo")
+        @DisplayName("Deve lançar exceção quando gestanteId é nulo")
         void deveLancarQuandoGestanteIdNulo() {
             assertThrows(IllegalArgumentException.class, () ->
                     new Appointment(null, MEDICO_ID, UNIDADE_ID, DATA_FUTURA, HORARIO));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando medicoId é nulo")
+        @DisplayName("Deve lançar exceção quando medicoId é nulo")
         void deveLancarQuandoMedicoIdNulo() {
             assertThrows(IllegalArgumentException.class, () ->
                     new Appointment(GESTANTE_ID, null, UNIDADE_ID, DATA_FUTURA, HORARIO));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando unidadeId é nulo")
+        @DisplayName("Deve lançar exceção quando unidadeId é nulo")
         void deveLancarQuandoUnidadeIdNulo() {
             assertThrows(IllegalArgumentException.class, () ->
                     new Appointment(GESTANTE_ID, MEDICO_ID, null, DATA_FUTURA, HORARIO));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando data é nula")
-        void deveLancarQuandoDataNula() {
+        @DisplayName("Deve lançar exceção quando data é nula")
+        void shouldThrowWhenDateIsNull() {
             assertThrows(IllegalArgumentException.class, () ->
                     new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, null, HORARIO));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando horário é nulo")
+        @DisplayName("Deve lançar exceção quando horário é nulo")
         void deveLancarQuandoHorarioNulo() {
             assertThrows(IllegalArgumentException.class, () ->
                     new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, DATA_FUTURA, null));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando data é no passado")
-        void deveLancarQuandoDataNoPassado() {
+        @DisplayName("Deve lançar exceção quando data é no passado")
+        void shouldThrowWhenDateIsInPast() {
             LocalDate ontem = LocalDate.now().minusDays(1);
             assertThrows(IllegalArgumentException.class, () ->
                     new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, ontem, HORARIO));
@@ -95,7 +95,7 @@ class AppointmentTest {
     class Cancelamento {
 
         @Test
-        @DisplayName("deve cancelar consulta agendada com motivo")
+        @DisplayName("Deve cancelar consulta agendada com motivo")
         void deveCancelarComMotivo() {
             Appointment consulta = new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, DATA_FUTURA, HORARIO);
             consulta.setId(10L);
@@ -110,8 +110,8 @@ class AppointmentTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção ao cancelar consulta já cancelada")
-        void deveLancarAoCancelarJaCancelada() {
+        @DisplayName("Deve lançar exceção ao cancelar consulta já cancelada")
+        void shouldThrowWhenCancellingAlreadyCancelled() {
             Appointment consulta = new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, DATA_FUTURA, HORARIO);
             consulta.setId(10L);
             consulta.cancelar(CancellationReason.MEDICO_INDISPONIVEL);
@@ -121,7 +121,7 @@ class AppointmentTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção ao cancelar consulta já realizada")
+        @DisplayName("Deve lançar exceção ao cancelar consulta já realizada")
         void deveLancarAoCancelarJaRealizada() {
             Appointment consulta = new Appointment(1L, GESTANTE_ID, MEDICO_ID, UNIDADE_ID, DATA_FUTURA, HORARIO,
                     AppointmentStatus.REALIZADA, null, LocalDateTime.now(), null);
@@ -131,8 +131,8 @@ class AppointmentTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando motivo é nulo")
-        void deveLancarQuandoMotivoNulo() {
+        @DisplayName("Deve lançar exceção quando motivo é nulo")
+        void shouldThrowWhenReasonIsNull() {
             Appointment consulta = new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, DATA_FUTURA, HORARIO);
 
             assertThrows(IllegalArgumentException.class, () ->
@@ -153,11 +153,13 @@ class AppointmentTest {
 
         @Test
         @DisplayName("estaCancelada retorna true após cancelar")
-        void estaCanceladaRetornaTrueAposCancelar() {
+        void shouldReturnTrueForCancelledAfterCancelling() {
             Appointment consulta = new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, DATA_FUTURA, HORARIO);
             consulta.setId(1L);
             consulta.cancelar(CancellationReason.EMERGENCIA);
             assertTrue(consulta.estaCancelada());
         }
     }
+}
+   }
 }

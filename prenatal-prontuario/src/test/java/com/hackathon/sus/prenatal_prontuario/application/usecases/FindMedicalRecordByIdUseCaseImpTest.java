@@ -5,6 +5,7 @@ import com.hackathon.sus.prenatal_prontuario.domain.entities.MedicalRecord;
 import com.hackathon.sus.prenatal_prontuario.domain.entities.PregnancyType;
 import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordGateway;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -59,7 +60,8 @@ class FindMedicalRecordByIdUseCaseImpTest {
     }
 
     @Test
-    void deveRetornarProntuarioQuandoEncontrado() {
+    @DisplayName("Deve retornar prontuário quando encontrado")
+    void shouldReturnRecordWhenFound() {
         // Arrange
         when(medicalRecordGateway.findById(medicalRecordId)).thenReturn(Optional.of(medicalRecord));
 
@@ -87,7 +89,8 @@ class FindMedicalRecordByIdUseCaseImpTest {
     }
 
     @Test
-    void deveChamarGatewayComIdCorreto() {
+    @DisplayName("Deve chamar gateway com ID correto")
+    void shouldCallGatewayWithCorrectId() {
         // Arrange
         UUID testId = UUID.randomUUID();
         when(medicalRecordGateway.findById(testId)).thenReturn(Optional.empty());

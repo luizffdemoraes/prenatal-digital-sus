@@ -1,5 +1,6 @@
 package br.com.hackathon.sus.prenatal_agenda;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -15,7 +16,8 @@ class PrenatalAgendaApplicationTests {
 	private JwtDecoder jwtDecoder;
 
 	@Test
-	void contextLoads() {
+	@DisplayName("Deve carregar o contexto da aplicação")
+	void shouldLoadApplicationContext() {
 	}
 
 }

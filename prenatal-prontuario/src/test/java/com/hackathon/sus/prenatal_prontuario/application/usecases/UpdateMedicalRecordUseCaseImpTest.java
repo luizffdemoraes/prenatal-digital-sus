@@ -9,6 +9,7 @@ import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordGatewa
 import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordHistoryGateway;
 import com.hackathon.sus.prenatal_prontuario.infrastructure.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -105,7 +106,8 @@ class UpdateMedicalRecordUseCaseImpTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoProntuarioNaoEncontrado() {
+    @DisplayName("Deve lançar exceção quando prontuário não encontrado")
+    void shouldThrowExceptionWhenRecordNotFound() {
         // Arrange
         when(medicalRecordGateway.findByCpf(cpf)).thenReturn(Optional.empty());
 
@@ -137,7 +139,8 @@ class UpdateMedicalRecordUseCaseImpTest {
     }
 
     @Test
-    void deveAtualizarApenasCamposInformados() {
+    @DisplayName("Deve atualizar apenas campos informados")
+    void shouldUpdateOnlyInformedFields() {
         // Arrange
         UpdateMedicalRecordRequest partialRequest = new UpdateMedicalRecordRequest(
                 true,

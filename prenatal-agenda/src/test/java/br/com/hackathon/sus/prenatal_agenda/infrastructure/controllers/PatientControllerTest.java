@@ -52,7 +52,7 @@ class PatientControllerTest {
     class BuscarPorCpf {
 
         @Test
-        @DisplayName("deve retornar 200 com lista de consultas quando CPF encontrado")
+        @DisplayName("Deve retornar 200 com lista de consultas quando CPF encontrado")
         void deveRetornar200QuandoCpfEncontrado() throws Exception {
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.of(10L));
             Appointment c = new Appointment(10L, 20L, 1L, LocalDate.now().plusDays(1), LocalTime.of(9, 0));
@@ -73,8 +73,8 @@ class PatientControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 404 quando CPF não encontrado")
-        void deveRetornar404QuandoCpfNaoEncontrado() throws Exception {
+        @DisplayName("Deve retornar 404 quando CPF não encontrado")
+        void shouldReturn404WhenCpfNotFound() throws Exception {
             when(patientGateway.buscarPorCpf("00000000000")).thenReturn(Optional.empty());
 
             mvc.perform(get("/api/gestantes/consultas").param("cpf", "00000000000"))
@@ -87,7 +87,7 @@ class PatientControllerTest {
     class BuscarPorId {
 
         @Test
-        @DisplayName("deve retornar 200 com lista de consultas")
+        @DisplayName("Deve retornar 200 com lista de consultas")
         void deveRetornar200ComConsultas() throws Exception {
             Appointment c = new Appointment(5L, 20L, 1L, LocalDate.now().plusDays(1), LocalTime.of(10, 0));
             c.setId(50L);
@@ -106,8 +106,8 @@ class PatientControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 200 com lista vazia quando sem consultas")
-        void deveRetornar200ListaVazia() throws Exception {
+        @DisplayName("Deve retornar 200 com lista vazia quando sem consultas")
+        void shouldReturn200WithEmptyList() throws Exception {
             when(findAppointmentsByPatientUseCase.execute(5L)).thenReturn(List.of());
 
             mvc.perform(get("/api/gestantes/5/consultas"))

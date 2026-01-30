@@ -24,8 +24,8 @@ class DoctorScheduleTest {
     class Criacao {
 
         @Test
-        @DisplayName("deve criar agenda com dados válidos")
-        void deveCriarAgendaComDadosValidos() {
+        @DisplayName("Deve criar agenda com dados válidos")
+        void shouldCreateScheduleWithValidData() {
             DoctorSchedule agenda = new DoctorSchedule(MEDICO_ID, UNIDADE_ID, DIAS, INICIO, FIM, DURACAO);
 
             assertNotNull(agenda);
@@ -38,21 +38,21 @@ class DoctorScheduleTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando medicoId é nulo")
+        @DisplayName("Deve lançar exceção quando medicoId é nulo")
         void deveLancarQuandoMedicoIdNulo() {
             assertThrows(IllegalArgumentException.class, () ->
                     new DoctorSchedule(null, UNIDADE_ID, DIAS, INICIO, FIM, DURACAO));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando unidadeId é nulo")
-        void deveLancarQuandoUnidadeIdNulo() {
+        @DisplayName("Deve lançar exceção quando unidadeId é nulo")
+        void shouldThrowWhenUnitIdIsNull() {
             assertThrows(IllegalArgumentException.class, () ->
                     new DoctorSchedule(MEDICO_ID, null, DIAS, INICIO, FIM, DURACAO));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando diasAtendimento é nulo ou vazio")
+        @DisplayName("Deve lançar exceção quando diasAtendimento é nulo ou vazio")
         void deveLancarQuandoDiasNuloOuVazio() {
             assertThrows(IllegalArgumentException.class, () ->
                     new DoctorSchedule(MEDICO_ID, UNIDADE_ID, null, INICIO, FIM, DURACAO));
@@ -62,14 +62,14 @@ class DoctorScheduleTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando horário de início é após o fim")
-        void deveLancarQuandoInicioAposFim() {
+        @DisplayName("Deve lançar exceção quando horário de início é após o fim")
+        void shouldThrowWhenStartAfterEnd() {
             assertThrows(IllegalArgumentException.class, () ->
                     new DoctorSchedule(MEDICO_ID, UNIDADE_ID, DIAS, LocalTime.of(14, 0), LocalTime.of(10, 0), DURACAO));
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando horário de início igual ao fim")
+        @DisplayName("Deve lançar exceção quando horário de início igual ao fim")
         void deveLancarQuandoInicioIgualFim() {
             LocalTime t = LocalTime.of(9, 0);
             assertThrows(IllegalArgumentException.class, () ->
@@ -77,8 +77,8 @@ class DoctorScheduleTest {
         }
 
         @Test
-        @DisplayName("deve lançar exceção quando duração é nula ou <= 0")
-        void deveLancarQuandoDuracaoInvalida() {
+        @DisplayName("Deve lançar exceção quando duração é nula ou <= 0")
+        void shouldThrowWhenDurationInvalid() {
             assertThrows(IllegalArgumentException.class, () ->
                     new DoctorSchedule(MEDICO_ID, UNIDADE_ID, DIAS, INICIO, FIM, null));
 
@@ -102,7 +102,7 @@ class DoctorScheduleTest {
 
         @Test
         @DisplayName("retorna false para dia da semana não configurado")
-        void retornaFalseParaDiaNaoConfigurado() {
+        void shouldReturnFalseForUnconfiguredDay() {
             DoctorSchedule agenda = new DoctorSchedule(MEDICO_ID, UNIDADE_ID, DIAS, INICIO, FIM, DURACAO);
             assertFalse(agenda.atendeNoDia(Weekday.TERCA));
             assertFalse(agenda.atendeNoDia(Weekday.DOMINGO));
@@ -115,7 +115,7 @@ class DoctorScheduleTest {
 
         @Test
         @DisplayName("retorna true para horário dentro do período")
-        void retornaTrueParaHorarioDentro() {
+        void shouldReturnTrueForTimeWithinRange() {
             DoctorSchedule agenda = new DoctorSchedule(MEDICO_ID, UNIDADE_ID, DIAS, INICIO, FIM, DURACAO);
             assertTrue(agenda.horarioDentroDoPeriodo(LocalTime.of(8, 0)));
             assertTrue(agenda.horarioDentroDoPeriodo(LocalTime.of(10, 0)));
@@ -132,7 +132,7 @@ class DoctorScheduleTest {
 
         @Test
         @DisplayName("retorna false para horário após o fim")
-        void retornaFalseParaHorarioApos() {
+        void shouldReturnFalseForTimeAfterEnd() {
             DoctorSchedule agenda = new DoctorSchedule(MEDICO_ID, UNIDADE_ID, DIAS, INICIO, FIM, DURACAO);
             assertFalse(agenda.horarioDentroDoPeriodo(LocalTime.of(12, 1)));
             assertFalse(agenda.horarioDentroDoPeriodo(LocalTime.of(14, 0)));

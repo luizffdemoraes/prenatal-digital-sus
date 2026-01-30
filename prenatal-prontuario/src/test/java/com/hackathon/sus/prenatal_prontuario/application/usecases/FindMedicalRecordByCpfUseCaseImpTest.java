@@ -5,6 +5,7 @@ import com.hackathon.sus.prenatal_prontuario.domain.entities.MedicalRecord;
 import com.hackathon.sus.prenatal_prontuario.domain.entities.PregnancyType;
 import com.hackathon.sus.prenatal_prontuario.domain.gateways.MedicalRecordGateway;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -59,7 +60,8 @@ class FindMedicalRecordByCpfUseCaseImpTest {
     }
 
     @Test
-    void deveRetornarProntuarioQuandoEncontrado() {
+    @DisplayName("Deve retornar prontuário quando encontrado")
+    void shouldReturnRecordWhenFound() {
         // Arrange
         when(medicalRecordGateway.findByCpf(cpf)).thenReturn(Optional.of(medicalRecord));
 
@@ -74,7 +76,8 @@ class FindMedicalRecordByCpfUseCaseImpTest {
     }
 
     @Test
-    void deveRetornarEmptyQuandoProntuarioNaoEncontrado() {
+    @DisplayName("Deve retornar vazio quando prontuário não encontrado")
+    void shouldReturnEmptyWhenRecordNotFound() {
         // Arrange
         when(medicalRecordGateway.findByCpf(cpf)).thenReturn(Optional.empty());
 
@@ -87,7 +90,8 @@ class FindMedicalRecordByCpfUseCaseImpTest {
     }
 
     @Test
-    void deveChamarGatewayComCpfCorreto() {
+    @DisplayName("Deve chamar gateway com CPF correto")
+    void shouldCallGatewayWithCorrectCpf() {
         // Arrange
         String testCpf = "98765432100";
         when(medicalRecordGateway.findByCpf(testCpf)).thenReturn(Optional.empty());

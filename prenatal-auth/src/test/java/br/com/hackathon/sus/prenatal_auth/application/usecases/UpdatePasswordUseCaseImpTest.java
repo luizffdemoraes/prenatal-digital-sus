@@ -3,6 +3,7 @@ package br.com.hackathon.sus.prenatal_auth.application.usecases;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -46,7 +47,8 @@ class UpdatePasswordUseCaseImpTest {
     }
 
     @Test
-    void execute_shouldThrowBusinessException_whenUserNotAuthorized() {
+    @DisplayName("Deve lançar BusinessException quando usuário não autorizado")
+    void shouldThrowBusinessExceptionWhenUserNotAuthorized() {
         Integer userId = 1;
         String newPassword = "novaSenha123";
 

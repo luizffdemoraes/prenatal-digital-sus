@@ -59,7 +59,7 @@ class AppointmentControllerTest {
     class Agendar {
 
         @Test
-        @DisplayName("deve retornar 201 e URI ao agendar com sucesso")
+        @DisplayName("Deve retornar 201 e URI ao agendar com sucesso")
         void deveRetornar201AoAgendar() throws Exception {
             String body = """
                     {"gestanteNome":"Maria","gestanteCpf":"12345678900","medicoNome":"Dr. João",
@@ -89,8 +89,8 @@ class AppointmentControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 400 quando use case lança IllegalArgumentException")
-        void deveRetornar400QuandoArgumentoInvalido() throws Exception {
+        @DisplayName("Deve retornar 400 quando use case lança IllegalArgumentException")
+        void shouldReturn400WhenInvalidArgument() throws Exception {
             String body = """
                     {"gestanteNome":"Maria","gestanteCpf":"12345678900","crm":"CRM-X",
                     "data":"%s","horario":"09:00"}
@@ -112,7 +112,7 @@ class AppointmentControllerTest {
     class Cancelar {
 
         @Test
-        @DisplayName("deve retornar 204 ao cancelar com sucesso")
+        @DisplayName("Deve retornar 204 ao cancelar com sucesso")
         void deveRetornar204AoCancelar() throws Exception {
             when(cancelAppointmentUseCase.execute(1L, CancellationReason.GESTANTE_DESISTIU)).thenReturn(null);
 
@@ -124,8 +124,8 @@ class AppointmentControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 400 quando consulta não encontrada")
-        void deveRetornar400QuandoNaoEncontrada() throws Exception {
+        @DisplayName("Deve retornar 400 quando consulta não encontrada")
+        void shouldReturn400WhenAppointmentNotFound() throws Exception {
             doThrow(new IllegalArgumentException("Consulta não encontrada"))
                     .when(cancelAppointmentUseCase).execute(999L, CancellationReason.OUTRO);
 

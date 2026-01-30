@@ -143,8 +143,8 @@ class MedicalRecordControllerTest {
     class CriarProntuario {
 
         @Test
-        @DisplayName("deve retornar 201 ao criar prontuário com sucesso")
-        void deveRetornar201AoCriarProntuario() throws Exception {
+        @DisplayName("Deve retornar 201 ao criar prontuário com sucesso")
+        void shouldReturn201WhenCreatingRecordSuccessfully() throws Exception {
             String lmp = LocalDate.now().minusWeeks(20).toString();
             String createBody = """
                     {
@@ -189,8 +189,8 @@ class MedicalRecordControllerTest {
     class BuscarPorCpf {
 
         @Test
-        @DisplayName("deve retornar 200 ao buscar prontuário por CPF")
-        void deveRetornar200AoBuscarPorCpf() throws Exception {
+        @DisplayName("Deve retornar 200 ao buscar prontuário por CPF")
+        void shouldReturn200WhenFindingByCpf() throws Exception {
             when(findMedicalRecordByCpfUseCase.execute(cpf)).thenReturn(Optional.of(medicalRecord));
 
             Authentication auth = createMockAuthentication("user-123", null, null);
@@ -205,8 +205,8 @@ class MedicalRecordControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 404 quando prontuário não encontrado")
-        void deveRetornar404QuandoNaoEncontrado() throws Exception {
+        @DisplayName("Deve retornar 404 quando prontuário não encontrado")
+        void shouldReturn404WhenRecordNotFound() throws Exception {
             when(findMedicalRecordByCpfUseCase.execute(cpf)).thenReturn(Optional.empty());
 
             Authentication auth = createMockAuthentication("user-123", null, null);
@@ -234,8 +234,8 @@ class MedicalRecordControllerTest {
         }
 
         @Test
-        @DisplayName("deve negar acesso quando gestante tenta acessar outro prontuário")
-        void deveNegarAcessoQuandoGestanteTentaAcessarOutroProntuario() throws Exception {
+        @DisplayName("Deve negar acesso quando gestante tenta acessar outro prontuário")
+        void shouldDenyAccessWhenPatientTriesToAccessOtherRecord() throws Exception {
             String differentCpf = "98765432100";
 
             Authentication auth = createMockAuthentication("gestante-123", "ROLE_GESTANTE", cpf);
@@ -252,8 +252,8 @@ class MedicalRecordControllerTest {
     class AtualizarProntuario {
 
         @Test
-        @DisplayName("deve retornar 200 ao atualizar prontuário com sucesso")
-        void deveRetornar200AoAtualizarProntuario() throws Exception {
+        @DisplayName("Deve retornar 200 ao atualizar prontuário com sucesso")
+        void shouldReturn200WhenUpdatingRecordSuccessfully() throws Exception {
             UpdateMedicalRecordRequest request = new UpdateMedicalRecordRequest(
                     true,
                     true,
@@ -307,8 +307,8 @@ class MedicalRecordControllerTest {
     class AtualizarFatoresDeRisco {
 
         @Test
-        @DisplayName("deve retornar 200 ao atualizar fatores de risco com sucesso")
-        void deveRetornar200AoAtualizarFatoresDeRisco() throws Exception {
+        @DisplayName("Deve retornar 200 ao atualizar fatores de risco com sucesso")
+        void shouldReturn200WhenUpdatingRiskFactorsSuccessfully() throws Exception {
             UpdateRiskFactorsRequest request = new UpdateRiskFactorsRequest(
                     List.of(RiskFactor.HYPERTENSION, RiskFactor.GESTATIONAL_DIABETES)
             );
@@ -358,8 +358,8 @@ class MedicalRecordControllerTest {
     class BuscarHistorico {
 
         @Test
-        @DisplayName("deve retornar 200 ao buscar histórico com sucesso")
-        void deveRetornar200AoBuscarHistorico() throws Exception {
+        @DisplayName("Deve retornar 200 ao buscar histórico com sucesso")
+        void shouldReturn200WhenFindingHistorySuccessfully() throws Exception {
             List<MedicalRecordHistory> history = List.of(
                     new MedicalRecordHistory(medicalRecord.getId(), "user-1", "Prontuário criado"),
                     new MedicalRecordHistory(medicalRecord.getId(), "user-2", "Dados atualizados")

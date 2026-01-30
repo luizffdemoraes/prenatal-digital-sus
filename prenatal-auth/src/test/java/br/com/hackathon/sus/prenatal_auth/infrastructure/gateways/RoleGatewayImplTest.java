@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -47,7 +48,8 @@ class RoleGatewayImplTest {
     }
 
     @Test
-    void findByAuthority_shouldReturnNurseRole_whenExists() {
+    @DisplayName("Deve retornar role NURSE quando existe")
+    void shouldReturnNurseRoleWhenExists() {
         when(roleRepository.findByAuthority("ROLE_NURSE")).thenReturn(Optional.of(nurseRoleEntity));
         Optional<Role> role = roleGateway.findByAuthority("ROLE_NURSE");
         assertTrue(role.isPresent());
@@ -65,7 +67,8 @@ class RoleGatewayImplTest {
     }
 
     @Test
-    void findByAuthority_shouldReturnEmptyOptional_whenNotFound() {
+    @DisplayName("Deve retornar Optional vazio quando role não encontrada")
+    void shouldReturnEmptyOptionalWhenRoleNotFound() {
         when(roleRepository.findByAuthority("ROLE_UNKNOWN")).thenReturn(Optional.empty());
         Optional<Role> role = roleGateway.findByAuthority("ROLE_UNKNOWN");
         assertFalse(role.isPresent());

@@ -5,6 +5,7 @@ import com.hackathon.sus.prenatal_prontuario.infrastructure.exceptions.ResourceN
 import com.hackathon.sus.prenatal_prontuario.infrastructure.exceptions.StandardError;
 import com.hackathon.sus.prenatal_prontuario.infrastructure.exceptions.ValidationError;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void deveTratarResourceNotFoundException() {
+    @DisplayName("Deve tratar ResourceNotFoundException")
+    void shouldHandleResourceNotFoundException() {
         // Arrange
         ResourceNotFoundException exception = new ResourceNotFoundException("Prontuário não encontrado");
 
@@ -45,7 +47,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void deveTratarBusinessException() {
+    @DisplayName("Deve tratar BusinessException")
+    void shouldHandleBusinessException() {
         // Arrange
         BusinessException exception = new BusinessException("Já existe prontuário para este CPF");
 
@@ -77,7 +80,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void deveTratarAccessDeniedException() {
+    @DisplayName("Deve tratar AccessDeniedException")
+    void shouldHandleAccessDeniedException() {
         // Arrange
         AccessDeniedException exception = new AccessDeniedException("Acesso negado");
 
@@ -93,7 +97,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void deveTratarIllegalStateException() {
+    @DisplayName("Deve tratar IllegalStateException")
+    void shouldHandleIllegalStateException() {
         // Arrange
         IllegalStateException exception = new IllegalStateException("Estado inválido");
 
@@ -109,7 +114,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void deveTratarMethodArgumentNotValidException() {
+    @DisplayName("Deve tratar MethodArgumentNotValidException")
+    void shouldHandleMethodArgumentNotValidException() {
         // Arrange
         MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
         BindingResult bindingResult = mock(BindingResult.class);
@@ -133,7 +139,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void deveTratarExceptionGenerica() {
+    @DisplayName("Deve tratar exceção genérica")
+    void shouldHandleGenericException() {
         // Arrange
         Exception exception = new Exception("Erro interno");
 

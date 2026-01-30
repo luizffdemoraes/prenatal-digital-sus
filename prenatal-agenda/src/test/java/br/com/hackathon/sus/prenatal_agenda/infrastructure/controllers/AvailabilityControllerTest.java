@@ -48,8 +48,8 @@ class AvailabilityControllerTest {
     class Consultar {
 
         @Test
-        @DisplayName("deve retornar 200 com horários disponíveis")
-        void deveRetornar200ComHorarios() throws Exception {
+        @DisplayName("Deve retornar 200 com horários disponíveis")
+        void shouldReturn200WithAvailableSlots() throws Exception {
             LocalDate data = LocalDate.now().plusDays(1);
             List<LocalTime> horarios = List.of(LocalTime.of(8, 0), LocalTime.of(8, 30), LocalTime.of(9, 0));
             when(doctorGateway.buscarPorCrm("12345")).thenReturn(Optional.of(1L));
@@ -68,7 +68,7 @@ class AvailabilityControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 400 quando use case lança exceção (agenda não encontrada)")
+        @DisplayName("Deve retornar 400 quando use case lança exceção (agenda não encontrada)")
         void deveRetornar400QuandoAgendaNaoEncontrada() throws Exception {
             LocalDate data = LocalDate.now().plusDays(1);
             when(doctorGateway.buscarPorCrm("999")).thenReturn(Optional.of(999L));
@@ -83,8 +83,8 @@ class AvailabilityControllerTest {
         }
 
         @Test
-        @DisplayName("deve retornar 404 quando CRM não encontrado")
-        void deveRetornar404QuandoCrmNaoEncontrado() throws Exception {
+        @DisplayName("Deve retornar 404 quando CRM não encontrado")
+        void shouldReturn404WhenCrmNotFound() throws Exception {
             LocalDate data = LocalDate.now().plusDays(1);
             when(doctorGateway.buscarPorCrm("CRM-INVALIDO")).thenReturn(Optional.empty());
 

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -87,7 +88,8 @@ class UserGatewayImplTest {
     }
 
     @Test
-    void saveUser_devePersistirComSenhaCodificadaEAssociarRoleGerenciada() {
+    @DisplayName("Deve persistir usuário com senha codificada e associar role gerenciada")
+    void shouldPersistUserWithEncodedPasswordAndManagedRole() {
         when(userRepository.save(any(UserEntity.class))).thenAnswer(inv -> {
             UserEntity e = inv.getArgument(0);
             e.setId(domainUser.getId());
@@ -113,7 +115,8 @@ class UserGatewayImplTest {
     }
 
     @Test
-    void findUserById_deveRetornarUsuario() {
+    @DisplayName("Deve retornar usuário quando encontrado por ID")
+    void shouldReturnUserWhenFoundById() {
         when(userRepository.findById(domainUser.getId())).thenReturn(Optional.of(userEntity));
         User u = userGateway.findUserById(domainUser.getId());
         assertEquals(domainUser.getId(), u.getId());
@@ -126,7 +129,8 @@ class UserGatewayImplTest {
     }
 
     @Test
-    void updateUser_deveNegarQuandoOutroUsuario() {
+    @DisplayName("Deve negar atualização quando é outro usuário")
+    void shouldDenyUpdateWhenOtherUser() {
         User otherDomain = TestDataFactory.createUser();
         otherDomain.setId(50);
         otherDomain.setEmail("outro@teste.com");
@@ -152,7 +156,8 @@ class UserGatewayImplTest {
     }
 
     @Test
-    void updateUserPassword_deveLancarExcecaoQuandoUsuarioNaoExiste() {
+    @DisplayName("Deve lançar exceção quando usuário não existe na atualização de senha")
+    void shouldThrowExceptionWhenUserDoesNotExistOnPasswordUpdate() {
         when(userRepository.findById(123)).thenReturn(Optional.empty());
         assertThrows(BusinessException.class,
                 () -> userGateway.updateUserPassword(123, "x"));
@@ -167,7 +172,8 @@ class UserGatewayImplTest {
     }
 
     @Test
-    void authenticated_deveLancarQuandoInvalido() {
+    @DisplayName("Deve lançar exceção quando autenticação é inválida")
+    void shouldThrowExceptionWhenAuthenticationIsInvalid() {
         Jwt jwt = mock(Jwt.class);
         when(jwt.getClaim("username")).thenReturn("nao@existe.com");
 
@@ -191,7 +197,8 @@ class UserGatewayImplTest {
     }
 
     @Test
-    void findUserOrThrow_deveLancar() {
+    @DisplayName("Deve lançar exceção em findUserOrThrow quando usuário não existe")
+    void shouldThrowExceptionInFindUserOrThrowWhenUserDoesNotExist() {
         when(userRepository.findById(777)).thenReturn(Optional.empty());
         assertThrows(BusinessException.class, () -> userGateway.findUserOrThrow(777));
     }
@@ -203,7 +210,8 @@ class UserGatewayImplTest {
     }
 
     @Test
-    void validateSelf_deveLancarQuandoOutroUsuario() {
+    @DisplayName("Deve lançar exceção quando é outro usuário na validação")
+    void shouldThrowExceptionWhenOtherUserOnValidation() {
         mockAuthenticated(userEntity);
         assertThrows(BusinessException.class, () -> userGateway.validateSelf(999));
     }
