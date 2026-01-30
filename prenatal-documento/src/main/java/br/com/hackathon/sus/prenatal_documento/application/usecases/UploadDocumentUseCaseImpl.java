@@ -1,16 +1,16 @@
 package br.com.hackathon.sus.prenatal_documento.application.usecases;
 
-import br.com.hackathon.sus.prenatal_documento.domain.enums.DocumentType;
-import br.com.hackathon.sus.prenatal_documento.domain.gateways.StorageGateway;
-import br.com.hackathon.sus.prenatal_documento.domain.models.MedicalDocument;
-import br.com.hackathon.sus.prenatal_documento.domain.repositories.MedicalDocumentRepository;
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.UUID;
+import br.com.hackathon.sus.prenatal_documento.domain.enums.DocumentType;
+import br.com.hackathon.sus.prenatal_documento.domain.gateways.StorageGateway;
+import br.com.hackathon.sus.prenatal_documento.domain.models.MedicalDocument;
+import br.com.hackathon.sus.prenatal_documento.domain.repositories.MedicalDocumentRepository;
 
 public class UploadDocumentUseCaseImpl implements UploadDocumentUseCase {
 
