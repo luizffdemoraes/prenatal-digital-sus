@@ -30,7 +30,7 @@ public class FlywayBeforeJpaConfig implements BeanFactoryPostProcessor {
             DataSource dataSource,
             @Value("${spring.flyway.locations:classpath:db/migration}") String locations,
             @Value("${spring.flyway.schemas:documento}") String schemas,
-            @Value("${spring.flyway.baseline-on-migrate:true}") boolean baselineOnMigrate,
+            @Value("${spring.flyway.baseline-on-migrate:false}") boolean baselineOnMigrate,
             @Value("${spring.flyway.baseline-version:0}") String baselineVersion,
             @Value("${spring.flyway.validate-on-migrate:true}") boolean validateOnMigrate
     ) {

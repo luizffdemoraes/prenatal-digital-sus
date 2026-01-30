@@ -1,54 +1,63 @@
 package br.com.hackathon.sus.prenatal_documento.infrastructure.persistence.entities;
 
-import br.com.hackathon.sus.prenatal_documento.domain.enums.DocumentType;
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import br.com.hackathon.sus.prenatal_documento.domain.enums.DocumentType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 @Entity
-@Table(name = "medical_documents")
+@Table(name = "documento_medico", schema = "documento")
 public class MedicalDocumentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "patient_cpf", nullable = false, length = 14)
+    @Column(name = "cpf", nullable = false, length = 14)
     private String patientCpf;
 
-    @Column(name = "file_name", nullable = false)
+    @Column(name = "nome_arquivo", nullable = false)
     private String fileName;
 
-    @Column(name = "original_file_name", nullable = false)
+    @Column(name = "nome_original_arquivo", nullable = false)
     private String originalFileName;
 
-    @Column(name = "content_type", nullable = false)
+    @Column(name = "tipo_conteudo", nullable = false)
     private String contentType;
 
-    @Column(name = "file_size", nullable = false)
+    @Column(name = "tamanho_bytes", nullable = false)
     private Long fileSize;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "document_type", nullable = false)
+    @Column(name = "tipo_documento", nullable = false)
     private DocumentType documentType;
 
-    @Column(name = "storage_path", nullable = false, unique = true)
+    @Column(name = "caminho_armazenamento", nullable = false, unique = true)
     private String storagePath;
 
-    @Column(name = "active", nullable = false)
+    @Column(name = "ativo", nullable = false)
     private Boolean active = true;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "atualizado_em")
     private LocalDateTime updatedAt;
 
-    @Column(name = "deleted_at")
+    @Column(name = "excluido_em")
     private LocalDateTime deletedAt;
 
     public UUID getId() {
