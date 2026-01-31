@@ -1,16 +1,16 @@
 package com.hackathon.sus.prenatal_prontuario.application.dtos.responses;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.hackathon.sus.prenatal_prontuario.domain.entities.DeliveryType;
-import com.hackathon.sus.prenatal_prontuario.domain.entities.MedicalRecord;
-import com.hackathon.sus.prenatal_prontuario.domain.entities.PregnancyType;
-import com.hackathon.sus.prenatal_prontuario.domain.entities.RiskFactor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hackathon.sus.prenatal_prontuario.domain.entities.DeliveryType;
+import com.hackathon.sus.prenatal_prontuario.domain.entities.MedicalRecord;
+import com.hackathon.sus.prenatal_prontuario.domain.entities.PregnancyType;
+import com.hackathon.sus.prenatal_prontuario.domain.entities.RiskFactor;
 
 /**
  * Resposta do prontuário. Chaves JSON em português.
@@ -20,8 +20,6 @@ public record MedicalRecordResponse(
         @JsonProperty("cpf") String cpf,
         @JsonProperty("nomeCompleto") String fullName,
         @JsonProperty("dataNascimento") LocalDate dateOfBirth,
-        @JsonProperty("gestanteId") UUID pregnantWomanId,
-        @JsonProperty("consultaId") UUID appointmentId,
         @JsonProperty("dataUltimaMenstruacao") LocalDate lastMenstrualPeriod,
         @JsonProperty("idadeGestacionalSemanas") Integer gestationalAgeWeeks,
         @JsonProperty("tipoGestacao") PregnancyType pregnancyType,
@@ -45,8 +43,6 @@ public record MedicalRecordResponse(
                 m.getCpf(),
                 m.getFullName(),
                 m.getDateOfBirth(),
-                m.getPregnantWomanId(),
-                m.getAppointmentId(),
                 m.getLastMenstrualPeriod(),
                 m.getGestationalAgeWeeks(),
                 m.getPregnancyType(),
