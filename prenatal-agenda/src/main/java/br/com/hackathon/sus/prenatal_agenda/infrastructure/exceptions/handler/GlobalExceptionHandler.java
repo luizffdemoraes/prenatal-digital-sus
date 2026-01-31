@@ -1,8 +1,7 @@
 package br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.handler;
 
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.BusinessException;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.StandardError;
-import br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.ValidationError;
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -10,7 +9,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.BusinessException;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.StandardError;
+import br.com.hackathon.sus.prenatal_agenda.infrastructure.exceptions.ValidationError;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -54,7 +55,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 "Erro de validação",
-                "Dados inválidos fornecidos"
+                "Verifique os dados informados. Há erros nos campos indicados abaixo."
         );
 
         ex.getBindingResult().getAllErrors().forEach(e -> {
