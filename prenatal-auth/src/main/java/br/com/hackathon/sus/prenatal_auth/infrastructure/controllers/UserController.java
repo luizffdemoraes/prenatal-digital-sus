@@ -5,6 +5,7 @@ import br.com.hackathon.sus.prenatal_auth.application.dtos.requests.PasswordRequ
 import br.com.hackathon.sus.prenatal_auth.application.dtos.requests.UserRequest;
 import br.com.hackathon.sus.prenatal_auth.application.dtos.responses.UserResponse;
 import br.com.hackathon.sus.prenatal_auth.application.usecases.CreateUserUseCase;
+import br.com.hackathon.sus.prenatal_auth.application.usecases.FindUserByCpfUseCase;
 import br.com.hackathon.sus.prenatal_auth.application.usecases.FindUserByIdUseCase;
 import br.com.hackathon.sus.prenatal_auth.application.usecases.UpdatePasswordUseCase;
 import br.com.hackathon.sus.prenatal_auth.application.usecases.UpdateUserUseCase;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/usuarios")
@@ -23,15 +25,18 @@ public class UserController {
 
     private final CreateUserUseCase createUserUseCase;
     private final FindUserByIdUseCase findUserByIdUseCase;
+    private final FindUserByCpfUseCase findUserByCpfUseCase;
     private final UpdateUserUseCase updateUserUseCase;
     private final UpdatePasswordUseCase updatePasswordUseCase;
 
     public UserController(CreateUserUseCase createUserUseCase,
                           FindUserByIdUseCase findUserByIdUseCase,
+                          FindUserByCpfUseCase findUserByCpfUseCase,
                           UpdateUserUseCase updateUserUseCase,
                           UpdatePasswordUseCase updatePasswordUseCase) {
         this.createUserUseCase = createUserUseCase;
         this.findUserByIdUseCase = findUserByIdUseCase;
+        this.findUserByCpfUseCase = findUserByCpfUseCase;
         this.updateUserUseCase = updateUserUseCase;
         this.updatePasswordUseCase = updatePasswordUseCase;
     }
@@ -44,6 +49,16 @@ public class UserController {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(response.id()).toUri();
         return ResponseEntity.created(uri).body(response);
+    }
+
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<Object> findUserByCpf(@PathVariable String cpf) {
+        Optional<User> user = this.findUserByCpfUseCase.execute(cpf);
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        UserResponse response = UserMapper.toResponse(user.get());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")

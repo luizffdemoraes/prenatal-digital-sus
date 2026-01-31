@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -48,7 +47,12 @@ public class ResourceServerConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain publicEndpointsFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, "/v1/usuarios"));
+        http.securityMatcher(request -> {
+            String path = request.getServletPath();
+            String method = request.getMethod();
+            return ("POST".equals(method) && "/v1/usuarios".equals(path))
+                    || ("GET".equals(method) && path != null && path.startsWith("/v1/usuarios/cpf/"));
+        });
         http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));

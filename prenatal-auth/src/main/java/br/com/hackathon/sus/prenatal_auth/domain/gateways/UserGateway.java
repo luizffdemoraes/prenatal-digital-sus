@@ -3,6 +3,8 @@ package br.com.hackathon.sus.prenatal_auth.domain.gateways;
 
 import br.com.hackathon.sus.prenatal_auth.domain.entities.User;
 
+import java.util.Optional;
+
 public interface UserGateway {
     User saveUser(User user);
     boolean existsUserByEmail(String email);
@@ -14,4 +16,5 @@ public interface UserGateway {
     User authenticated();
     User findUserOrThrow(Integer id);
     void validateSelf(Integer userId);
+    Optional<User> findUserByCpf(String cpf);
 }

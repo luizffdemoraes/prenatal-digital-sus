@@ -2,6 +2,7 @@ package br.com.hackathon.sus.prenatal_auth.infrastructure.gateways;
 
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -125,5 +126,14 @@ public class UserGatewayImpl implements UserGateway {
         if (!me.getId().equals(userId)) {
             throw new BusinessException("error.access.denied");
         }
+    }
+
+    @Override
+    public Optional<User> findUserByCpf(String cpf) {
+        if (cpf == null || cpf.isBlank()) return Optional.empty();
+        String digits = cpf.replaceAll("\\D", "");
+        if (digits.length() != 11) return Optional.empty();
+        return userRepository.findByCpf(digits)
+                .map(UserMapper::toDomain);
     }
 }

@@ -25,12 +25,14 @@ public class DependencyInjectionConfig {
     public UserController userController(
             CreateUserUseCase createUserUseCase,
             FindUserByIdUseCase findUserByIdUseCase,
+            FindUserByCpfUseCase findUserByCpfUseCase,
             UpdateUserUseCase updateUserUseCase,
             UpdatePasswordUseCase updatePasswordUseCase
     ) {
         return new UserController(
                 createUserUseCase,
                 findUserByIdUseCase,
+                findUserByCpfUseCase,
                 updateUserUseCase,
                 updatePasswordUseCase
         );
@@ -52,6 +54,11 @@ public class DependencyInjectionConfig {
     @Bean
     public FindUserByIdUseCase findUserByIdUseCase(UserGateway userGateway) {
         return new FindUserByIdUseCaseImp(userGateway);
+    }
+
+    @Bean
+    public FindUserByCpfUseCase findUserByCpfUseCase(UserGateway userGateway) {
+        return new FindUserByCpfUseCaseImp(userGateway);
     }
 
     @Bean
