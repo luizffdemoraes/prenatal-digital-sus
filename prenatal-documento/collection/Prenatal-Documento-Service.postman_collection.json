@@ -88,25 +88,25 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/prenatal-records/:id/documents",
+							"raw": "{{baseUrl}}/api/prenatal-records/:cpf/documents",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"prenatal-records",
-								":id",
+								":cpf",
 								"documents"
 							],
 							"variable": [
 								{
-									"key": "id",
-									"value": "1",
-									"description": "ID do registro pré-natal"
+									"key": "cpf",
+									"value": "{{patientCpf}}",
+									"description": "CPF da paciente (apenas números)"
 								}
 							]
 						},
-						"description": "Lista todos os documentos ativos de um registro pré-natal.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR"
+						"description": "Lista todos os documentos ativos de uma paciente pelo CPF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR"
 					},
 					"response": []
 				},
@@ -315,9 +315,9 @@
 		},
 		{
 			"key": "patientCpf",
-			"value": "12345678901",
+			"value": "12345678900",
 			"type": "string",
-			"description": "CPF da paciente (apenas números) - exemplo"
+			"description": "CPF da paciente (apenas números) - ex: Maria da Silva"
 		}
 	]
 }
