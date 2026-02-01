@@ -53,7 +53,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"crm\": \"12345\",\n    \"medicoNome\": \"Dr. João Silva\",\n    \"especialidade\": \"Obstetrícia\",\n    \"unidadeId\": 1,\n    \"diasAtendimento\": [\"SEGUNDA\", \"TERCA\", \"QUARTA\", \"QUINTA\", \"SEXTA\"],\n    \"horarioInicio\": \"08:00\",\n    \"horarioFim\": \"17:00\",\n    \"duracaoConsultaMinutos\": 30\n}",
+							"raw": "{\n    \"crm\": \"12345\",\n    \"medicoNome\": \"Dr. Pedro Souza\",\n    \"especialidade\": \"Obstetrícia\",\n    \"unidadeId\": 1,\n    \"diasAtendimento\": [\"SEGUNDA\", \"TERCA\", \"QUARTA\", \"QUINTA\", \"SEXTA\"],\n    \"horarioInicio\": \"08:00\",\n    \"horarioFim\": \"17:00\",\n    \"duracaoConsultaMinutos\": 30\n}",
 							"options": {
 								"raw": {
 									"language": "json"

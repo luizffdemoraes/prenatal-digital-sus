@@ -107,7 +107,7 @@
 								},
 								{
 									"key": "username",
-									"value": "maria.silva@example.com",
+									"value": "maria.silva@tuamaeaquelaursa.com",
 									"type": "text"
 								},
 								{
@@ -132,7 +132,7 @@
 								"token"
 							]
 						},
-						"description": "Obtém token OAuth2 para o paciente Maria da Silva (email: maria.silva@example.com). O token é salvo em 'access_token'."
+						"description": "Obtém token OAuth2 para o paciente Maria da Silva (email: maria.silva@tuamaeaquelaursa.com). O token é salvo em 'access_token'."
 					},
 					"response": []
 				},
@@ -172,13 +172,13 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{ "key": "grant_type", "value": "password", "type": "text" },
-								{ "key": "username", "value": "ana.costa@sus.com.br", "type": "text" },
+								{ "key": "username", "value": "ana.costa@tuamaeaquelaursa.com", "type": "text" },
 								{ "key": "password", "value": "senha123", "type": "text" },
 								{ "key": "scope", "value": "read write", "type": "text" }
 							]
 						},
 						"url": { "raw": "{{base_url}}/oauth2/token", "host": ["{{base_url}}"], "path": ["oauth2", "token"] },
-						"description": "Obtém token OAuth2 para a enfermeira Ana Costa (email: ana.costa@sus.com.br). O token é salvo em 'access_token'."
+						"description": "Obtém token OAuth2 para a enfermeira Ana Costa (email: ana.costa@tuamaeaquelaursa.com). O token é salvo em 'access_token'."
 					},
 					"response": []
 				},
@@ -218,13 +218,13 @@
 							"mode": "urlencoded",
 							"urlencoded": [
 								{ "key": "grant_type", "value": "password", "type": "text" },
-								{ "key": "username", "value": "pedro.souza@sus.com.br", "type": "text" },
+								{ "key": "username", "value": "pedro.souza@tuamaeaquelaursa.com", "type": "text" },
 								{ "key": "password", "value": "senha123", "type": "text" },
 								{ "key": "scope", "value": "read write", "type": "text" }
 							]
 						},
 						"url": { "raw": "{{base_url}}/oauth2/token", "host": ["{{base_url}}"], "path": ["oauth2", "token"] },
-						"description": "Obtém token OAuth2 para o médico Dr. Pedro Souza (email: pedro.souza@sus.com.br). O token é salvo em 'access_token'."
+						"description": "Obtém token OAuth2 para o médico Dr. Pedro Souza (email: pedro.souza@tuamaeaquelaursa.com). O token é salvo em 'access_token'."
 					},
 					"response": []
 				}
@@ -250,7 +250,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nome\": \"Maria da Silva\",\n    \"email\": \"maria.silva@example.com\",\n    \"login\": \"maria.silva\",\n    \"cpf\": \"12345678900\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+							"raw": "{\n    \"nome\": \"Maria da Silva\",\n    \"email\": \"maria.silva@tuamaeaquelaursa.com\",\n    \"login\": \"maria.silva\",\n    \"cpf\": \"12345678900\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -288,7 +288,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nome\": \"Ana Costa\",\n    \"email\": \"ana.costa@sus.com.br\",\n    \"login\": \"ana.costa\",\n    \"cpf\": \"12345678902\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_NURSE\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+							"raw": "{\n    \"nome\": \"Ana Costa\",\n    \"email\": \"ana.costa@tuamaeaquelaursa.com\",\n    \"login\": \"ana.costa\",\n    \"cpf\": \"12345678902\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_NURSE\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -326,7 +326,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"nome\": \"Dr. Pedro Souza\",\n    \"email\": \"pedro.souza@sus.com.br\",\n    \"login\": \"pedro.souza\",\n    \"cpf\": \"12345678903\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_DOCTOR\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+							"raw": "{\n    \"nome\": \"Dr. Pedro Souza\",\n    \"email\": \"pedro.souza@tuamaeaquelaursa.com\",\n    \"login\": \"pedro.souza\",\n    \"cpf\": \"12345678903\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_DOCTOR\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         // Criar prontuário: ENFERMEIRO, MEDICO ou NURSE, DOCTOR (compatível com prenatal-auth)
                         .requestMatchers(HttpMethod.POST, "/api/v1/prontuarios").hasAnyAuthority("ROLE_ENFERMEIRO", "ROLE_MEDICO", "ROLE_NURSE", "ROLE_DOCTOR")
                         // Atualizar dados clínicos: ENFERMEIRO, MEDICO ou NURSE, DOCTOR

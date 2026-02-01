@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Health check - público (sem auth), para checar se a aplicação está de pé
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        // SpringDoc OpenAPI / Swagger UI - documentação da API
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         
                         // Agenda do médico - Enfermeiras e Médicos: criar, alterar, excluir; todos: consultar
                         .requestMatchers(HttpMethod.POST, "/api/agendas/medico").hasAnyAuthority("ROLE_DOCTOR", "ROLE_NURSE")

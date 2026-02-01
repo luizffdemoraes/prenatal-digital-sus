@@ -38,7 +38,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"cpf\": \"12345678900\",\n  \"nomeCompleto\": \"Maria da Silva\",\n  \"dataNascimento\": \"1992-04-15\",\n  \"dataUltimaMenstruacao\": \"2025-01-10\",\n  \"dataConsulta\": \"2025-02-15\",\n  \"tipoGestacao\": \"UNICA\",\n  \"tipoParto\": \"NAO_DEFINIDO\",\n  \"numeroGestacoesAnteriores\": 1,\n  \"numeroPartos\": 1,\n  \"numeroAbortos\": 0,\n  \"gestacaoAltoRisco\": false,\n  \"motivoAltoRisco\": null,\n  \"fatoresRisco\": [],\n  \"usoVitaminas\": true,\n  \"usoAAS\": false,\n  \"observacoes\": \"Primeira consulta realizada na unidade.\",\n  \"emailPaciente\": \"maria.silva@email.com\",\n  \"medicoNome\": \"Dr. João Silva\",\n  \"medicoEmail\": \"joao.silva@saude.gov.br\"\n}",
+							"raw": "{\n  \"cpf\": \"12345678900\",\n  \"nomeCompleto\": \"Maria da Silva\",\n  \"dataNascimento\": \"1992-04-15\",\n  \"dataUltimaMenstruacao\": \"2025-01-10\",\n  \"dataConsulta\": \"2025-02-15\",\n  \"tipoGestacao\": \"UNICA\",\n  \"tipoParto\": \"NAO_DEFINIDO\",\n  \"numeroGestacoesAnteriores\": 1,\n  \"numeroPartos\": 1,\n  \"numeroAbortos\": 0,\n  \"gestacaoAltoRisco\": false,\n  \"motivoAltoRisco\": null,\n  \"fatoresRisco\": [],\n  \"usoVitaminas\": true,\n  \"usoAAS\": false,\n  \"observacoes\": \"Primeira consulta realizada na unidade.\",\n  \"emailPaciente\": \"maria.silva@tuamaeaquelaursa.com\",\n  \"medicoNome\": \"Dr. Pedro Souza\",\n  \"medicoEmail\": \"pedro.souza@tuamaeaquelaursa.com\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -76,7 +76,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"usoVitaminas\": true,\n  \"usoAAS\": true,\n  \"observacoes\": \"Gestação evoluindo bem\",\n  \"tipoParto\": \"CESARIANA\",\n  \"emailPaciente\": \"maria.silva@email.com\",\n  \"medicoNome\": \"Dr. João Silva\",\n  \"medicoEmail\": \"joao.silva@saude.gov.br\"\n}",
+							"raw": "{\n  \"usoVitaminas\": true,\n  \"usoAAS\": true,\n  \"observacoes\": \"Gestação evoluindo bem\",\n  \"tipoParto\": \"CESARIANA\",\n  \"emailPaciente\": \"maria.silva@tuamaeaquelaursa.com\",\n  \"medicoNome\": \"Dr. Pedro Souza\",\n  \"medicoEmail\": \"pedro.souza@tuamaeaquelaursa.com\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {

@@ -51,7 +51,8 @@ public class ResourceServerConfig {
             String path = request.getServletPath();
             String method = request.getMethod();
             return ("POST".equals(method) && "/v1/usuarios".equals(path))
-                    || ("GET".equals(method) && path != null && path.startsWith("/v1/usuarios/cpf/"));
+                    || ("GET".equals(method) && path != null && path.startsWith("/v1/usuarios/cpf/"))
+                    || (path != null && (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")));
         });
         http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         http.csrf(AbstractHttpConfigurer::disable);

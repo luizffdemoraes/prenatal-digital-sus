@@ -1,6 +1,4 @@
 # Suba o prenatal-auth na porta 8079 no host para JWT. Se o postgres já estiver em 5432 (ex.: auth), comente o service postgres e use SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/prenatal_digital_sus
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16
