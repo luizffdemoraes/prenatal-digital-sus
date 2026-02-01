@@ -83,6 +83,15 @@ public class MedicalRecordEntity {
     @Column(name = "criado_em", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "email_paciente")
+    private String patientEmail;
+
+    @Column(name = "medico_nome")
+    private String doctorName;
+
+    @Column(name = "medico_email")
+    private String doctorEmail;
+
     public MedicalRecordEntity() {
     }
 
@@ -126,4 +135,10 @@ public class MedicalRecordEntity {
     public void setDeliveryType(DeliveryType deliveryType) { this.deliveryType = deliveryType; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getPatientEmail() { return patientEmail; }
+    public void setPatientEmail(String patientEmail) { this.patientEmail = patientEmail; }
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+    public String getDoctorEmail() { return doctorEmail; }
+    public void setDoctorEmail(String doctorEmail) { this.doctorEmail = doctorEmail; }
 }

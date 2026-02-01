@@ -163,6 +163,7 @@ class DownloadDocumentUseCaseImplTest {
                 CONTENT_TYPE,
                 1024L,
                 DocumentType.EXAM,
+                null,
                 STORAGE_PATH
         );
         document.setId(DOCUMENT_ID);

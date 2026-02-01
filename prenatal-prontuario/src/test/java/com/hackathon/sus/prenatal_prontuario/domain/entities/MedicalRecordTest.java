@@ -35,6 +35,9 @@ class MedicalRecordTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -82,6 +85,9 @@ class MedicalRecordTest {
                     false,
                     null,
                     null,
+                    null,
+                    null,
+                    null,
                     null
             ));
 
@@ -110,6 +116,9 @@ class MedicalRecordTest {
                     null,
                     false,
                     false,
+                    null,
+                    null,
+                    null,
                     null,
                     null,
                     null
@@ -142,6 +151,9 @@ class MedicalRecordTest {
                     false,
                     null,
                     null,
+                    null,
+                    null,
+                    null,
                     null
             ));
 
@@ -171,6 +183,9 @@ class MedicalRecordTest {
                     null,
                     false,
                     false,
+                    null,
+                    null,
+                    null,
                     null,
                     null,
                     null
@@ -205,6 +220,9 @@ class MedicalRecordTest {
                     false,
                     null,
                     null,
+                    null,
+                    null,
+                    null,
                     null
             ));
 
@@ -236,6 +254,9 @@ class MedicalRecordTest {
                 null, // aspirinUse
                 null,
                 null, // deliveryType
+                null,
+                null,
+                null,
                 null
         );
 
@@ -274,6 +295,9 @@ class MedicalRecordTest {
                 false,
                 "Observações antigas",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -311,6 +335,9 @@ class MedicalRecordTest {
                 false,
                 "Observações antigas",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -347,6 +374,9 @@ class MedicalRecordTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -384,6 +414,9 @@ class MedicalRecordTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -418,6 +451,9 @@ class MedicalRecordTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -453,7 +489,10 @@ class MedicalRecordTest {
                 false,
                 null,
                 null,
-                referenceDate
+                referenceDate,
+                null,
+                null,
+                null
         );
 
         // Assert
@@ -486,6 +525,9 @@ class MedicalRecordTest {
                     null,
                     false,
                     false,
+                    null,
+                    null,
+                    null,
                     null,
                     null,
                     null

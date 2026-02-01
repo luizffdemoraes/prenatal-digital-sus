@@ -1,5 +1,5 @@
 {
-  "name": "Prenatal Alert - Receber alertas do prenatal-ia",
+  "name": "Prenatal Alert - Receber e notificar alertas",
   "nodes": [
     {
       "parameters": {
@@ -17,25 +17,110 @@
     },
     {
       "parameters": {
-        "mode": "raw",
-        "jsonOutput": "={{ JSON.stringify($json, null, 2) }}"
+        "jsCode": "const input = $input.first().json;\nconst alerts = input.alerts || [];\nconst patientAlerts = alerts.filter(a => a.target === 'PATIENT');\nconst professionalAlerts = alerts.filter(a => a.target === 'PROFESSIONAL');\n\nreturn [{\n  json: {\n    ...input,\n    patientAlerts,\n    professionalAlerts,\n    hasPatientAlerts: patientAlerts.length > 0,\n    hasProfessionalAlerts: professionalAlerts.length > 0,\n    patientMessage: patientAlerts.map(a => `• ${a.message}`).join('\\n'),\n    professionalMessage: professionalAlerts.map(a => `• ${a.message} [${a.severity}]`).join('\\n')\n  }\n}];"
       },
-      "id": "set-node",
-      "name": "Log Payload",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "id": "code-node",
+      "name": "Classificar alertas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [470, 300]
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-patient",
+              "leftValue": "={{ $json.hasPatientAlerts }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-patient-node",
+      "name": "Tem alerta para gestante?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [690, 200]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.SMTP_EMAIL }}",
+        "toEmail": "={{ $json.patientEmail }}",
+        "subject": "=Exame importante do pré-natal pendente - {{ $json.patientName }}",
+        "emailFormat": "text",
+        "message": "=Olá {{ $json.patientName }},\n\nIdentificamos pendências no seu acompanhamento pré-natal ({{ $json.gestationalWeeks }}ª semana):\n\n{{ $json.patientMessage }}\n\nProcure sua unidade de saúde para agendar os procedimentos.\n\n— Prenatal Digital SUS"
+      },
+      "id": "email-patient-node",
+      "name": "Email para gestante",
+      "type": "n8n-nodes-base.sendEmail",
+      "typeVersion": 2.1,
+      "position": [910, 100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-professional",
+              "leftValue": "={{ $json.hasProfessionalAlerts }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-professional-node",
+      "name": "Tem alerta para profissional?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [690, 400]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.SMTP_EMAIL }}",
+        "toEmail": "={{ $env.SMTP_EMAIL }}",
+        "subject": "=Alerta pré-natal - {{ $json.patientName }} ({{ $json.patientId }})",
+        "emailFormat": "text",
+        "message": "=Alerta clínico - gestante {{ $json.patientName }} ({{ $json.gestationalWeeks }}ª semana):\n\n{{ $json.professionalMessage }}\n\nAção recomendada: verificar prontuário e contatar a gestante.\n\n— Prenatal Digital SUS"
+      },
+      "id": "email-professional-node",
+      "name": "Email para profissional",
+      "type": "n8n-nodes-base.sendEmail",
+      "typeVersion": 2.1,
+      "position": [910, 500]
+    },
+    {
+      "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { \"received\": true, \"patientId\": $json.patientId, \"alertsCount\": $json.alerts ? $json.alerts.length : 0 } }}"
+        "responseBody": "={{ { \"received\": true, \"patientId\": $json.patientId, \"alertsCount\": ($json.alerts || []).length, \"patientNotified\": $json.hasPatientAlerts, \"professionalNotified\": $json.hasProfessionalAlerts } }}"
       },
       "id": "respond-node",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [690, 300]
+      "position": [1130, 300]
     }
   ],
   "connections": {
@@ -43,14 +128,72 @@
       "main": [
         [
           {
-            "node": "Log Payload",
+            "node": "Classificar alertas",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Log Payload": {
+    "Classificar alertas": {
+      "main": [
+        [
+          {
+            "node": "Tem alerta para gestante?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tem alerta para gestante?": {
+      "main": [
+        [
+          {
+            "node": "Email para gestante",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tem alerta para profissional?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email para gestante": {
+      "main": [
+        [
+          {
+            "node": "Tem alerta para profissional?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tem alerta para profissional?": {
+      "main": [
+        [
+          {
+            "node": "Email para profissional",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email para profissional": {
       "main": [
         [
           {
@@ -69,5 +212,5 @@
   "tags": [],
   "triggerCount": 0,
   "updatedAt": "2025-01-31T00:00:00.000Z",
-  "versionId": "1"
+  "versionId": "2"
 }

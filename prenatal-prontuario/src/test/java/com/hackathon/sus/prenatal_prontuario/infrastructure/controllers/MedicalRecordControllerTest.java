@@ -109,6 +109,9 @@ class MedicalRecordControllerTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
     }
@@ -258,7 +261,10 @@ class MedicalRecordControllerTest {
                     true,
                     true,
                     "Observações atualizadas",
-                    DeliveryType.CESAREAN
+                    DeliveryType.CESAREAN,
+                    null,
+                    null,
+                    null
             );
 
             MedicalRecord updatedRecord = new MedicalRecord(
@@ -281,6 +287,9 @@ class MedicalRecordControllerTest {
                     true,
                     "Observações atualizadas",
                     DeliveryType.CESAREAN,
+                    null,
+                    null,
+                    null,
                     null
             );
 
@@ -333,6 +342,9 @@ class MedicalRecordControllerTest {
                     medicalRecord.getAspirinUse(),
                     medicalRecord.getNotes(),
                     medicalRecord.getDeliveryType(),
+                    null,
+                    null,
+                    null,
                     null
             );
 

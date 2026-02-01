@@ -15,6 +15,7 @@ public record DocumentResponse(
         @JsonProperty("tipoConteudo") String contentType,
         @JsonProperty("tamanhoArquivo") Long fileSize,
         @JsonProperty("tipoDocumento") DocumentType documentType,
+        @JsonProperty("tipoExame") String examType,
         @JsonProperty("ativo") Boolean active,
         @JsonProperty("dataCriacao") LocalDateTime createdAt,
         @JsonProperty("dataAtualizacao") LocalDateTime updatedAt
@@ -28,6 +29,7 @@ public record DocumentResponse(
                 document.getContentType(),
                 document.getFileSize(),
                 document.getDocumentType(),
+                document.getExamType(),
                 document.getActive(),
                 document.getCreatedAt(),
                 document.getUpdatedAt()

@@ -55,9 +55,8 @@ class PatientControllerTest {
         @DisplayName("Deve retornar 200 com lista de consultas quando CPF encontrado")
         void deveRetornar200QuandoCpfEncontrado() throws Exception {
             when(patientGateway.buscarPorCpf("12345678900")).thenReturn(Optional.of(10L));
-            Appointment c = new Appointment(10L, 20L, 1L, LocalDate.now().plusDays(1), LocalTime.of(9, 0));
-            c.setId(100L);
-            c.setDataAgendamento(LocalDateTime.now());
+            Appointment c = new Appointment(100L, 10L, "12345678900", 20L, 1L, LocalDate.now().plusDays(1), LocalTime.of(9, 0),
+                    br.com.hackathon.sus.prenatal_agenda.domain.entities.AppointmentStatus.AGENDADA, null, LocalDateTime.now(), null);
             when(findAppointmentsByPatientUseCase.execute(10L)).thenReturn(List.of(c));
             when(patientGateway.findNameById(10L)).thenReturn(Optional.of("Maria"));
             when(doctorGateway.findById(20L)).thenReturn(Optional.of(new DoctorInfo("Dr. João", "Obstetrícia")));
@@ -89,9 +88,8 @@ class PatientControllerTest {
         @Test
         @DisplayName("Deve retornar 200 com lista de consultas")
         void deveRetornar200ComConsultas() throws Exception {
-            Appointment c = new Appointment(5L, 20L, 1L, LocalDate.now().plusDays(1), LocalTime.of(10, 0));
-            c.setId(50L);
-            c.setDataAgendamento(LocalDateTime.now());
+            Appointment c = new Appointment(50L, 5L, null, 20L, 1L, LocalDate.now().plusDays(1), LocalTime.of(10, 0),
+                    br.com.hackathon.sus.prenatal_agenda.domain.entities.AppointmentStatus.AGENDADA, null, LocalDateTime.now(), null);
             when(findAppointmentsByPatientUseCase.execute(5L)).thenReturn(List.of(c));
             when(patientGateway.findNameById(5L)).thenReturn(Optional.of("Joana"));
             when(doctorGateway.findById(20L)).thenReturn(Optional.of(new DoctorInfo("Dr. João", "Obstetrícia")));

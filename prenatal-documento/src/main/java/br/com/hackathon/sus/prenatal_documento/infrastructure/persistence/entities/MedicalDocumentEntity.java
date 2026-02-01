@@ -43,6 +43,9 @@ public class MedicalDocumentEntity {
     @Column(name = "tipo_documento", nullable = false)
     private DocumentType documentType;
 
+    @Column(name = "tipo_exame", length = 80)
+    private String examType;
+
     @Column(name = "caminho_armazenamento", nullable = false, unique = true)
     private String storagePath;
 
@@ -114,6 +117,14 @@ public class MedicalDocumentEntity {
 
     public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
+    }
+
+    public String getExamType() {
+        return examType;
+    }
+
+    public void setExamType(String examType) {
+        this.examType = examType;
     }
 
     public String getStoragePath() {

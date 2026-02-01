@@ -55,6 +55,9 @@ class FindMedicalRecordByCpfUseCaseImpTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
     }

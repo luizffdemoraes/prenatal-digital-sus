@@ -38,7 +38,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"cpf\": \"12345678900\",\n  \"nomeCompleto\": \"Maria da Silva\",\n  \"dataNascimento\": \"1992-04-15\",\n  \"dataUltimaMenstruacao\": \"2025-01-10\",\n  \"dataConsulta\": \"2025-02-15\",\n  \"tipoGestacao\": \"UNICA\",\n  \"tipoParto\": \"NAO_DEFINIDO\",\n  \"numeroGestacoesAnteriores\": 1,\n  \"numeroPartos\": 1,\n  \"numeroAbortos\": 0,\n  \"gestacaoAltoRisco\": false,\n  \"motivoAltoRisco\": null,\n  \"fatoresRisco\": [],\n  \"usoVitaminas\": true,\n  \"usoAAS\": false,\n  \"observacoes\": \"Primeira consulta realizada na unidade.\"\n}",
+							"raw": "{\n  \"cpf\": \"12345678900\",\n  \"nomeCompleto\": \"Maria da Silva\",\n  \"dataNascimento\": \"1992-04-15\",\n  \"dataUltimaMenstruacao\": \"2025-01-10\",\n  \"dataConsulta\": \"2025-02-15\",\n  \"tipoGestacao\": \"UNICA\",\n  \"tipoParto\": \"NAO_DEFINIDO\",\n  \"numeroGestacoesAnteriores\": 1,\n  \"numeroPartos\": 1,\n  \"numeroAbortos\": 0,\n  \"gestacaoAltoRisco\": false,\n  \"motivoAltoRisco\": null,\n  \"fatoresRisco\": [],\n  \"usoVitaminas\": true,\n  \"usoAAS\": false,\n  \"observacoes\": \"Primeira consulta realizada na unidade.\",\n  \"emailPaciente\": \"maria.silva@email.com\",\n  \"medicoNome\": \"Dr. João Silva\",\n  \"medicoEmail\": \"joao.silva@saude.gov.br\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -46,7 +46,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "prontuarios"]
 						},
-						"description": "Cria o prontuário na primeira consulta. Obrigatório: cpf (11 dígitos), dataUltimaMenstruacao. Idade gestacional = semanas entre dataUltimaMenstruacao e dataConsulta (ou hoje se dataConsulta omitida); deve ser 1–44. dataConsulta (opcional): para retroativo/testes. tipoParto (opcional): PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO; omitir = NAO_DEFINIDO. Um prontuário por CPF. Acesso: ENFERMEIRO, MEDICO, NURSE, DOCTOR."
+						"description": "Cria o prontuário na primeira consulta. Obrigatório: cpf (11 dígitos), dataUltimaMenstruacao. Idade gestacional = semanas entre dataUltimaMenstruacao e dataConsulta (ou hoje se dataConsulta omitida); deve ser 1–44. dataConsulta (opcional): para retroativo/testes. tipoParto (opcional): PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO; omitir = NAO_DEFINIDO. Opcional: emailPaciente, medicoNome, medicoEmail (contato e médico responsável para notificações/IA). Um prontuário por CPF. Acesso: ENFERMEIRO, MEDICO, NURSE, DOCTOR."
 					},
 					"response": []
 				},
@@ -76,7 +76,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"usoVitaminas\": true,\n  \"usoAAS\": true,\n  \"observacoes\": \"Gestação evoluindo bem\",\n  \"tipoParto\": \"CESARIANA\"\n}",
+							"raw": "{\n  \"usoVitaminas\": true,\n  \"usoAAS\": true,\n  \"observacoes\": \"Gestação evoluindo bem\",\n  \"tipoParto\": \"CESARIANA\",\n  \"emailPaciente\": \"maria.silva@email.com\",\n  \"medicoNome\": \"Dr. João Silva\",\n  \"medicoEmail\": \"joao.silva@saude.gov.br\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": {
@@ -84,7 +84,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["api", "v1", "prontuarios", "cpf", "{{cpf}}"]
 						},
-						"description": "Atualiza usoVitaminas, usoAAS, observacoes, tipoParto. Campos null ou omitidos não alteram. tipoParto: PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO — permite definir/alterar o tipo de parto (natural ou cesariana) quando decidido. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuário."
+						"description": "Atualiza usoVitaminas, usoAAS, observacoes, tipoParto, emailPaciente, medicoNome, medicoEmail. Campos null ou omitidos não alteram. tipoParto: PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuário."
 					},
 					"response": []
 				},

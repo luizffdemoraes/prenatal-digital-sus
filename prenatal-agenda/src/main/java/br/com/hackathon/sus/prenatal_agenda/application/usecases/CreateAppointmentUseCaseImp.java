@@ -35,7 +35,8 @@ public class CreateAppointmentUseCaseImp implements CreateAppointmentUseCase {
         Long gestanteId = resolveGestanteId(req);
         Long medicoId = resolveMedicoId(req, unidadeId);
 
-        Appointment appointment = new Appointment(gestanteId, medicoId, unidadeId, req.date(), req.time());
+        String cpfDigits = req.patientCpf() != null ? req.patientCpf().replaceAll("\\D", "") : null;
+        Appointment appointment = new Appointment(gestanteId, cpfDigits, medicoId, unidadeId, req.date(), req.time());
 
         var schedule = doctorScheduleGateway.buscarPorMedicoId(medicoId)
                 .orElseThrow(() -> new IllegalArgumentException("Agenda não encontrada para o médico informado"));

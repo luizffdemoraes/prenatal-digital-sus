@@ -56,6 +56,12 @@
 									"value": "EXAM",
 									"type": "text",
 									"description": "Tipo de documento: EXAM ou ULTRASOUND"
+								},
+								{
+									"key": "examType",
+									"value": "",
+									"type": "text",
+									"description": "Tipo específico (opcional). Ex: MORPHOLOGICAL_ULTRASOUND, NUCHAL_TRANSLUCENCY, CURVA_GLICEMICA, GLICEMIA. Usado pela IA."
 								}
 							]
 						},
@@ -78,7 +84,7 @@
 								}
 							]
 						},
-						"description": "Upload de documento (exame ou ultrassom) em PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Validações:**\n- Apenas arquivos PDF\n- Tamanho máximo: 10MB\n- Tipos: EXAM ou ULTRASOUND"
+						"description": "Upload de documento (exame ou ultrassom) em PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Validações:**\n- Apenas arquivos PDF\n- Tamanho máximo: 10MB\n- documentType: EXAM ou ULTRASOUND\n- examType (opcional): MORPHOLOGICAL_ULTRASOUND, NUCHAL_TRANSLUCENCY, CURVA_GLICEMICA, GLICEMIA - usado pela IA para regras clínicas\n\n**Response:** inclui tipoExame quando informado"
 					},
 					"response": []
 				},
@@ -275,6 +281,58 @@
 				}
 			],
 			"description": "Endpoints para gerenciamento de documentos médicos"
+		},
+		{
+			"name": "Vaccines",
+			"item": [
+				{
+					"name": "Registrar Vacina",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwtToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/prenatal-records/:cpf/vacinas?tipoVacina=DTpa&dataAplicacao=2025-01-15",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"prenatal-records",
+								":cpf",
+								"vacinas"
+							],
+							"query": [
+								{
+									"key": "tipoVacina",
+									"value": "DTpa",
+									"description": "Tipo da vacina (ex: DTpa, Hepatite B, Influenza)"
+								},
+								{
+									"key": "dataAplicacao",
+									"value": "2025-01-15",
+									"description": "Data da aplicação (yyyy-MM-dd)"
+								}
+							],
+							"variable": [
+								{
+									"key": "cpf",
+									"value": "{{patientCpf}}",
+									"description": "CPF da paciente (apenas números)"
+								}
+							]
+						},
+						"description": "Registra a aplicação de uma vacina para a gestante.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Parâmetros:**\n- tipoVacina: ex. DTpa, Hepatite B, Influenza\n- dataAplicacao: yyyy-MM-dd\n\n**Response:** 201 com VaccineResponse (id, gestanteCpf, tipoVacina, dataAplicacao)"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para registro de vacinas da gestante"
 		},
 		{
 			"name": "Health Check",

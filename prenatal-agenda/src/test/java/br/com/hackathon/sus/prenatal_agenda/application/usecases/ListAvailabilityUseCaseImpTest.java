@@ -76,7 +76,7 @@ class ListAvailabilityUseCaseImpTest {
                 LocalTime.of(8, 0), LocalTime.of(10, 0), 30);
         when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.of(agenda));
 
-        Appointment ocupada = new Appointment(1L, 10L, MEDICO_ID, 3L, data, LocalTime.of(8, 30), AppointmentStatus.AGENDADA, null, LocalDateTime.now(), null);
+        Appointment ocupada = new Appointment(1L, 10L, null, MEDICO_ID, 3L, data, LocalTime.of(8, 30), AppointmentStatus.AGENDADA, null, LocalDateTime.now(), null);
         when(appointmentGateway.buscarConsultasAgendadasPorMedicoEData(MEDICO_ID, data)).thenReturn(List.of(ocupada));
 
         List<LocalTime> result = useCase.execute(MEDICO_ID, data);

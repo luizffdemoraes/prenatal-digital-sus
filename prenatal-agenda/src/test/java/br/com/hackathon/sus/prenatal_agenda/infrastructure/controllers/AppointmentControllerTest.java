@@ -66,9 +66,8 @@ class AppointmentControllerTest {
                     "data":"%s","horario":"09:00"}
                     """.formatted(LocalDate.now().plusDays(1));
 
-            Appointment salva = new Appointment(10L, 20L, 1L, LocalDate.now().plusDays(1), LocalTime.of(9, 0));
-            salva.setId(100L);
-            salva.setDataAgendamento(LocalDateTime.now());
+            Appointment salva = new Appointment(100L, 10L, "12345678900", 20L, 1L, LocalDate.now().plusDays(1), LocalTime.of(9, 0),
+                    br.com.hackathon.sus.prenatal_agenda.domain.entities.AppointmentStatus.AGENDADA, null, LocalDateTime.now(), null);
             when(createAppointmentUseCase.execute(any(), eq(1L))).thenReturn(salva);
             when(patientGateway.findNameById(10L)).thenReturn(Optional.of("Maria"));
             when(doctorGateway.findById(20L)).thenReturn(Optional.of(new DoctorInfo("Dr. João", "Obstetrícia")));

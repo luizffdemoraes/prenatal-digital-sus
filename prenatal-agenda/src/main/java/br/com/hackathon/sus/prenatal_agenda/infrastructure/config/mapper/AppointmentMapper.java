@@ -11,6 +11,7 @@ public class AppointmentMapper {
         return new Appointment(
                 entity.getId(),
                 entity.getGestanteId(),
+                entity.getCpf(),
                 entity.getMedicoId(),
                 entity.getUnidadeId(),
                 entity.getData(),
@@ -50,6 +51,7 @@ public class AppointmentMapper {
         return new AppointmentEntity(
                 domain.getId(),
                 domain.getGestanteId(),
+                domain.getCpf(),
                 domain.getMedicoId(),
                 domain.getUnidadeId(),
                 domain.getData(),

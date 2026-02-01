@@ -64,7 +64,10 @@ class CreateMedicalRecordUseCaseImpTest {
                 false,
                 "Observações iniciais",
                 DeliveryType.NATURAL,
-                null
+                null,
+                "maria@email.com",
+                "Dr. João Silva",
+                "dr.joao@email.com"
         );
 
         savedRecord = new MedicalRecord(
@@ -87,7 +90,10 @@ class CreateMedicalRecordUseCaseImpTest {
                 request.aspirinUse(),
                 request.notes(),
                 request.deliveryType(),
-                null
+                null,
+                "maria@email.com",
+                "Dr. João Silva",
+                "dr.joao@email.com"
         );
     }
 

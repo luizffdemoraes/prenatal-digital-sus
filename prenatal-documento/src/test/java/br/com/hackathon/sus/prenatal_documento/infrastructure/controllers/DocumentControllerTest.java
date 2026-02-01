@@ -78,6 +78,7 @@ class DocumentControllerTest {
                 CONTENT_TYPE,
                 1024L,
                 DocumentType.EXAM,
+                null,
                 "prenatal-records/12345678900/exame.pdf"
         );
         mockDocument.setId(DOCUMENT_ID);
@@ -90,6 +91,7 @@ class DocumentControllerTest {
                 CONTENT_TYPE,
                 1024L,
                 DocumentType.EXAM,
+                null,
                 true,
                 null,
                 null
@@ -100,11 +102,11 @@ class DocumentControllerTest {
     @DisplayName("Deve fazer upload de documento com sucesso")
     void shouldUploadDocumentSuccessfully() {
         // Arrange
-        when(uploadUseCase.upload(eq(PATIENT_CPF), any(), eq("EXAM"))).thenReturn(mockDocument);
+        when(uploadUseCase.upload(eq(PATIENT_CPF), any(), eq("EXAM"), any())).thenReturn(mockDocument);
         when(mapper.toResponse(mockDocument)).thenReturn(mockResponse);
 
         // Act
-        ResponseEntity<DocumentResponse> response = controller.upload(PATIENT_CPF, mockFile, "EXAM");
+        ResponseEntity<DocumentResponse> response = controller.upload(PATIENT_CPF, mockFile, "EXAM", null);
 
         // Assert
         assertNotNull(response);
@@ -112,7 +114,7 @@ class DocumentControllerTest {
         assertNotNull(response.getBody());
         assertEquals(DOCUMENT_ID, response.getBody().id());
         
-        verify(uploadUseCase, times(1)).upload(eq(PATIENT_CPF), any(), eq("EXAM"));
+        verify(uploadUseCase, times(1)).upload(eq(PATIENT_CPF), any(), eq("EXAM"), any());
         verify(mapper, times(1)).toResponse(mockDocument);
     }
 
@@ -267,17 +269,18 @@ class DocumentControllerTest {
     }
 
     private MedicalDocument createDocument(String fileName) {
-        MedicalDocument document = new MedicalDocument(
+        MedicalDocument doc = new MedicalDocument(
                 PATIENT_CPF,
                 fileName,
                 fileName,
                 CONTENT_TYPE,
                 1024L,
                 DocumentType.EXAM,
+                null,
                 "prenatal-records/" + PATIENT_CPF + "/" + fileName
         );
-        document.setId(UUID.randomUUID());
-        return document;
+        doc.setId(UUID.randomUUID());
+        return doc;
     }
 
     private DocumentResponse createResponse(UUID id, String fileName) {
@@ -289,6 +292,7 @@ class DocumentControllerTest {
                 CONTENT_TYPE,
                 1024L,
                 DocumentType.EXAM,
+                null,
                 true,
                 null,
                 null

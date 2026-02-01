@@ -19,6 +19,9 @@ public class AppointmentEntity {
     @Column(name = "gestante_id", nullable = false)
     private Long gestanteId;
 
+    @Column(name = "cpf", length = 14)
+    private String cpf;
+
     @Column(name = "medico_id", nullable = false)
     private Long medicoId;
 
@@ -48,7 +51,7 @@ public class AppointmentEntity {
     public AppointmentEntity() {
     }
 
-    public AppointmentEntity(Long id, Long gestanteId, Long medicoId, Long unidadeId,
+    public AppointmentEntity(Long id, Long gestanteId, String cpf, Long medicoId, Long unidadeId,
                              LocalDate data, LocalTime horario, AppointmentStatus status,
                              CancellationReason motivoCancelamento, LocalDateTime dataAgendamento,
                              LocalDateTime dataCancelamento) {
@@ -68,6 +71,8 @@ public class AppointmentEntity {
     public void setId(Long id) { this.id = id; }
     public Long getGestanteId() { return gestanteId; }
     public void setGestanteId(Long gestanteId) { this.gestanteId = gestanteId; }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
     public Long getMedicoId() { return medicoId; }
     public void setMedicoId(Long medicoId) { this.medicoId = medicoId; }
     public Long getUnidadeId() { return unidadeId; }

@@ -94,6 +94,7 @@ class InactivateDocumentUseCaseImplTest {
                 "application/pdf",
                 1024L,
                 DocumentType.EXAM,
+                null,
                 "prenatal-records/12345678900/exame.pdf"
         );
         document.setId(DOCUMENT_ID);

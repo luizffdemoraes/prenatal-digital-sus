@@ -47,6 +47,7 @@ class MedicalDocumentRepositoryImplTest {
                 "application/pdf",
                 1024L,
                 DocumentType.EXAM,
+                null,
                 STORAGE_PATH
         );
 

@@ -35,7 +35,7 @@ class FindAppointmentsByPatientUseCaseImpTest {
     @Test
     @DisplayName("Deve retornar lista de consultas da gestante")
     void shouldReturnAppointments() {
-        Appointment c = new Appointment(GESTANTE_ID, 2L, 3L, LocalDate.now().plusDays(1), LocalTime.of(9, 0));
+        Appointment c = new Appointment(GESTANTE_ID, null, 2L, 3L, LocalDate.now().plusDays(1), LocalTime.of(9, 0));
         c.setId(10L);
         when(appointmentGateway.buscarPorGestanteId(GESTANTE_ID)).thenReturn(List.of(c));
 

@@ -64,6 +64,9 @@ class FindMedicalRecordHistoryUseCaseImpTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -148,6 +151,9 @@ class FindMedicalRecordHistoryUseCaseImpTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
         

@@ -33,7 +33,10 @@ public final class MedicalRecordMapper {
                 e.getAspirinUse(),
                 e.getNotes(),
                 e.getDeliveryType(),
-                e.getCreatedAt()
+                e.getCreatedAt(),
+                e.getPatientEmail(),
+                e.getDoctorName(),
+                e.getDoctorEmail()
         );
     }
 
@@ -64,6 +67,9 @@ public final class MedicalRecordMapper {
         e.setNotes(m.getNotes());
         e.setDeliveryType(m.getDeliveryType());
         e.setCreatedAt(m.getCreatedAt());
+        e.setPatientEmail(m.getPatientEmail());
+        e.setDoctorName(m.getDoctorName());
+        e.setDoctorEmail(m.getDoctorEmail());
         return e;
     }
 
@@ -83,5 +89,8 @@ public final class MedicalRecordMapper {
         e.setDeliveryType(m.getDeliveryType());
         e.getRiskFactors().clear();
         e.getRiskFactors().addAll(m.getRiskFactors() != null ? m.getRiskFactors() : List.of());
+        if (m.getPatientEmail() != null) e.setPatientEmail(m.getPatientEmail());
+        if (m.getDoctorName() != null) e.setDoctorName(m.getDoctorName());
+        if (m.getDoctorEmail() != null) e.setDoctorEmail(m.getDoctorEmail());
     }
 }

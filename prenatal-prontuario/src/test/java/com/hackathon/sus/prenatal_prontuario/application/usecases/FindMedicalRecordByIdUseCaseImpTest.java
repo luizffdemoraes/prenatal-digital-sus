@@ -55,6 +55,9 @@ class FindMedicalRecordByIdUseCaseImpTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
     }

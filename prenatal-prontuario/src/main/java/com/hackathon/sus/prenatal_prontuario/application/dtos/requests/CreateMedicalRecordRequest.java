@@ -68,7 +68,16 @@ public record CreateMedicalRecordRequest(
 
         /** Opcional. Se informada, a idade gestacional é calculada entre dataUltimaMenstruacao e esta data. Útil para retroativo e testes. */
         @JsonProperty("dataConsulta")
-        LocalDate consultationDate
+        LocalDate consultationDate,
+
+        @JsonProperty("emailPaciente")
+        String patientEmail,
+
+        @JsonProperty("medicoNome")
+        String doctorName,
+
+        @JsonProperty("medicoEmail")
+        String doctorEmail
 ) {
     public CreateMedicalRecordRequest {
         previousPregnancies = previousPregnancies != null ? previousPregnancies : 0;

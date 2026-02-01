@@ -1,11 +1,11 @@
-package br.com.hackathon.sus.prenatal_ia.domain.gateways;
+package br.com.hackathon.sus.prenatal_ia.domain.repositories;
 
 import br.com.hackathon.sus.prenatal_ia.domain.entities.ExamRecord;
 import br.com.hackathon.sus.prenatal_ia.domain.entities.VaccineRecord;
 
 import java.util.List;
 
-public interface DocumentoGateway {
+public interface DocumentoRepository {
     List<ExamRecord> findExamsByCpf(String cpf);
     List<VaccineRecord> findVaccinesByCpf(String cpf);
 }

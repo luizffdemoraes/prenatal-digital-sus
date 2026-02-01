@@ -4,7 +4,8 @@ import br.com.hackathon.sus.prenatal_ia.domain.entities.*;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.AlertSeverity;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.AlertType;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.NotificationTarget;
-import br.com.hackathon.sus.prenatal_ia.domain.gateways.*;
+import br.com.hackathon.sus.prenatal_ia.domain.gateways.NotificationOrchestratorGateway;
+import br.com.hackathon.sus.prenatal_ia.domain.repositories.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,26 +17,24 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
     private static final int NUCHAL_WEEKS_MIN = 12;
     private static final int NUCHAL_WEEKS_MAX = 14;
     private static final int MORPHOLOGICAL_WEEKS_MIN = 20;
+    private static final int GLUCOSE_CURVE_WEEKS_MIN = 28;
 
-    private final ProntuarioGateway prontuarioGateway;
-    private final AgendaGateway agendaGateway;
-    private final DocumentoGateway documentoGateway;
-    private final AuthGateway authGateway;
+    private final ProntuarioRepository prontuarioRepository;
+    private final AgendaRepository agendaRepository;
+    private final DocumentoRepository documentoRepository;
     private final NotificationOrchestratorGateway notificationGateway;
 
-    public AnalyzeAllPregnanciesUseCaseImpl(ProntuarioGateway prontuarioGateway, AgendaGateway agendaGateway,
-            DocumentoGateway documentoGateway, AuthGateway authGateway,
-            NotificationOrchestratorGateway notificationGateway) {
-        this.prontuarioGateway = prontuarioGateway;
-        this.agendaGateway = agendaGateway;
-        this.documentoGateway = documentoGateway;
-        this.authGateway = authGateway;
+    public AnalyzeAllPregnanciesUseCaseImpl(ProntuarioRepository prontuarioRepository, AgendaRepository agendaRepository,
+            DocumentoRepository documentoRepository, NotificationOrchestratorGateway notificationGateway) {
+        this.prontuarioRepository = prontuarioRepository;
+        this.agendaRepository = agendaRepository;
+        this.documentoRepository = documentoRepository;
         this.notificationGateway = notificationGateway;
     }
 
     @Override
     public void execute() {
-        List<PregnantPatient> patients = prontuarioGateway.findAllActivePregnancies();
+        List<PregnantPatient> patients = prontuarioRepository.findAllActivePregnancies();
         for (PregnantPatient patient : patients) {
             processPatient(patient);
         }
@@ -45,18 +44,15 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
         String cpf = patient.getCpf() != null ? patient.getCpf().replaceAll("\\D", "") : null;
         if (cpf == null || cpf.length() != 11) return;
 
-        List<ExamRecord> exams = documentoGateway.findExamsByCpf(cpf);
-        List<VaccineRecord> vaccines = documentoGateway.findVaccinesByCpf(cpf);
-        List<AppointmentSummary> appointments = agendaGateway.findAppointmentsByCpf(cpf);
+        List<ExamRecord> exams = documentoRepository.findExamsByCpf(cpf);
+        List<VaccineRecord> vaccines = documentoRepository.findVaccinesByCpf(cpf);
+        List<AppointmentSummary> appointments = agendaRepository.findAppointmentsByCpf(cpf);
 
-        List<PrenatalAlert> alerts = applyRules(
-                patient.getGestationalWeeks(),
-                exams,
-                vaccines,
-                appointments
-        );
+        List<PrenatalAlert> alerts = applyRules(patient, exams, vaccines, appointments);
 
-        String patientEmail = authGateway.findEmailByCpf(cpf).orElse(patient.getEmail());
+        if (alerts.isEmpty()) return;
+
+        String patientEmail = patient.getEmail();
 
         PrenatalAnalysisResult result = new PrenatalAnalysisResult(
                 patient.getId(),
@@ -69,19 +65,21 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
     }
 
     private List<PrenatalAlert> applyRules(
-            Integer gestationalWeeks,
+            PregnantPatient patient,
             List<ExamRecord> exams,
             List<VaccineRecord> vaccines,
             List<AppointmentSummary> appointments) {
 
         List<PrenatalAlert> alerts = new ArrayList<>();
-
+        Integer gestationalWeeks = patient.getGestationalWeeks();
         if (gestationalWeeks == null) return alerts;
 
         checkMorphologicalUltrasound(gestationalWeeks, exams, alerts);
         checkNuchalTranslucency(gestationalWeeks, exams, alerts);
-        checkPendingVaccine(gestationalWeeks, vaccines, alerts);
+        checkGlucoseCurve(gestationalWeeks, exams, alerts);
+        checkPendingVaccine(vaccines, alerts);
         checkNoAppointmentScheduled(appointments, alerts);
+        checkCriticalExamWithRiskFactor(patient, gestationalWeeks, exams, alerts);
 
         return alerts;
     }
@@ -112,15 +110,14 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
         }
     }
 
-    private void checkPendingVaccine(Integer gestationalWeeks, List<VaccineRecord> vaccines, List<PrenatalAlert> alerts) {
-        if (gestationalWeeks < 20) return;
+    private void checkPendingVaccine(List<VaccineRecord> vaccines, List<PrenatalAlert> alerts) {
+        boolean hasTetanusVaccine = vaccines.stream()
+                .anyMatch(v -> "DTPA".equalsIgnoreCase(v.getType()) || "DTAP".equalsIgnoreCase(v.getType())
+                        || "DT".equalsIgnoreCase(v.getType()) || "DUPLA_ADULTO".equalsIgnoreCase(v.getType()));
 
-        boolean hasDtpa = vaccines.stream()
-                .anyMatch(v -> "DTPA".equalsIgnoreCase(v.getType()) || "DTAP".equalsIgnoreCase(v.getType()));
-
-        if (!hasDtpa) {
+        if (!hasTetanusVaccine) {
             alerts.add(new PrenatalAlert(AlertType.PENDING_VACCINE, AlertSeverity.MEDIUM,
-                    "Vacina dTpa pendente (recomendada entre 27-36 semanas)", NotificationTarget.PATIENT));
+                    "Vacina antitetânica (dT ou dTpa) pendente", NotificationTarget.PATIENT));
         }
     }
 
@@ -130,7 +127,53 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
 
         if (!hasFutureAppointment) {
             alerts.add(new PrenatalAlert(AlertType.NO_APPOINTMENT_SCHEDULED, AlertSeverity.MEDIUM,
-                    "Não há próxima consulta de pré-natal agendada", NotificationTarget.PATIENT));
+                    "Não há próxima consulta de pré-natal agendada", NotificationTarget.PROFESSIONAL));
+        }
+    }
+
+    private void checkGlucoseCurve(Integer gestationalWeeks, List<ExamRecord> exams, List<PrenatalAlert> alerts) {
+        if (gestationalWeeks < GLUCOSE_CURVE_WEEKS_MIN) return;
+
+        boolean hasGlucoseCurve = exams.stream()
+                .anyMatch(e -> "CURVA_GLICEMICA".equalsIgnoreCase(e.getType())
+                        || "GLUCOSE_CURVE".equalsIgnoreCase(e.getType())
+                        || "GLICEMIA".equalsIgnoreCase(e.getType()));
+
+        if (!hasGlucoseCurve) {
+            alerts.add(new PrenatalAlert(AlertType.MISSING_EXAM, AlertSeverity.HIGH,
+                    "Curva glicêmica não encontrada", NotificationTarget.PATIENT));
+        }
+    }
+
+    private void checkCriticalExamWithRiskFactor(PregnantPatient patient, Integer gestationalWeeks,
+                                                 List<ExamRecord> exams, List<PrenatalAlert> alerts) {
+        if (!patient.hasRiskFactor()) return;
+
+        boolean hasCriticalMissing = false;
+
+        if (gestationalWeeks >= MORPHOLOGICAL_WEEKS_MIN) {
+            boolean hasMorphological = exams.stream()
+                    .anyMatch(e -> "MORPHOLOGICAL_ULTRASOUND".equalsIgnoreCase(e.getType())
+                            || "ULTRASOUND".equalsIgnoreCase(e.getType()));
+            if (!hasMorphological) hasCriticalMissing = true;
+        }
+        if (!hasCriticalMissing && gestationalWeeks >= NUCHAL_WEEKS_MIN && gestationalWeeks <= NUCHAL_WEEKS_MAX) {
+            boolean hasNuchal = exams.stream()
+                    .anyMatch(e -> "NUCHAL_TRANSLUCENCY".equalsIgnoreCase(e.getType())
+                            || "ULTRASOUND".equalsIgnoreCase(e.getType()));
+            if (!hasNuchal) hasCriticalMissing = true;
+        }
+        if (!hasCriticalMissing && gestationalWeeks >= GLUCOSE_CURVE_WEEKS_MIN) {
+            boolean hasGlucoseCurve = exams.stream()
+                    .anyMatch(e -> "CURVA_GLICEMICA".equalsIgnoreCase(e.getType())
+                            || "GLUCOSE_CURVE".equalsIgnoreCase(e.getType())
+                            || "GLICEMIA".equalsIgnoreCase(e.getType()));
+            if (!hasGlucoseCurve) hasCriticalMissing = true;
+        }
+
+        if (hasCriticalMissing) {
+            alerts.add(new PrenatalAlert(AlertType.HIGH_RISK_ATTENTION, AlertSeverity.HIGH,
+                    "Gestante de risco com exame crítico pendente - atenção necessária", NotificationTarget.PROFESSIONAL));
         }
     }
 }

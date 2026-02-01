@@ -68,6 +68,9 @@ class UpdateRiskFactorsUseCaseImpTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -177,6 +180,9 @@ class UpdateRiskFactorsUseCaseImpTest {
                 false,
                 "Observações",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
         

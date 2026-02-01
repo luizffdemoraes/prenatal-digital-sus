@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 
@@ -48,7 +49,8 @@ class CancelAppointmentUseCaseImpTest {
     @Test
     @DisplayName("Deve cancelar consulta com sucesso e salvar")
     void shouldCancelSuccessfully() {
-        Appointment consulta = new Appointment(10L, 20L, 30L, LocalDate.now().plusDays(1), LocalTime.of(9, 0));
+        Appointment consulta = new Appointment(10L, 20L, null, 30L, 1L, LocalDate.now().plusDays(1), LocalTime.of(9, 0),
+                AppointmentStatus.AGENDADA, null, LocalDateTime.now(), null);
         consulta.setId(CONSULTA_ID);
         when(appointmentGateway.buscarPorId(CONSULTA_ID)).thenReturn(Optional.of(consulta));
         when(appointmentGateway.salvar(any(Appointment.class))).thenAnswer(i -> i.getArgument(0));

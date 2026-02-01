@@ -33,7 +33,10 @@ public record MedicalRecordResponse(
         @JsonProperty("usoAAS") Boolean aspirinUse,
         @JsonProperty("observacoes") String notes,
         @JsonProperty("tipoParto") DeliveryType deliveryType,
-        @JsonProperty("criadoEm") LocalDateTime createdAt
+        @JsonProperty("criadoEm") LocalDateTime createdAt,
+        @JsonProperty("emailPaciente") String patientEmail,
+        @JsonProperty("medicoNome") String doctorName,
+        @JsonProperty("medicoEmail") String doctorEmail
 ) {
     /** Cria a resposta a partir do domínio (evita erros de resolução do construtor no mapper). */
     public static MedicalRecordResponse from(MedicalRecord m) {
@@ -56,7 +59,10 @@ public record MedicalRecordResponse(
                 m.getAspirinUse(),
                 m.getNotes(),
                 m.getDeliveryType(),
-                m.getCreatedAt()
+                m.getCreatedAt(),
+                m.getPatientEmail(),
+                m.getDoctorName(),
+                m.getDoctorEmail()
         );
     }
 }

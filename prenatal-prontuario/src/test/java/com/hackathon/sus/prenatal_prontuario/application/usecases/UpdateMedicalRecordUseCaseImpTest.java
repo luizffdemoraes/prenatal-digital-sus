@@ -66,6 +66,9 @@ class UpdateMedicalRecordUseCaseImpTest {
                 false,
                 "Observações antigas",
                 DeliveryType.NATURAL,
+                null,
+                null,
+                null,
                 null
         );
 
@@ -73,7 +76,10 @@ class UpdateMedicalRecordUseCaseImpTest {
                 true,
                 true,
                 "Observações atualizadas",
-                DeliveryType.CESAREAN
+                DeliveryType.CESAREAN,
+                null,
+                null,
+                null
         );
     }
 
@@ -144,6 +150,9 @@ class UpdateMedicalRecordUseCaseImpTest {
         // Arrange
         UpdateMedicalRecordRequest partialRequest = new UpdateMedicalRecordRequest(
                 true,
+                null,
+                null,
+                null,
                 null,
                 null,
                 null

@@ -67,13 +67,13 @@ class UploadDocumentUseCaseImplTest {
 
         MedicalDocument savedDocument = new MedicalDocument(
                 PATIENT_CPF, "test.pdf", FILE_NAME, CONTENT_TYPE, FILE_SIZE,
-                DocumentType.EXAM, storagePath
+                DocumentType.EXAM, null, storagePath
         );
         savedDocument.setId(UUID.randomUUID());
         when(repository.save(any(MedicalDocument.class))).thenReturn(savedDocument);
 
         // Act
-        MedicalDocument result = uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE);
+        MedicalDocument result = uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE, null);
 
         // Assert
         assertNotNull(result);
@@ -93,7 +93,7 @@ class UploadDocumentUseCaseImplTest {
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> uploadUseCase.upload(PATIENT_CPF, null, DOCUMENT_TYPE)
+                () -> uploadUseCase.upload(PATIENT_CPF, null, DOCUMENT_TYPE, null)
         );
         
         assertEquals("Arquivo não pode ser vazio", exception.getMessage());
@@ -110,7 +110,7 @@ class UploadDocumentUseCaseImplTest {
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE)
+                () -> uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE, null)
         );
         
         assertEquals("Arquivo não pode ser vazio", exception.getMessage());
@@ -128,7 +128,7 @@ class UploadDocumentUseCaseImplTest {
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE)
+                () -> uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE, null)
         );
         
         assertEquals("Arquivo excede o tamanho máximo de 10MB", exception.getMessage());
@@ -145,7 +145,7 @@ class UploadDocumentUseCaseImplTest {
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE)
+                () -> uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE, null)
         );
         
         assertEquals("Apenas arquivos PDF são permitidos", exception.getMessage());
@@ -163,7 +163,7 @@ class UploadDocumentUseCaseImplTest {
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> uploadUseCase.upload(PATIENT_CPF, file, "INVALID_TYPE")
+                () -> uploadUseCase.upload(PATIENT_CPF, file, "INVALID_TYPE", null)
         );
         
         assertTrue(exception.getMessage().contains("Tipo de documento inválido"));
@@ -180,7 +180,7 @@ class UploadDocumentUseCaseImplTest {
         // Act & Assert
         RuntimeException exception = assertThrows(
                 RuntimeException.class,
-                () -> uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE)
+                () -> uploadUseCase.upload(PATIENT_CPF, file, DOCUMENT_TYPE, null)
         );
         
         assertEquals("Erro ao processar arquivo", exception.getMessage());
@@ -201,13 +201,13 @@ class UploadDocumentUseCaseImplTest {
 
         MedicalDocument savedDocument = new MedicalDocument(
                 PATIENT_CPF, "test.pdf", FILE_NAME, CONTENT_TYPE, FILE_SIZE,
-                DocumentType.ULTRASOUND, storagePath
+                DocumentType.ULTRASOUND, null, storagePath
         );
         savedDocument.setId(UUID.randomUUID());
         when(repository.save(any(MedicalDocument.class))).thenReturn(savedDocument);
 
         // Act
-        MedicalDocument result = uploadUseCase.upload(PATIENT_CPF, file, "ULTRASOUND");
+        MedicalDocument result = uploadUseCase.upload(PATIENT_CPF, file, "ULTRASOUND", null);
 
         // Assert
         assertNotNull(result);

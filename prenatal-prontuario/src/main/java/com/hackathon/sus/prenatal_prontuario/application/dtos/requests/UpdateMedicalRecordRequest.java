@@ -18,5 +18,14 @@ public record UpdateMedicalRecordRequest(
         String notes,
 
         @JsonProperty("tipoParto")
-        DeliveryType deliveryType
+        DeliveryType deliveryType,
+
+        @JsonProperty("emailPaciente")
+        String patientEmail,
+
+        @JsonProperty("medicoNome")
+        String doctorName,
+
+        @JsonProperty("medicoEmail")
+        String doctorEmail
 ) {}

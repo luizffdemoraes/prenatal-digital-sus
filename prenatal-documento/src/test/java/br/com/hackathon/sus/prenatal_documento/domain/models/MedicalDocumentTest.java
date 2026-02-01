@@ -43,6 +43,7 @@ class MedicalDocumentTest {
                 CONTENT_TYPE,
                 FILE_SIZE,
                 DocumentType.EXAM,
+                null,
                 STORAGE_PATH
         );
 
@@ -216,6 +217,7 @@ class MedicalDocumentTest {
                 CONTENT_TYPE,
                 FILE_SIZE,
                 DocumentType.ULTRASOUND,
+                null,
                 STORAGE_PATH
         );
 
@@ -231,6 +233,7 @@ class MedicalDocumentTest {
                 CONTENT_TYPE,
                 FILE_SIZE,
                 DocumentType.EXAM,
+                null,
                 STORAGE_PATH
         );
     }

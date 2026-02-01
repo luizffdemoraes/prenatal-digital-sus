@@ -50,11 +50,12 @@ public class DocumentController {
     public ResponseEntity<DocumentResponse> upload(
             @PathVariable String cpf,
             @RequestParam("file") MultipartFile file,
-            @RequestParam("documentType") @NotBlank String documentType) {
+            @RequestParam("documentType") @NotBlank String documentType,
+            @RequestParam(value = "examType", required = false) String examType) {
 
-        MedicalDocument document = uploadUseCase.upload(cpf, file, documentType);
+        MedicalDocument saved = uploadUseCase.upload(cpf, file, documentType, examType);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toResponse(document));
+                .body(mapper.toResponse(saved));
     }
 
     @GetMapping("/prenatal-records/{cpf}/documents")

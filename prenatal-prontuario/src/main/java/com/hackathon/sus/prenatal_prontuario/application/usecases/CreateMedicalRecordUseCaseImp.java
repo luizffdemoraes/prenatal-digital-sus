@@ -40,7 +40,10 @@ public class CreateMedicalRecordUseCaseImp implements CreateMedicalRecordUseCase
                 request.aspirinUse(),
                 request.notes(),
                 request.deliveryType(),
-                request.consultationDate()
+                request.consultationDate(),
+                request.patientEmail(),
+                request.doctorName(),
+                request.doctorEmail()
         );
 
         MedicalRecord saved = medicalRecordGateway.save(m);

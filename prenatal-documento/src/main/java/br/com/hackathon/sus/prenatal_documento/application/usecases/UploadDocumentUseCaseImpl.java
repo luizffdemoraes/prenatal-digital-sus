@@ -28,12 +28,13 @@ public class UploadDocumentUseCaseImpl implements UploadDocumentUseCase {
 
     @Override
     @Transactional
-    public MedicalDocument upload(String patientCpf, MultipartFile file, String documentType) {
+    public MedicalDocument upload(String patientCpf, MultipartFile file, String documentType, String examType) {
         validateFile(file);
 
         try {
             DocumentType type = DocumentType.valueOf(documentType.toUpperCase());
             String storagePath = generateStoragePath(patientCpf, file.getOriginalFilename());
+            String normalizedExamType = (examType != null && !examType.isBlank()) ? examType.trim().toUpperCase() : null;
 
             String uploadedPath = storagePort.upload(
                     storagePath,
@@ -49,6 +50,7 @@ public class UploadDocumentUseCaseImpl implements UploadDocumentUseCase {
                     file.getContentType(),
                     file.getSize(),
                     type,
+                    normalizedExamType,
                     uploadedPath
             );
 

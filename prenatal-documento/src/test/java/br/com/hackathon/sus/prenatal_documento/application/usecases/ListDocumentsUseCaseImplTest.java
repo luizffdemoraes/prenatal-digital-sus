@@ -89,17 +89,18 @@ class ListDocumentsUseCaseImplTest {
     }
 
     private MedicalDocument createDocument(String fileName, DocumentType type) {
-        MedicalDocument document = new MedicalDocument(
+        MedicalDocument doc = new MedicalDocument(
                 PATIENT_CPF,
                 fileName,
                 fileName,
                 "application/pdf",
                 1024L,
                 type,
+                null,
                 "prenatal-records/" + PATIENT_CPF + "/" + fileName
         );
-        document.setId(UUID.randomUUID());
-        document.setActive(true);
-        return document;
+        doc.setId(UUID.randomUUID());
+        doc.setActive(true);
+        return doc;
     }
 }

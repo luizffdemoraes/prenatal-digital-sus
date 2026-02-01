@@ -117,7 +117,7 @@ class CreateAppointmentUseCaseImpTest {
             when(appointmentGateway.buscarConsultasAgendadas(MEDICO_ID, data, HORARIO)).thenReturn(List.of());
 
             CreateAppointmentRequest req = new CreateAppointmentRequest("Maria", "12345678900", "Dr. João", "Obstetrícia", "CRM-SP 123", data, HORARIO);
-            Appointment consultaSalva = new Appointment(GESTANTE_ID, MEDICO_ID, UNIDADE_ID, data, HORARIO);
+            Appointment consultaSalva = new Appointment(GESTANTE_ID, "12345678900", MEDICO_ID, UNIDADE_ID, data, HORARIO);
             consultaSalva.setId(100L);
             when(appointmentGateway.salvar(any(Appointment.class))).thenReturn(consultaSalva);
 
@@ -206,7 +206,7 @@ class CreateAppointmentUseCaseImpTest {
                     LocalTime.of(8, 0), LocalTime.of(12, 0), 30);
             when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.of(agenda));
 
-            Appointment existente = new Appointment(99L, GESTANTE_ID, MEDICO_ID, UNIDADE_ID, data, HORARIO, br.com.hackathon.sus.prenatal_agenda.domain.entities.AppointmentStatus.AGENDADA, null, java.time.LocalDateTime.now(), null);
+            Appointment existente = new Appointment(99L, GESTANTE_ID, null, MEDICO_ID, UNIDADE_ID, data, HORARIO, br.com.hackathon.sus.prenatal_agenda.domain.entities.AppointmentStatus.AGENDADA, null, java.time.LocalDateTime.now(), null);
             when(appointmentGateway.buscarConsultasAgendadas(MEDICO_ID, data, HORARIO)).thenReturn(List.of(existente));
 
             assertThrows(IllegalArgumentException.class, () ->

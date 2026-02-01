@@ -11,6 +11,7 @@ import java.time.LocalTime;
 public class Appointment {
     private Long id;
     private Long gestanteId;
+    private String cpf;
     private Long medicoId;
     private Long unidadeId;
     private LocalDate data;
@@ -20,8 +21,9 @@ public class Appointment {
     private LocalDateTime dataAgendamento;
     private LocalDateTime dataCancelamento;
 
-    public Appointment(Long gestanteId, Long medicoId, Long unidadeId, LocalDate data, LocalTime horario) {
+    public Appointment(Long gestanteId, String cpf, Long medicoId, Long unidadeId, LocalDate data, LocalTime horario) {
         this.gestanteId = gestanteId;
+        this.cpf = (cpf != null) ? cpf.replaceAll("\\D", "") : null;
         this.medicoId = medicoId;
         this.unidadeId = unidadeId;
         this.data = data;
@@ -31,12 +33,13 @@ public class Appointment {
         validar();
     }
 
-    public Appointment(Long id, Long gestanteId, Long medicoId, Long unidadeId,
+    public Appointment(Long id, Long gestanteId, String cpf, Long medicoId, Long unidadeId,
                        LocalDate data, LocalTime horario, AppointmentStatus status,
                        CancellationReason motivoCancelamento, LocalDateTime dataAgendamento,
                        LocalDateTime dataCancelamento) {
         this.id = id;
         this.gestanteId = gestanteId;
+        this.cpf = cpf;
         this.medicoId = medicoId;
         this.unidadeId = unidadeId;
         this.data = data;
@@ -73,6 +76,8 @@ public class Appointment {
     public void setId(Long id) { this.id = id; }
     public Long getGestanteId() { return gestanteId; }
     public void setGestanteId(Long gestanteId) { this.gestanteId = gestanteId; }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
     public Long getMedicoId() { return medicoId; }
     public void setMedicoId(Long medicoId) { this.medicoId = medicoId; }
     public Long getUnidadeId() { return unidadeId; }

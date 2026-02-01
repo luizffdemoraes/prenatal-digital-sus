@@ -28,11 +28,12 @@ CREATE TABLE agenda.agenda_dias_atendimento
     CONSTRAINT check_dia_semana_valido CHECK (dia_semana IN ('SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO'))
 );
 
--- Tabela de consultas
+-- Tabela de consultas (cpf permite filtro direto pela IA)
 CREATE TABLE agenda.consulta
 (
     id                    BIGSERIAL PRIMARY KEY,
     gestante_id           BIGINT       NOT NULL,
+    cpf                  VARCHAR(14),
     medico_id             BIGINT       NOT NULL,
     unidade_id            BIGINT       NOT NULL,
     data                  DATE         NOT NULL,
@@ -53,6 +54,7 @@ CREATE TABLE agenda.consulta
 CREATE INDEX idx_agenda_medico_medico_id ON agenda.agenda_medico (medico_id);
 CREATE INDEX idx_agenda_medico_unidade_id ON agenda.agenda_medico (unidade_id);
 CREATE INDEX idx_consulta_gestante_id ON agenda.consulta (gestante_id);
+CREATE INDEX idx_consulta_cpf ON agenda.consulta (cpf);
 CREATE INDEX idx_consulta_medico_id ON agenda.consulta (medico_id);
 CREATE INDEX idx_consulta_data ON agenda.consulta (data);
 CREATE INDEX idx_consulta_medico_data_status ON agenda.consulta (medico_id, data, status);

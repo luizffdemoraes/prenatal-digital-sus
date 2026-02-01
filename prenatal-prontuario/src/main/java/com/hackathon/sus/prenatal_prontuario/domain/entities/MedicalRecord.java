@@ -33,6 +33,9 @@ public class MedicalRecord {
     private String notes;
     private DeliveryType deliveryType;
     private LocalDateTime createdAt;
+    private String patientEmail;
+    private String doctorName;
+    private String doctorEmail;
 
     /**
      * Cria prontuário a partir dos dados da primeira consulta (modelo por CPF).
@@ -42,7 +45,8 @@ public class MedicalRecord {
             String cpf, String fullName, LocalDate dateOfBirth, LocalDate lastMenstrualPeriod,
             PregnancyType pregnancyType, Integer previousPregnancies, Integer previousDeliveries, Integer previousAbortions,
             Boolean highRiskPregnancy, String highRiskReason, List<RiskFactor> riskFactors,
-            Boolean vitaminUse, Boolean aspirinUse, String notes, DeliveryType deliveryType, LocalDate referenceDate) {
+            Boolean vitaminUse, Boolean aspirinUse, String notes, DeliveryType deliveryType, LocalDate referenceDate,
+            String patientEmail, String doctorName, String doctorEmail) {
         if (cpf == null || cpf.isBlank()) throw new IllegalArgumentException("CPF é obrigatório");
         if (lastMenstrualPeriod == null) throw new IllegalArgumentException("dataUltimaMenstruacao é obrigatória");
         LocalDate ref = referenceDate != null ? referenceDate : LocalDate.now();
@@ -71,7 +75,10 @@ public class MedicalRecord {
                 aspirinUse != null ? aspirinUse : false,
                 notes,
                 deliveryType,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                patientEmail,
+                doctorName,
+                doctorEmail
         );
     }
 
@@ -81,7 +88,8 @@ public class MedicalRecord {
                          LocalDate lastMenstrualPeriod, Integer gestationalAgeWeeks, PregnancyType pregnancyType,
                          Integer previousPregnancies, Integer previousDeliveries, Integer previousAbortions,
                          Boolean highRiskPregnancy, String highRiskReason, List<RiskFactor> riskFactors,
-                         Boolean vitaminUse, Boolean aspirinUse, String notes, DeliveryType deliveryType, LocalDateTime createdAt) {
+                         Boolean vitaminUse, Boolean aspirinUse, String notes, DeliveryType deliveryType, LocalDateTime createdAt,
+                         String patientEmail, String doctorName, String doctorEmail) {
         this.id = id;
         this.cpf = cpf;
         this.fullName = fullName;
@@ -102,6 +110,9 @@ public class MedicalRecord {
         this.notes = notes;
         this.deliveryType = deliveryType;
         this.createdAt = createdAt != null ? createdAt : LocalDateTime.now();
+        this.patientEmail = patientEmail;
+        this.doctorName = doctorName;
+        this.doctorEmail = doctorEmail;
         validate();
     }
 
@@ -116,6 +127,12 @@ public class MedicalRecord {
         if (aspirinUse != null) this.aspirinUse = aspirinUse;
         if (notes != null) this.notes = notes;
         if (deliveryType != null) this.deliveryType = deliveryType;
+    }
+
+    public void updateContactAndDoctorData(String patientEmail, String doctorName, String doctorEmail) {
+        if (patientEmail != null) this.patientEmail = patientEmail;
+        if (doctorName != null) this.doctorName = doctorName;
+        if (doctorEmail != null) this.doctorEmail = doctorEmail;
     }
 
     public void updateRiskFactors(List<RiskFactor> riskFactors) {
@@ -146,4 +163,10 @@ public class MedicalRecord {
     public String getNotes() { return notes; }
     public DeliveryType getDeliveryType() { return deliveryType; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public String getPatientEmail() { return patientEmail; }
+    public void setPatientEmail(String patientEmail) { this.patientEmail = patientEmail; }
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+    public String getDoctorEmail() { return doctorEmail; }
+    public void setDoctorEmail(String doctorEmail) { this.doctorEmail = doctorEmail; }
 }

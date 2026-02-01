@@ -58,6 +58,7 @@ public class MedicalDocumentRepositoryImpl implements MedicalDocumentRepository 
         entity.setContentType(domain.getContentType());
         entity.setFileSize(domain.getFileSize());
         entity.setDocumentType(domain.getDocumentType());
+        entity.setExamType(domain.getExamType());
         entity.setStoragePath(domain.getStoragePath());
         entity.setActive(domain.getActive());
         entity.setCreatedAt(domain.getCreatedAt());
@@ -75,6 +76,7 @@ public class MedicalDocumentRepositoryImpl implements MedicalDocumentRepository 
         domain.setContentType(entity.getContentType());
         domain.setFileSize(entity.getFileSize());
         domain.setDocumentType(entity.getDocumentType());
+        domain.setExamType(entity.getExamType());
         domain.setStoragePath(entity.getStoragePath());
         domain.setActive(entity.getActive());
         domain.setCreatedAt(entity.getCreatedAt());

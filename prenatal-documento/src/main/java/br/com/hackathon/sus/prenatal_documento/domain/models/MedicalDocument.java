@@ -13,6 +13,7 @@ public class MedicalDocument {
     private String contentType;
     private Long fileSize;
     private DocumentType documentType;
+    private String examType;
     private String storagePath;
     private Boolean active;
     private LocalDateTime createdAt;
@@ -25,7 +26,7 @@ public class MedicalDocument {
     }
 
     public MedicalDocument(String patientCpf, String fileName, String originalFileName,
-                          String contentType, Long fileSize, DocumentType documentType, String storagePath) {
+                          String contentType, Long fileSize, DocumentType documentType, String examType, String storagePath) {
         this();
         this.patientCpf = patientCpf;
         this.fileName = fileName;
@@ -33,6 +34,7 @@ public class MedicalDocument {
         this.contentType = contentType;
         this.fileSize = fileSize;
         this.documentType = documentType;
+        this.examType = examType;
         this.storagePath = storagePath;
     }
 
@@ -90,6 +92,14 @@ public class MedicalDocument {
 
     public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
+    }
+
+    public String getExamType() {
+        return examType;
+    }
+
+    public void setExamType(String examType) {
+        this.examType = examType;
     }
 
     public String getStoragePath() {
