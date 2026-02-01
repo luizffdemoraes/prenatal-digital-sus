@@ -32,8 +32,11 @@ class DeleteDoctorScheduleUseCaseImpTest {
 
     private DeleteDoctorScheduleUseCaseImp useCase;
 
+    private static final String CRM = "12345";
     private static final Long MEDICO_ID = 1L;
-    private static final Long AGENDA_ID = 10L;
+    private static final Set<Weekday> DIAS = Set.of(Weekday.SEGUNDA, Weekday.QUARTA);
+    private static final LocalTime INICIO = LocalTime.of(8, 0);
+    private static final LocalTime FIM = LocalTime.of(12, 0);
 
     @BeforeEach
     void setUp() {
@@ -41,43 +44,48 @@ class DeleteDoctorScheduleUseCaseImpTest {
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando médico não encontrado")
-    void deveLancarQuandoMedicoNaoEncontrado() {
-        when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.empty());
+    @DisplayName("Deve lançar exceção quando médico não encontrado por CRM")
+    void shouldThrowWhenDoctorNotFound() {
+        when(doctorGateway.buscarPorCrm(CRM)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> useCase.execute("CRM-X"));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> useCase.execute(CRM));
+        assertTrue(ex.getMessage().contains("Médico não encontrado"));
+        verify(doctorScheduleGateway, never()).excluirPorId(any());
     }
 
     @Test
     @DisplayName("Deve lançar exceção quando agenda não encontrada")
     void shouldThrowWhenScheduleNotFound() {
-        when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(MEDICO_ID));
+        when(doctorGateway.buscarPorCrm(CRM)).thenReturn(Optional.of(MEDICO_ID));
         when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> useCase.execute("CRM-X"));
+        assertThrows(IllegalArgumentException.class, () -> useCase.execute(CRM));
+        verify(doctorScheduleGateway, never()).excluirPorId(any());
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando existem consultas agendadas para o médico")
-    void deveLancarQuandoExistemConsultasAgendadas() {
-        when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(MEDICO_ID));
-        DoctorSchedule agenda = new DoctorSchedule(AGENDA_ID, MEDICO_ID, 2L, Set.of(Weekday.SEGUNDA), LocalTime.of(8, 0), LocalTime.of(12, 0), 30);
-        when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.of(agenda));
+    @DisplayName("Deve lançar exceção quando existem consultas agendadas")
+    void shouldThrowWhenAppointmentsExist() {
+        DoctorSchedule schedule = new DoctorSchedule(100L, MEDICO_ID, 1L, DIAS, INICIO, FIM, 30);
+        when(doctorGateway.buscarPorCrm(CRM)).thenReturn(Optional.of(MEDICO_ID));
+        when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.of(schedule));
         when(appointmentGateway.existeAgendamentoPorMedico(MEDICO_ID)).thenReturn(true);
 
-        assertThrows(IllegalStateException.class, () -> useCase.execute("CRM-X"));
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> useCase.execute(CRM));
+        assertTrue(ex.getMessage().contains("consultas agendadas"));
+        verify(doctorScheduleGateway, never()).excluirPorId(any());
     }
 
     @Test
-    @DisplayName("Deve excluir agenda com sucesso quando não há consultas agendadas")
+    @DisplayName("Deve excluir agenda com sucesso")
     void shouldDeleteSuccessfully() {
-        when(doctorGateway.buscarPorCrm("CRM-X")).thenReturn(Optional.of(MEDICO_ID));
-        DoctorSchedule agenda = new DoctorSchedule(AGENDA_ID, MEDICO_ID, 2L, Set.of(Weekday.SEGUNDA), LocalTime.of(8, 0), LocalTime.of(12, 0), 30);
-        when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.of(agenda));
+        DoctorSchedule schedule = new DoctorSchedule(100L, MEDICO_ID, 1L, DIAS, INICIO, FIM, 30);
+        when(doctorGateway.buscarPorCrm(CRM)).thenReturn(Optional.of(MEDICO_ID));
+        when(doctorScheduleGateway.buscarPorMedicoId(MEDICO_ID)).thenReturn(Optional.of(schedule));
         when(appointmentGateway.existeAgendamentoPorMedico(MEDICO_ID)).thenReturn(false);
 
-        useCase.execute("CRM-X");
+        useCase.execute(CRM);
 
-        verify(doctorScheduleGateway).excluirPorId(AGENDA_ID);
+        verify(doctorScheduleGateway).excluirPorId(100L);
     }
 }
