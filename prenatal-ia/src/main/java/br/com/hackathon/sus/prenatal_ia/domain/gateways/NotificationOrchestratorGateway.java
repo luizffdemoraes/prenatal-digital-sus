@@ -3,5 +3,5 @@ package br.com.hackathon.sus.prenatal_ia.domain.gateways;
 import br.com.hackathon.sus.prenatal_ia.domain.entities.PrenatalAnalysisResult;
 
 public interface NotificationOrchestratorGateway {
-    void sendToN8n(PrenatalAnalysisResult result);
+    void sendNotifications(PrenatalAnalysisResult result);
 }

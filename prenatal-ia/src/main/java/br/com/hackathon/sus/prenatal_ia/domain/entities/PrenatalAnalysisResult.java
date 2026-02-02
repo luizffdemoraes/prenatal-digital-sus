@@ -8,16 +8,25 @@ public class PrenatalAnalysisResult {
     private String patientEmail;
     private Integer gestationalWeeks;
     private List<PrenatalAlert> alerts;
+    private String doctorName;
+    private String doctorEmail;
 
     public PrenatalAnalysisResult() {
     }
 
     public PrenatalAnalysisResult(String patientId, String patientName, String patientEmail, Integer gestationalWeeks, List<PrenatalAlert> alerts) {
+        this(patientId, patientName, patientEmail, gestationalWeeks, alerts, null, null);
+    }
+
+    public PrenatalAnalysisResult(String patientId, String patientName, String patientEmail, Integer gestationalWeeks,
+                                  List<PrenatalAlert> alerts, String doctorName, String doctorEmail) {
         this.patientId = patientId;
         this.patientName = patientName;
         this.patientEmail = patientEmail;
         this.gestationalWeeks = gestationalWeeks;
         this.alerts = alerts;
+        this.doctorName = doctorName;
+        this.doctorEmail = doctorEmail;
     }
 
     public String getPatientId() { return patientId; }
@@ -30,4 +39,8 @@ public class PrenatalAnalysisResult {
     public void setGestationalWeeks(Integer gestationalWeeks) { this.gestationalWeeks = gestationalWeeks; }
     public List<PrenatalAlert> getAlerts() { return alerts; }
     public void setAlerts(List<PrenatalAlert> alerts) { this.alerts = alerts; }
+    public String getDoctorName() { return doctorName; }
+    public void setDoctorName(String doctorName) { this.doctorName = doctorName; }
+    public String getDoctorEmail() { return doctorEmail; }
+    public void setDoctorEmail(String doctorEmail) { this.doctorEmail = doctorEmail; }
 }

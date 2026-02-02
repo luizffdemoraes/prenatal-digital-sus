@@ -29,7 +29,7 @@ public class AgendaRepositoryImpl implements AgendaRepository {
         String sql = """
             SELECT c.id, c.data, c.horario, c.status
             FROM agenda.consulta c
-            WHERE REPLACE(REPLACE(REPLACE(COALESCE(c.cpf, ''), '.', ''), '-', ''), ' ') = ?
+            WHERE REPLACE(REPLACE(REPLACE(COALESCE(c.cpf, ''::text), '.'::text, ''::text), '-'::text, ''::text), ' '::text, ''::text) = ?
               AND c.status = 'AGENDADA'
               AND c.data >= CURRENT_DATE
             ORDER BY c.data, c.horario

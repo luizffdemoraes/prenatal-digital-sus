@@ -28,7 +28,7 @@ public class DocumentoRepositoryImpl implements DocumentoRepository {
         String sql = """
             SELECT COALESCE(tipo_exame, tipo_documento) AS tipo, criado_em
             FROM documento.documento_medico
-            WHERE REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), ' ') = ? AND ativo = TRUE
+            WHERE REPLACE(REPLACE(REPLACE(cpf, '.'::text, ''::text), '-'::text, ''::text), ' '::text, ''::text) = ? AND ativo = TRUE
               AND (tipo_documento = 'EXAM' OR tipo_documento = 'ULTRASOUND')
             """;
 
@@ -49,7 +49,7 @@ public class DocumentoRepositoryImpl implements DocumentoRepository {
         String sql = """
             SELECT tipo_vacina, data_aplicacao
             FROM documento.vacina
-            WHERE REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), ' ') = ?
+            WHERE REPLACE(REPLACE(REPLACE(cpf, '.'::text, ''::text), '-'::text, ''::text), ' '::text, ''::text) = ?
             """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {

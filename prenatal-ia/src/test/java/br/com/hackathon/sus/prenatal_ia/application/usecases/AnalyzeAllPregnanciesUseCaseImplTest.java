@@ -1,6 +1,31 @@
 package br.com.hackathon.sus.prenatal_ia.application.usecases;
 
-import br.com.hackathon.sus.prenatal_ia.domain.entities.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import br.com.hackathon.sus.prenatal_ia.domain.entities.AppointmentSummary;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.ExamRecord;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.PregnantPatient;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.PrenatalAlert;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.PrenatalAnalysisResult;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.VaccineRecord;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.AlertSeverity;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.AlertType;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.NotificationTarget;
@@ -8,22 +33,6 @@ import br.com.hackathon.sus.prenatal_ia.domain.gateways.NotificationOrchestrator
 import br.com.hackathon.sus.prenatal_ia.domain.repositories.AgendaRepository;
 import br.com.hackathon.sus.prenatal_ia.domain.repositories.DocumentoRepository;
 import br.com.hackathon.sus.prenatal_ia.domain.repositories.ProntuarioRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes do AnalyzeAllPregnanciesUseCaseImpl")
@@ -64,11 +73,11 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
         useCase.execute();
 
         verify(documentoRepository, never()).findExamsByCpf(any());
-        verify(notificationGateway, never()).sendToN8n(any());
+        verify(notificationGateway, never()).sendNotifications(any());
     }
 
     @Test
-    @DisplayName("não envia para n8n quando não há alertas")
+    @DisplayName("não envia notificações quando não há alertas")
     void naoEnviaQuandoSemAlertas() {
         PregnantPatient patient = new PregnantPatient("1", "Maria", "12345678900", 5, "maria@email.com", false, List.of());
         when(prontuarioRepository.findAllActivePregnancies()).thenReturn(List.of(patient));
@@ -80,7 +89,7 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
 
         useCase.execute();
 
-        verify(notificationGateway, never()).sendToN8n(any());
+        verify(notificationGateway, never()).sendNotifications(any());
     }
 
     @Test
@@ -96,7 +105,7 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
         useCase.execute();
 
         ArgumentCaptor<PrenatalAnalysisResult> captor = ArgumentCaptor.forClass(PrenatalAnalysisResult.class);
-        verify(notificationGateway).sendToN8n(captor.capture());
+        verify(notificationGateway).sendNotifications(captor.capture());
         PrenatalAnalysisResult result = captor.getValue();
 
         assertEquals("1", result.getPatientId());
@@ -126,7 +135,7 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
 
         useCase.execute();
 
-        verify(notificationGateway, never()).sendToN8n(any());
+        verify(notificationGateway, never()).sendNotifications(any());
     }
 
     @Test
@@ -143,7 +152,7 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
         useCase.execute();
 
         ArgumentCaptor<PrenatalAnalysisResult> captor = ArgumentCaptor.forClass(PrenatalAnalysisResult.class);
-        verify(notificationGateway).sendToN8n(captor.capture());
+        verify(notificationGateway).sendNotifications(captor.capture());
         PrenatalAlert alertaVacina = captor.getValue().getAlerts().stream()
                 .filter(a -> a.getMessage().contains("antitetânica"))
                 .findFirst().orElse(null);
@@ -164,7 +173,7 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
         useCase.execute();
 
         ArgumentCaptor<PrenatalAnalysisResult> captor = ArgumentCaptor.forClass(PrenatalAnalysisResult.class);
-        verify(notificationGateway).sendToN8n(captor.capture());
+        verify(notificationGateway).sendNotifications(captor.capture());
         PrenatalAlert alertaConsulta = captor.getValue().getAlerts().stream()
                 .filter(a -> a.getMessage().contains("consulta"))
                 .findFirst().orElse(null);
@@ -188,7 +197,7 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
         useCase.execute();
 
         ArgumentCaptor<PrenatalAnalysisResult> captor = ArgumentCaptor.forClass(PrenatalAnalysisResult.class);
-        verify(notificationGateway).sendToN8n(captor.capture());
+        verify(notificationGateway).sendNotifications(captor.capture());
         PrenatalAlert alertaCurva = captor.getValue().getAlerts().stream()
                 .filter(a -> a.getMessage().contains("glicêmica"))
                 .findFirst().orElse(null);
@@ -210,7 +219,7 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
 
         useCase.execute();
 
-        verify(notificationGateway, never()).sendToN8n(any());
+        verify(notificationGateway, never()).sendNotifications(any());
     }
 
     @Test

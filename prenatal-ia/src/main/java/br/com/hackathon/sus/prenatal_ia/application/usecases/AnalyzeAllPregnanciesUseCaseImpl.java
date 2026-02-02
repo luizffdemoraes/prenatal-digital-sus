@@ -1,15 +1,25 @@
 package br.com.hackathon.sus.prenatal_ia.application.usecases;
 
-import br.com.hackathon.sus.prenatal_ia.domain.entities.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import br.com.hackathon.sus.prenatal_ia.domain.entities.AppointmentSummary;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.ExamRecord;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.PregnantPatient;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.PrenatalAlert;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.PrenatalAnalysisResult;
+import br.com.hackathon.sus.prenatal_ia.domain.entities.VaccineRecord;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.AlertSeverity;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.AlertType;
 import br.com.hackathon.sus.prenatal_ia.domain.enums.NotificationTarget;
 import br.com.hackathon.sus.prenatal_ia.domain.gateways.NotificationOrchestratorGateway;
-import br.com.hackathon.sus.prenatal_ia.domain.repositories.*;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
+import br.com.hackathon.sus.prenatal_ia.domain.repositories.AgendaRepository;
+import br.com.hackathon.sus.prenatal_ia.domain.repositories.DocumentoRepository;
+import br.com.hackathon.sus.prenatal_ia.domain.repositories.ProntuarioRepository;
 
 @Service
 public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUseCase {
@@ -24,6 +34,8 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
     private final DocumentoRepository documentoRepository;
     private final NotificationOrchestratorGateway notificationGateway;
 
+    private static final Logger log = LoggerFactory.getLogger(AnalyzeAllPregnanciesUseCaseImpl.class);
+
     public AnalyzeAllPregnanciesUseCaseImpl(ProntuarioRepository prontuarioRepository, AgendaRepository agendaRepository,
             DocumentoRepository documentoRepository, NotificationOrchestratorGateway notificationGateway) {
         this.prontuarioRepository = prontuarioRepository;
@@ -35,6 +47,7 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
     @Override
     public void execute() {
         List<PregnantPatient> patients = prontuarioRepository.findAllActivePregnancies();
+        log.info("Análise de gestações: {} paciente(s) ativo(s) no prontuário.", patients.size());
         for (PregnantPatient patient : patients) {
             processPatient(patient);
         }
@@ -42,7 +55,10 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
 
     private void processPatient(PregnantPatient patient) {
         String cpf = patient.getCpf() != null ? patient.getCpf().replaceAll("\\D", "") : null;
-        if (cpf == null || cpf.length() != 11) return;
+        if (cpf == null || cpf.length() != 11) {
+            log.debug("Paciente {} ignorado: CPF inválido ou ausente.", patient.getId());
+            return;
+        }
 
         List<ExamRecord> exams = documentoRepository.findExamsByCpf(cpf);
         List<VaccineRecord> vaccines = documentoRepository.findVaccinesByCpf(cpf);
@@ -53,15 +69,19 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
         if (alerts.isEmpty()) return;
 
         String patientEmail = patient.getEmail();
+        String doctorName = patient.getDoctorName();
+        String doctorEmail = patient.getDoctorEmail();
 
         PrenatalAnalysisResult result = new PrenatalAnalysisResult(
                 patient.getId(),
                 patient.getName(),
                 patientEmail,
                 patient.getGestationalWeeks(),
-                alerts);
+                alerts,
+                doctorName,
+                doctorEmail);
 
-        notificationGateway.sendToN8n(result);
+        notificationGateway.sendNotifications(result);
     }
 
     private List<PrenatalAlert> applyRules(

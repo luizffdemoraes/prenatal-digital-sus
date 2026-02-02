@@ -17,7 +17,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const input = $input.first().json;\nconst alerts = input.alerts || [];\nconst patientAlerts = alerts.filter(a => a.target === 'PATIENT');\nconst professionalAlerts = alerts.filter(a => a.target === 'PROFESSIONAL');\n\nreturn [{\n  json: {\n    ...input,\n    patientAlerts,\n    professionalAlerts,\n    hasPatientAlerts: patientAlerts.length > 0,\n    hasProfessionalAlerts: professionalAlerts.length > 0,\n    patientMessage: patientAlerts.map(a => `• ${a.message}`).join('\\n'),\n    professionalMessage: professionalAlerts.map(a => `• ${a.message} [${a.severity}]`).join('\\n')\n  }\n}];"
+        "jsCode": "const input = $input.first().json;\nconst alerts = input.alerts || [];\nconst patientAlerts = alerts.filter(a => a.target === 'PATIENT');\nconst professionalAlerts = alerts.filter(a => a.target === 'PROFESSIONAL');\nconst patientEmail = (input.patientEmail && String(input.patientEmail).trim()) || '';\nconst hasValidPatientEmail = patientEmail.length > 0;\nreturn [{\n  json: {\n    ...input,\n    patientAlerts,\n    professionalAlerts,\n    hasPatientAlerts: patientAlerts.length > 0,\n    hasProfessionalAlerts: professionalAlerts.length > 0,\n    hasValidPatientEmail,\n    patientMessage: patientAlerts.map(a => `• ${a.message}`).join('\\n'),\n    professionalMessage: professionalAlerts.map(a => `• ${a.message} [${a.severity}]`).join('\\n')\n  }\n}];"
       },
       "id": "code-node",
       "name": "Classificar alertas",
@@ -42,6 +42,15 @@
                 "type": "boolean",
                 "operation": "equals"
               }
+            },
+            {
+              "id": "cond-patient-email",
+              "leftValue": "={{ $json.hasValidPatientEmail }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
             }
           ],
           "combinator": "and"
@@ -60,13 +69,14 @@
         "toEmail": "={{ $json.patientEmail }}",
         "subject": "=Exame importante do pré-natal pendente - {{ $json.patientName }}",
         "emailFormat": "text",
-        "message": "=Olá {{ $json.patientName }},\n\nIdentificamos pendências no seu acompanhamento pré-natal ({{ $json.gestationalWeeks }}ª semana):\n\n{{ $json.patientMessage }}\n\nProcure sua unidade de saúde para agendar os procedimentos.\n\n— Prenatal Digital SUS"
+        "text": "=Olá {{ $json.patientName }},\n\nIdentificamos pendências no seu acompanhamento pré-natal ({{ $json.gestationalWeeks }}ª semana):\n\n{{ $json.patientMessage }}\n\nProcure sua unidade de saúde para agendar os procedimentos.\n\n— Prenatal Digital SUS"
       },
       "id": "email-patient-node",
       "name": "Email para gestante",
-      "type": "n8n-nodes-base.sendEmail",
+      "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
-      "position": [910, 100]
+      "position": [910, 100],
+      "credentials": { "smtp": { "name": "smtp" } }
     },
     {
       "parameters": {
@@ -103,13 +113,14 @@
         "toEmail": "={{ $env.SMTP_EMAIL }}",
         "subject": "=Alerta pré-natal - {{ $json.patientName }} ({{ $json.patientId }})",
         "emailFormat": "text",
-        "message": "=Alerta clínico - gestante {{ $json.patientName }} ({{ $json.gestationalWeeks }}ª semana):\n\n{{ $json.professionalMessage }}\n\nAção recomendada: verificar prontuário e contatar a gestante.\n\n— Prenatal Digital SUS"
+        "text": "=Alerta clínico - gestante {{ $json.patientName }} ({{ $json.gestationalWeeks }}ª semana):\n\n{{ $json.professionalMessage }}\n\nAção recomendada: verificar prontuário e contatar a gestante.\n\n— Prenatal Digital SUS"
       },
       "id": "email-professional-node",
       "name": "Email para profissional",
-      "type": "n8n-nodes-base.sendEmail",
+      "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
-      "position": [910, 500]
+      "position": [910, 500],
+      "credentials": { "smtp": { "name": "smtp" } }
     },
     {
       "parameters": {
