@@ -1,0 +1,54 @@
+# Stack: prenatal-alertas. Envio de e-mail direto por SMTP (sem n8n).
+# Para plena comunicação com prontuário/agenda/documento, o prenatal-alertas conecta
+# por padrão no Postgres do HOST (porta 5432), onde estão os dados.
+# Uso: suba o Postgres do projeto principal (porta 5432) e depois: docker compose up --build
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: prenatal-alertas-postgres
+    environment:
+      POSTGRES_DB: prenatal_digital_sus
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d prenatal_digital_sus"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    profiles:
+      - fullstack
+    # Use o profile fullstack só se quiser Postgres local (5433) sem dados do prontuário.
+
+  prenatal-alertas:
+    build: .
+    container_name: prenatal-alertas-app
+    ports:
+      - "8083:8083"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      SERVER_PORT: 8083
+      SMTP_EMAIL: ${SMTP_EMAIL:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      # Conecta no Postgres do host (porta 5432) onde estão prontuário/agenda/documento.
+      # Para usar o Postgres deste compose (5433), use: docker compose --profile fullstack up e DATASOURCE_URL=jdbc:postgresql://postgres:5432/prenatal_digital_sus
+      DATASOURCE_URL: ${DATASOURCE_URL:-jdbc:postgresql://host.docker.internal:5432/prenatal_digital_sus}
+      DATASOURCE_USERNAME: ${DATASOURCE_USERNAME:-postgres}
+      DATASOURCE_PASSWORD: ${DATASOURCE_PASSWORD:-password}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8083/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      start_period: 60s
+      retries: 5
+
+volumes:
+  postgres_data:

@@ -1,0 +1,21 @@
+package br.com.hackathon.sus.prenatal_alertas.domain.entities;
+
+import java.time.LocalDate;
+
+public class ExamRecord {
+    private String type;
+    private LocalDate date;
+
+    public ExamRecord() {
+    }
+
+    public ExamRecord(String type, LocalDate date) {
+        this.type = type;
+        this.date = date;
+    }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+    public LocalDate getDate() { return date; }
+    public void setDate(LocalDate date) { this.date = date; }
+}
