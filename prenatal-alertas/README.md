@@ -65,7 +65,7 @@ Para **receber e-mails**, verifique:
    A análise usa gestações ativas em `prontuario.prontuario` (CPF válido, idade gestacional 1–44), exames/vacinas em `documento` e consultas em `agenda`. Só há envio quando **há pelo menos um alerta** (ex.: ultrassom morfológico pendente, vacina pendente, consulta não agendada). Nos logs: *"Análise de gestações: X paciente(s) ativo(s)"* e *"E-mail enviado diretamente (SMTP) para ..."*.
 
 3. **E-mail da gestante no prontuário.**  
-   O app envia para **`prontuario.prontuario.email_paciente`** (o mesmo que o cadastro expõe como **emailPaciente**). O prenatal-alertas precisa usar o **mesmo banco** em que o serviço de prontuário gravou os dados. Para conferir o que está no banco: `scripts/definir-email-gestante-tuamaeaquelaursa.sql` (apenas SELECT).
+   O app envia para **`prontuario.prontuario.email_paciente`** (o mesmo que o cadastro expõe como **emailPaciente**). O prenatal-alertas precisa usar o **mesmo banco** em que o serviço de prontuário gravou os dados. Para conferir o que está no banco: `scripts/verificar-email-gestante.sql` (apenas SELECT).
 
 4. **Gmail: usar Senha de app.**  
    Se o SMTP for Gmail (`smtp.gmail.com`), **SMTP_PASSWORD** deve ser uma **Senha de app**, não a senha normal da conta. [Conta Google](https://myaccount.google.com/) → Segurança → Verificação em 2 etapas → Senhas de app.

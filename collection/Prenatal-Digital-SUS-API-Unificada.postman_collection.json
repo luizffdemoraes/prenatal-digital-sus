@@ -1,0 +1,1621 @@
+{
+    "item":  [
+                 {
+                     "name":  "Prenatal Agenda",
+                     "item":  [
+                                  {
+                                      "name":  "Health Check",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Verificar Status da API",
+                                                       "request":  {
+                                                                       "auth":  {
+                                                                                    "type":  "noauth"
+                                                                                },
+                                                                       "method":  "GET",
+                                                                       "header":  [
+
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/actuator/health",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "actuator",
+                                                                                                "health"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Verifica o status de saúde da aplicaÃ§Ã£o. Rota pÃºblica â€” nÃ£o requer autenticação (sem Bearer)."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  },
+                                  {
+                                      "name":  "Agenda MÃ©dico",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Criar Agenda do MÃ©dico",
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n    \"crm\": \"12345\",\n    \"medicoNome\": \"Dr. Pedro Souza\",\n    \"especialidade\": \"Obstetrícia\",\n    \"unidadeId\": 1,\n    \"diasAtendimento\": [\"SEGUNDA\", \"TERCA\", \"QUARTA\", \"QUINTA\", \"SEXTA\"],\n    \"horarioInicio\": \"08:00\",\n    \"horarioFim\": \"17:00\",\n    \"duracaoConsultaMinutos\": 30\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/agendas/medico",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "agendas",
+                                                                                                "medico"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Cria a agenda semanal de um mÃ©dico. Requer ROLE_DOCTOR ou ROLE_NURSE.\n\n- crm, medicoNome, especialidade: obrigatórios (mÃ©dico identificado por CRM).\n- unidadeId, diasAtendimento, horarioInicio, horarioFim, duracaoConsultaMinutos.\n\nStub: CRM 12345 ou 123456 â†’ medico_id=1. Dias: SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO, DOMINGO."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Buscar Agenda por MÃ©dico (CRM)",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/agendas/medico/{{crm}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "agendas",
+                                                                                                "medico",
+                                                                                                "{{crm}}"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Busca a agenda de um mÃ©dico pelo CRM. Requer ROLE_DOCTOR, ROLE_NURSE ou ROLE_PATIENT (gestantes consultam agendas para escolher mÃ©dico). Stub: 12345 ou 123456."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Atualizar Agenda do MÃ©dico",
+                                                       "request":  {
+                                                                       "method":  "PUT",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n    \"unidadeId\": 1,\n    \"diasAtendimento\": [\"SEGUNDA\", \"TERCA\", \"QUARTA\", \"QUINTA\"],\n    \"horarioInicio\": \"09:00\",\n    \"horarioFim\": \"16:00\",\n    \"duracaoConsultaMinutos\": 30\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/agendas/medico/{{crm}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "agendas",
+                                                                                                "medico",
+                                                                                                "{{crm}}"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Altera a agenda semanal do mÃ©dico. Requer ROLE_DOCTOR ou ROLE_NURSE. CRM na URL. Body: unidadeId, diasAtendimento, horarioInicio, horarioFim, duracaoConsultaMinutos."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Excluir Agenda do MÃ©dico",
+                                                       "request":  {
+                                                                       "method":  "DELETE",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/agendas/medico/{{crm}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "agendas",
+                                                                                                "medico",
+                                                                                                "{{crm}}"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Exclui a agenda do mÃ©dico. Requer ROLE_DOCTOR ou ROLE_NURSE. CRM na URL. SÃ³ Ã© permitido se nÃ£o houver consultas agendadas (status AGENDADA) para o mÃ©dico; caso contrÃ¡rio retorna 400. Retorna 204 quando excluÃ­da."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  },
+                                  {
+                                      "name":  "Consultas",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Agendar Consulta",
+                                                       "event":  [
+                                                                     {
+                                                                         "listen":  "test",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "if (pm.response.code === 201) {",
+                                                                                                     "    var jsonData = pm.response.json();",
+                                                                                                     "    pm.environment.set(\"consulta_id\", jsonData.id);",
+                                                                                                     "    console.log(\"Consulta agendada com ID: \" + jsonData.id);",
+                                                                                                     "}"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript"
+                                                                                    }
+                                                                     }
+                                                                 ],
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "X-Unidade-Id",
+                                                                                          "value":  "{{unidade_id}}",
+                                                                                          "description":  "ID da UBS que estÃ¡ realizando o agendamento"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n    \"gestanteNome\": \"Maria Silva\",\n    \"gestanteCpf\": \"111.111.111-11\",\n    \"especialidade\": \"Obstetrícia\",\n    \"data\": \"2026-01-28\",\n    \"horario\": \"09:00\"\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/consultas/agendar",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "consultas",
+                                                                                                "agendar"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Agenda uma consulta (MVP). Requer ROLE_PATIENT ou ROLE_NURSE.\n\n- Header X-Unidade-Id: UBS que realiza o agendamento (obrigatÃ³rio).\n- Gestante: gestanteNome e gestanteCpf (obrigatórios).\n- MÃ©dico: medicoNome OU especialidade OU crm (um deles).\n- data, horario (obrigatórios).\n\nStub: CPF 111.111.111-11; especialidade Obstetrícia/Obstetra/Prenatal ou nome Dr. JoÃ£o/Silva ou CRM 12345 â†’ 1."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Cancelar Consulta",
+                                                       "request":  {
+                                                                       "method":  "DELETE",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/consultas/{{consulta_id}}/cancelar?motivo=GESTANTE_DESISTIU",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "consultas",
+                                                                                                "{{consulta_id}}",
+                                                                                                "cancelar"
+                                                                                            ],
+                                                                                   "query":  [
+                                                                                                 {
+                                                                                                     "key":  "motivo",
+                                                                                                     "value":  "GESTANTE_DESISTIU",
+                                                                                                     "description":  "Motivos disponÃ­veis: GESTANTE_DESISTIU, MEDICO_INDISPONIVEL, EMERGENCIA, OUTRO"
+                                                                                                 }
+                                                                                             ]
+                                                                               },
+                                                                       "description":  "Cancela uma consulta agendada. Requer permissÃ£o ROLE_PATIENT, ROLE_NURSE ou ROLE_DOCTOR.\n\nMotivos disponÃ­veis:\n- GESTANTE_DESISTIU\n- MEDICO_INDISPONIVEL\n- EMERGENCIA\n- OUTRO"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  },
+                                  {
+                                      "name":  "Gestantes",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Consultar Consultas por CPF (prÃ³pria agenda)",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/gestantes/consultas?cpf={{cpf}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "gestantes",
+                                                                                                "consultas"
+                                                                                            ],
+                                                                                   "query":  [
+                                                                                                 {
+                                                                                                     "key":  "cpf",
+                                                                                                     "value":  "{{cpf}}",
+                                                                                                     "description":  "CPF da gestante (prÃ³pria agenda)"
+                                                                                                 }
+                                                                                             ]
+                                                                               },
+                                                                       "description":  "Consulta a prÃ³pria agenda (consultas agendadas) da gestante por CPF. Gestantes, Enfermeiras e MÃ©dicos. Stub: 111.111.111-11 ou 11111111111."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Listar Consultas por gestanteId",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/gestantes/{{gestante_id}}/consultas",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "gestantes",
+                                                                                                "{{gestante_id}}",
+                                                                                                "consultas"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Lista consultas por ID da gestante (apoio). Preferir \u0027Consultar por CPF\u0027 quando a gestante nÃ£o souber o ID. ROLE_PATIENT, ROLE_NURSE, ROLE_DOCTOR."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  },
+                                  {
+                                      "name":  "Disponibilidade",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Consultar HorÃ¡rios DisponÃ­veis",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_agenda}}/api/disponibilidade?crm={{crm}}\u0026data={{data_consulta}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_agenda}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "disponibilidade"
+                                                                                            ],
+                                                                                   "query":  [
+                                                                                                 {
+                                                                                                     "key":  "crm",
+                                                                                                     "value":  "{{crm}}",
+                                                                                                     "description":  "CRM do mÃ©dico (ex.: 12345)"
+                                                                                                 },
+                                                                                                 {
+                                                                                                     "key":  "data",
+                                                                                                     "value":  "{{data_consulta}}",
+                                                                                                     "description":  "Data no formato yyyy-MM-dd (ex: 2026-01-28)"
+                                                                                                 }
+                                                                                             ]
+                                                                               },
+                                                                       "description":  "Consulta os horÃ¡rios disponÃ­veis de um mÃ©dico em uma data. ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT.\n\n- crm: CRM do mÃ©dico (identificaÃ§Ã£o por CRM, nÃ£o por ID).\n- data: yyyy-MM-dd.\n\nResposta: medicoNome, especialidade, data, horariosDisponiveis[]. Ex.: {\"medicoNome\":\"Dr. JoÃ£o\",\"especialidade\":\"Obstetrícia\",\"data\":\"2026-01-28\",\"horariosDisponiveis\":[\"08:00\",\"08:30\",...]}\n\n404 se CRM nÃ£o encontrado."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Prenatal Auth",
+                     "item":  [
+                                  {
+                                      "name":  "Health Check",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Verificar Status da API",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/actuator/health",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "actuator",
+                                                                                                "health"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Verifica o status de saúde da aplicaÃ§Ã£o. NÃ£o requer autenticação."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  },
+                                  {
+                                      "name":  "AutenticaÃ§Ã£o",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Obter Token OAuth2 Paciente",
+                                                       "event":  [
+                                                                     {
+                                                                         "listen":  "prerequest",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "// Gera Basic Auth token automaticamente",
+                                                                                                     "const clientId = pm.environment.get(\"client_id\");",
+                                                                                                     "const clientSecret = pm.environment.get(\"client_secret\");",
+                                                                                                     "const basicAuth = btoa(clientId + \":\" + clientSecret);",
+                                                                                                     "pm.environment.set(\"basic_auth_token\", basicAuth);",
+                                                                                                     "console.log(\"Basic Auth token gerado automaticamente\");"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript",
+                                                                                        "packages":  {
+
+                                                                                                     },
+                                                                                        "requests":  {
+
+                                                                                                     }
+                                                                                    }
+                                                                     },
+                                                                     {
+                                                                         "listen":  "test",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "if (pm.response.code === 200) {",
+                                                                                                     "    var jsonData = pm.response.json();",
+                                                                                                     "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                                                                                                     "    console.log(\"Token salvo: \" + jsonData.access_token);",
+                                                                                                     "}"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript",
+                                                                                        "packages":  {
+
+                                                                                                     },
+                                                                                        "requests":  {
+
+                                                                                                     }
+                                                                                    }
+                                                                     }
+                                                                 ],
+                                                       "request":  {
+                                                                       "auth":  {
+                                                                                    "type":  "basic",
+                                                                                    "basic":  [
+                                                                                                  {
+                                                                                                      "key":  "password",
+                                                                                                      "value":  "myclientsecret",
+                                                                                                      "type":  "string"
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "key":  "username",
+                                                                                                      "value":  "myclientid",
+                                                                                                      "type":  "string"
+                                                                                                  }
+                                                                                              ]
+                                                                                },
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/x-www-form-urlencoded"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Basic {{basic_auth_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "urlencoded",
+                                                                                    "urlencoded":  [
+                                                                                                       {
+                                                                                                           "key":  "grant_type",
+                                                                                                           "value":  "password",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "username",
+                                                                                                           "value":  "maria.silva@tuamaeaquelaursa.com",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "password",
+                                                                                                           "value":  "senha123",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "scope",
+                                                                                                           "value":  "read write",
+                                                                                                           "type":  "text"
+                                                                                                       }
+                                                                                                   ]
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/oauth2/token",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "oauth2",
+                                                                                                "token"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "ObtÃ©m token OAuth2 para o paciente Maria da Silva (email: maria.silva@tuamaeaquelaursa.com). O token Ã© salvo em \u0027access_token\u0027."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Obter Token OAuth2 Enfermeira",
+                                                       "event":  [
+                                                                     {
+                                                                         "listen":  "prerequest",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "const clientId = pm.environment.get(\"client_id\");",
+                                                                                                     "const clientSecret = pm.environment.get(\"client_secret\");",
+                                                                                                     "const basicAuth = btoa(clientId + \":\" + clientSecret);",
+                                                                                                     "pm.environment.set(\"basic_auth_token\", basicAuth);"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript"
+                                                                                    }
+                                                                     },
+                                                                     {
+                                                                         "listen":  "test",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "if (pm.response.code === 200) {",
+                                                                                                     "    var jsonData = pm.response.json();",
+                                                                                                     "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                                                                                                     "}"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript"
+                                                                                    }
+                                                                     }
+                                                                 ],
+                                                       "request":  {
+                                                                       "auth":  {
+                                                                                    "type":  "basic",
+                                                                                    "basic":  [
+                                                                                                  {
+                                                                                                      "key":  "password",
+                                                                                                      "value":  "myclientsecret",
+                                                                                                      "type":  "string"
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "key":  "username",
+                                                                                                      "value":  "myclientid",
+                                                                                                      "type":  "string"
+                                                                                                  }
+                                                                                              ]
+                                                                                },
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/x-www-form-urlencoded"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Basic {{basic_auth_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "urlencoded",
+                                                                                    "urlencoded":  [
+                                                                                                       {
+                                                                                                           "key":  "grant_type",
+                                                                                                           "value":  "password",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "username",
+                                                                                                           "value":  "ana.costa@tuamaeaquelaursa.com",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "password",
+                                                                                                           "value":  "senha123",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "scope",
+                                                                                                           "value":  "read write",
+                                                                                                           "type":  "text"
+                                                                                                       }
+                                                                                                   ]
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/oauth2/token",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "oauth2",
+                                                                                                "token"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "ObtÃ©m token OAuth2 para a enfermeira Ana Costa (email: ana.costa@tuamaeaquelaursa.com). O token Ã© salvo em \u0027access_token\u0027."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Obter Token OAuth2 Medico",
+                                                       "event":  [
+                                                                     {
+                                                                         "listen":  "prerequest",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "const clientId = pm.environment.get(\"client_id\");",
+                                                                                                     "const clientSecret = pm.environment.get(\"client_secret\");",
+                                                                                                     "const basicAuth = btoa(clientId + \":\" + clientSecret);",
+                                                                                                     "pm.environment.set(\"basic_auth_token\", basicAuth);"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript"
+                                                                                    }
+                                                                     },
+                                                                     {
+                                                                         "listen":  "test",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "if (pm.response.code === 200) {",
+                                                                                                     "    var jsonData = pm.response.json();",
+                                                                                                     "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                                                                                                     "}"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript"
+                                                                                    }
+                                                                     }
+                                                                 ],
+                                                       "request":  {
+                                                                       "auth":  {
+                                                                                    "type":  "basic",
+                                                                                    "basic":  [
+                                                                                                  {
+                                                                                                      "key":  "password",
+                                                                                                      "value":  "myclientsecret",
+                                                                                                      "type":  "string"
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "key":  "username",
+                                                                                                      "value":  "myclientid",
+                                                                                                      "type":  "string"
+                                                                                                  }
+                                                                                              ]
+                                                                                },
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/x-www-form-urlencoded"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Basic {{basic_auth_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "urlencoded",
+                                                                                    "urlencoded":  [
+                                                                                                       {
+                                                                                                           "key":  "grant_type",
+                                                                                                           "value":  "password",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "username",
+                                                                                                           "value":  "pedro.souza@tuamaeaquelaursa.com",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "password",
+                                                                                                           "value":  "senha123",
+                                                                                                           "type":  "text"
+                                                                                                       },
+                                                                                                       {
+                                                                                                           "key":  "scope",
+                                                                                                           "value":  "read write",
+                                                                                                           "type":  "text"
+                                                                                                       }
+                                                                                                   ]
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/oauth2/token",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "oauth2",
+                                                                                                "token"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "ObtÃ©m token OAuth2 para o mÃ©dico Dr. Pedro Souza (email: pedro.souza@tuamaeaquelaursa.com). O token Ã© salvo em \u0027access_token\u0027."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  },
+                                  {
+                                      "name":  "UsuÃ¡rios",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Criar UsuÃ¡rio Paciente",
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n    \"nome\": \"Maria da Silva\",\n    \"email\": \"maria.silva@tuamaeaquelaursa.com\",\n    \"login\": \"maria.silva\",\n    \"cpf\": \"12345678900\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural CapÃ£o\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/v1/usuarios",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "v1",
+                                                                                                "usuarios"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Cria um novo usuÃ¡rio paciente no sistema. CPF obrigatÃ³rio (11 dÃ­gitos)."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Criar UsuÃ¡rio Enfermeira",
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n    \"nome\": \"Ana Costa\",\n    \"email\": \"ana.costa@tuamaeaquelaursa.com\",\n    \"login\": \"ana.costa\",\n    \"cpf\": \"12345678902\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_NURSE\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural CapÃ£o\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/v1/usuarios",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "v1",
+                                                                                                "usuarios"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Cria um novo usuÃ¡rio enfermeira (ROLE_NURSE). CPF obrigatÃ³rio (11 dÃ­gitos). Use o token de um usuÃ¡rio jÃ¡ existente (ex.: mÃ©dico ou admin) para criar."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Criar UsuÃ¡rio Medico",
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n    \"nome\": \"Dr. Pedro Souza\",\n    \"email\": \"pedro.souza@tuamaeaquelaursa.com\",\n    \"login\": \"pedro.souza\",\n    \"cpf\": \"12345678903\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_DOCTOR\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural CapÃ£o\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/v1/usuarios",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "v1",
+                                                                                                "usuarios"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Cria um novo usuÃ¡rio mÃ©dico (ROLE_DOCTOR). CPF obrigatÃ³rio (11 dÃ­gitos). Para o primeiro mÃ©dico, use um token de usuÃ¡rio criado via migration/seed ou crie-o sem auth se a API permitir em dev."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Buscar UsuÃ¡rio por ID",
+                                                       "request":  {
+                                                                       "auth":  {
+                                                                                    "type":  "bearer",
+                                                                                    "bearer":  [
+                                                                                                   {
+                                                                                                       "key":  "token",
+                                                                                                       "value":  "{{access_token}}",
+                                                                                                       "type":  "string"
+                                                                                                   }
+                                                                                               ]
+                                                                                },
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/v1/usuarios/{{user_id}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "v1",
+                                                                                                "usuarios",
+                                                                                                "{{user_id}}"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Busca um usuÃ¡rio especÃ­fico pelo seu ID"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Atualizar UsuÃ¡rio",
+                                                       "request":  {
+                                                                       "auth":  {
+                                                                                    "type":  "bearer",
+                                                                                    "bearer":  [
+                                                                                                   {
+                                                                                                       "key":  "token",
+                                                                                                       "value":  "{{access_token}}",
+                                                                                                       "type":  "string"
+                                                                                                   }
+                                                                                               ]
+                                                                                },
+                                                                       "method":  "PUT",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n    \"nome\": \"JoÃ£o Silva Atualizado\",\n    \"email\": \"joao.silva.updated@example.com\",\n    \"login\": \"joao.silva.updated\",\n    \"senha\": \"novaSenha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"Rua das Flores Atualizada\",\n        \"numero\": 456,\n        \"cidade\": \"SÃ£o Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01234-567\"\n    }\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/v1/usuarios/{{user_id}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "v1",
+                                                                                                "usuarios",
+                                                                                                "{{user_id}}"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Atualiza os dados de um usuÃ¡rio existente"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Atualizar Senha",
+                                                       "request":  {
+                                                                       "auth":  {
+                                                                                    "type":  "bearer",
+                                                                                    "bearer":  [
+                                                                                                   {
+                                                                                                       "key":  "token",
+                                                                                                       "value":  "{{access_token}}",
+                                                                                                       "type":  "string"
+                                                                                                   }
+                                                                                               ]
+                                                                                },
+                                                                       "method":  "PATCH",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n    \"senha\": \"novaSenhaSegura123\"\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_auth}}/v1/usuarios/{{user_id}}/senha",
+                                                                                   "host":  [
+                                                                                                "{{base_url_auth}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "v1",
+                                                                                                "usuarios",
+                                                                                                "{{user_id}}",
+                                                                                                "senha"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Atualiza a senha de um usuÃ¡rio especÃ­fico"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Prenatal Documento",
+                     "item":  [
+                                  {
+                                      "name":  "Documents",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Upload Document",
+                                                       "event":  [
+                                                                     {
+                                                                         "listen":  "test",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "if (pm.response.code === 201) {",
+                                                                                                     "    const res = pm.response.json();",
+                                                                                                     "    if (res.id) {",
+                                                                                                     "        pm.collectionVariables.set(\"documentId\", String(res.id));",
+                                                                                                     "        try { pm.environment.set(\"documentId\", String(res.id)); } catch (e) {}",
+                                                                                                     "    }",
+                                                                                                     "    if (res.gestanteCpf) {",
+                                                                                                     "        pm.collectionVariables.set(\"patientCpf\", res.gestanteCpf);",
+                                                                                                     "        try { pm.environment.set(\"patientCpf\", res.gestanteCpf); } catch (e) {}",
+                                                                                                     "    }",
+                                                                                                     "}"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript"
+                                                                                    }
+                                                                     }
+                                                                 ],
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{jwtToken}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "formdata",
+                                                                                    "formdata":  [
+                                                                                                     {
+                                                                                                         "key":  "file",
+                                                                                                         "type":  "file",
+                                                                                                         "src":  [
+
+                                                                                                                 ],
+                                                                                                         "description":  "Arquivo PDF (mÃ¡ximo 10MB)"
+                                                                                                     },
+                                                                                                     {
+                                                                                                         "key":  "documentType",
+                                                                                                         "value":  "EXAM",
+                                                                                                         "type":  "text",
+                                                                                                         "description":  "Tipo de documento: EXAM ou ULTRASOUND"
+                                                                                                     },
+                                                                                                     {
+                                                                                                         "key":  "examType",
+                                                                                                         "value":  "",
+                                                                                                         "type":  "text",
+                                                                                                         "description":  "Tipo especÃ­fico (opcional). Ex: MORPHOLOGICAL_ULTRASOUND, NUCHAL_TRANSLUCENCY, CURVA_GLICEMICA, GLICEMIA. Usado pela IA."
+                                                                                                     }
+                                                                                                 ]
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_documento}}/api/prenatal-records/:cpf/documents",
+                                                                                   "host":  [
+                                                                                                "{{base_url_documento}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "prenatal-records",
+                                                                                                ":cpf",
+                                                                                                "documents"
+                                                                                            ],
+                                                                                   "variable":  [
+                                                                                                    {
+                                                                                                        "key":  "cpf",
+                                                                                                        "value":  "{{patientCpf}}",
+                                                                                                        "description":  "CPF da paciente (apenas nÃºmeros)"
+                                                                                                    }
+                                                                                                ]
+                                                                               },
+                                                                       "description":  "Upload de documento (exame ou ultrassom) em PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**ValidaÃ§Ãµes:**\n- Apenas arquivos PDF\n- Tamanho mÃ¡ximo: 10MB\n- documentType: EXAM ou ULTRASOUND\n- examType (opcional): MORPHOLOGICAL_ULTRASOUND, NUCHAL_TRANSLUCENCY, CURVA_GLICEMICA, GLICEMIA - usado pela IA para regras clÃ­nicas\n\n**Response:** inclui tipoExame quando informado"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "List Active Documents",
+                                                       "event":  [
+                                                                     {
+                                                                         "listen":  "test",
+                                                                         "script":  {
+                                                                                        "exec":  [
+                                                                                                     "if (pm.response.code === 200) {",
+                                                                                                     "    const docs = pm.response.json();",
+                                                                                                     "    if (Array.isArray(docs) \u0026\u0026 docs.length \u003e 0 \u0026\u0026 docs[0].id) {",
+                                                                                                     "        pm.collectionVariables.set(\"documentId\", String(docs[0].id));",
+                                                                                                     "        try { pm.environment.set(\"documentId\", String(docs[0].id)); } catch (e) {}",
+                                                                                                     "        if (docs[0].gestanteCpf) {",
+                                                                                                     "            pm.collectionVariables.set(\"patientCpf\", docs[0].gestanteCpf);",
+                                                                                                     "            try { pm.environment.set(\"patientCpf\", docs[0].gestanteCpf); } catch (e) {}",
+                                                                                                     "        }",
+                                                                                                     "    }",
+                                                                                                     "}"
+                                                                                                 ],
+                                                                                        "type":  "text/javascript"
+                                                                                    }
+                                                                     }
+                                                                 ],
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{jwtToken}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_documento}}/api/prenatal-records/:cpf/documents",
+                                                                                   "host":  [
+                                                                                                "{{base_url_documento}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "prenatal-records",
+                                                                                                ":cpf",
+                                                                                                "documents"
+                                                                                            ],
+                                                                                   "variable":  [
+                                                                                                    {
+                                                                                                        "key":  "cpf",
+                                                                                                        "value":  "{{patientCpf}}",
+                                                                                                        "description":  "CPF da paciente (apenas nÃºmeros)"
+                                                                                                    }
+                                                                                                ]
+                                                                               },
+                                                                       "description":  "Lista todos os documentos ativos de uma paciente pelo CPF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Download Document",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{jwtToken}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_documento}}/api/documents/:id/download",
+                                                                                   "host":  [
+                                                                                                "{{base_url_documento}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "documents",
+                                                                                                ":id",
+                                                                                                "download"
+                                                                                            ],
+                                                                                   "variable":  [
+                                                                                                    {
+                                                                                                        "key":  "id",
+                                                                                                        "value":  "{{documentId}}",
+                                                                                                        "description":  "ID do documento (UUID)"
+                                                                                                    }
+                                                                                                ]
+                                                                               },
+                                                                       "description":  "Faz download de um documento PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Response:** Arquivo PDF binÃ¡rio"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Inactivate Document",
+                                                       "request":  {
+                                                                       "method":  "PATCH",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{jwtToken}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_documento}}/api/documents/:id/inactivate",
+                                                                                   "host":  [
+                                                                                                "{{base_url_documento}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "documents",
+                                                                                                ":id",
+                                                                                                "inactivate"
+                                                                                            ],
+                                                                                   "variable":  [
+                                                                                                    {
+                                                                                                        "key":  "id",
+                                                                                                        "value":  "{{documentId}}",
+                                                                                                        "description":  "ID do documento (UUID)"
+                                                                                                    }
+                                                                                                ]
+                                                                               },
+                                                                       "description":  "Inativa um documento (soft delete). O documento nÃ£o serÃ¡ mais listado, mas permanece no banco de dados.\n\n**Roles permitidas:** NURSE, DOCTOR\n\n**Response:** 204 No Content"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Delete Document Permanently",
+                                                       "request":  {
+                                                                       "method":  "DELETE",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{jwtToken}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_documento}}/api/documents/:id/permanent",
+                                                                                   "host":  [
+                                                                                                "{{base_url_documento}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "documents",
+                                                                                                ":id",
+                                                                                                "permanent"
+                                                                                            ],
+                                                                                   "variable":  [
+                                                                                                    {
+                                                                                                        "key":  "id",
+                                                                                                        "value":  "{{documentId}}",
+                                                                                                        "description":  "ID do documento (UUID)"
+                                                                                                    }
+                                                                                                ]
+                                                                               },
+                                                                       "description":  "Exclui permanentemente um documento (hard delete). Remove o arquivo do S3 e os metadados do banco de dados.\n\n**Roles permitidas:** NURSE, DOCTOR\n\n**Response:** 204 No Content\n\n**âš ï¸ ATENÃ‡ÃƒO:** Esta aÃ§Ã£o Ã© irreversÃ­vel!"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Request Document Deletion",
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{jwtToken}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_documento}}/api/documents/:id/request-delete",
+                                                                                   "host":  [
+                                                                                                "{{base_url_documento}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "documents",
+                                                                                                ":id",
+                                                                                                "request-delete"
+                                                                                            ],
+                                                                                   "variable":  [
+                                                                                                    {
+                                                                                                        "key":  "id",
+                                                                                                        "value":  "{{documentId}}",
+                                                                                                        "description":  "ID do documento (UUID)"
+                                                                                                    }
+                                                                                                ]
+                                                                               },
+                                                                       "description":  "Solicita a exclusÃ£o de um documento. Cria uma solicitaÃ§Ã£o que precisa ser aprovada por um profissional (NURSE ou DOCTOR).\n\n**Roles permitidas:** PATIENT\n\n**Response:** 202 Accepted"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ],
+                                      "description":  "Endpoints para gerenciamento de documentos mÃ©dicos"
+                                  },
+                                  {
+                                      "name":  "Vaccines",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Registrar Vacina",
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{jwtToken}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_documento}}/api/prenatal-records/:cpf/vacinas?tipoVacina=DTpa\u0026dataAplicacao=2025-01-15",
+                                                                                   "host":  [
+                                                                                                "{{base_url_documento}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "prenatal-records",
+                                                                                                ":cpf",
+                                                                                                "vacinas"
+                                                                                            ],
+                                                                                   "query":  [
+                                                                                                 {
+                                                                                                     "key":  "tipoVacina",
+                                                                                                     "value":  "DTpa",
+                                                                                                     "description":  "Tipo da vacina (ex: DTpa, Hepatite B, Influenza)"
+                                                                                                 },
+                                                                                                 {
+                                                                                                     "key":  "dataAplicacao",
+                                                                                                     "value":  "2025-01-15",
+                                                                                                     "description":  "Data da aplicaÃ§Ã£o (yyyy-MM-dd)"
+                                                                                                 }
+                                                                                             ],
+                                                                                   "variable":  [
+                                                                                                    {
+                                                                                                        "key":  "cpf",
+                                                                                                        "value":  "{{patientCpf}}",
+                                                                                                        "description":  "CPF da paciente (apenas nÃºmeros)"
+                                                                                                    }
+                                                                                                ]
+                                                                               },
+                                                                       "description":  "Registra a aplicaÃ§Ã£o de uma vacina para a gestante.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**ParÃ¢metros:**\n- tipoVacina: ex. DTpa, Hepatite B, Influenza\n- dataAplicacao: yyyy-MM-dd\n\n**Response:** 201 com VaccineResponse (id, gestanteCpf, tipoVacina, dataAplicacao)"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ],
+                                      "description":  "Endpoints para registro de vacinas da gestante"
+                                  },
+                                  {
+                                      "name":  "Health Check",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Health",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_documento}}/actuator/health",
+                                                                                   "host":  [
+                                                                                                "{{base_url_documento}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "actuator",
+                                                                                                "health"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Endpoint de health check da aplicaÃ§Ã£o (nÃ£o requer autenticação)"
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ],
+                                      "description":  "Endpoints de monitoramento"
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Prenatal Prontuario",
+                     "item":  [
+                                  {
+                                      "name":  "Health Check",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Verificar Status da API",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_prontuario}}/actuator/health",
+                                                                                   "host":  [
+                                                                                                "{{base_url_prontuario}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "actuator",
+                                                                                                "health"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Verifica o status de saúde da aplicaÃ§Ã£o. NÃ£o requer autenticação."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  },
+                                  {
+                                      "name":  "Prontuários",
+                                      "item":  [
+                                                   {
+                                                       "name":  "Criar prontuÃ¡rio (primeira consulta)",
+                                                       "request":  {
+                                                                       "method":  "POST",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n  \"cpf\": \"12345678900\",\n  \"nomeCompleto\": \"Maria da Silva\",\n  \"dataNascimento\": \"1992-04-15\",\n  \"dataUltimaMenstruacao\": \"2025-01-10\",\n  \"dataConsulta\": \"2025-02-15\",\n  \"tipoGestacao\": \"UNICA\",\n  \"tipoParto\": \"NAO_DEFINIDO\",\n  \"numeroGestacoesAnteriores\": 1,\n  \"numeroPartos\": 1,\n  \"numeroAbortos\": 0,\n  \"gestacaoAltoRisco\": false,\n  \"motivoAltoRisco\": null,\n  \"fatoresRisco\": [],\n  \"usoVitaminas\": true,\n  \"usoAAS\": false,\n  \"observacoes\": \"Primeira consulta realizada na unidade.\",\n  \"emailPaciente\": \"maria.silva@tuamaeaquelaursa.com\",\n  \"medicoNome\": \"Dr. Pedro Souza\",\n  \"medicoEmail\": \"pedro.souza@tuamaeaquelaursa.com\"\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_prontuario}}/api/v1/prontuarios",
+                                                                                   "host":  [
+                                                                                                "{{base_url_prontuario}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "v1",
+                                                                                                "prontuarios"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Cria o prontuÃ¡rio na primeira consulta. ObrigatÃ³rio: cpf (11 dÃ­gitos), dataUltimaMenstruacao. Idade gestacional = semanas entre dataUltimaMenstruacao e dataConsulta (ou hoje se dataConsulta omitida); deve ser 1â€“44. dataConsulta (opcional): para retroativo/testes. tipoParto (opcional): PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO; omitir = NAO_DEFINIDO. Opcional: emailPaciente, medicoNome, medicoEmail (contato e mÃ©dico responsÃ¡vel para notificaÃ§Ãµes/IA). Um prontuÃ¡rio por CPF. Acesso: ENFERMEIRO, MEDICO, NURSE, DOCTOR."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Buscar prontuÃ¡rio por CPF",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_prontuario}}/api/v1/prontuarios/cpf/{{cpf}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_prontuario}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "v1",
+                                                                                                "prontuarios",
+                                                                                                "cpf",
+                                                                                                "{{cpf}}"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Busca prontuÃ¡rio por CPF (11 dÃ­gitos). Gestante: apenas o próprio (JWT com claim cpf). Profissionais: qualquer CPF."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Atualizar dados clÃ­nicos",
+                                                       "request":  {
+                                                                       "method":  "PUT",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n  \"usoVitaminas\": true,\n  \"usoAAS\": true,\n  \"observacoes\": \"GestaÃ§Ã£o evoluindo bem\",\n  \"tipoParto\": \"CESARIANA\",\n  \"emailPaciente\": \"maria.silva@tuamaeaquelaursa.com\",\n  \"medicoNome\": \"Dr. Pedro Souza\",\n  \"medicoEmail\": \"pedro.souza@tuamaeaquelaursa.com\"\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_prontuario}}/api/v1/prontuarios/cpf/{{cpf}}",
+                                                                                   "host":  [
+                                                                                                "{{base_url_prontuario}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "v1",
+                                                                                                "prontuarios",
+                                                                                                "cpf",
+                                                                                                "{{cpf}}"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Atualiza usoVitaminas, usoAAS, observacoes, tipoParto, emailPaciente, medicoNome, medicoEmail. Campos null ou omitidos nÃ£o alteram. tipoParto: PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuÃ¡rio."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Atualizar fatores de risco",
+                                                       "request":  {
+                                                                       "method":  "PATCH",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Content-Type",
+                                                                                          "value":  "application/json"
+                                                                                      },
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "body":  {
+                                                                                    "mode":  "raw",
+                                                                                    "raw":  "{\n  \"fatoresRisco\": [\"HIPERTENSAO\", \"OBESIDADE\"]\n}",
+                                                                                    "options":  {
+                                                                                                    "raw":  {
+                                                                                                                "language":  "json"
+                                                                                                            }
+                                                                                                }
+                                                                                },
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_prontuario}}/api/v1/prontuarios/cpf/{{cpf}}/fatores-risco",
+                                                                                   "host":  [
+                                                                                                "{{base_url_prontuario}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "v1",
+                                                                                                "prontuarios",
+                                                                                                "cpf",
+                                                                                                "{{cpf}}",
+                                                                                                "fatores-risco"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Substitui a lista de fatores de risco. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuÃ¡rio."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   },
+                                                   {
+                                                       "name":  "Consultar histÃ³rico do prontuÃ¡rio",
+                                                       "request":  {
+                                                                       "method":  "GET",
+                                                                       "header":  [
+                                                                                      {
+                                                                                          "key":  "Authorization",
+                                                                                          "value":  "Bearer {{access_token}}",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                       "url":  {
+                                                                                   "raw":  "{{base_url_prontuario}}/api/v1/prontuarios/cpf/{{cpf}}/historico",
+                                                                                   "host":  [
+                                                                                                "{{base_url_prontuario}}"
+                                                                                            ],
+                                                                                   "path":  [
+                                                                                                "api",
+                                                                                                "v1",
+                                                                                                "prontuarios",
+                                                                                                "cpf",
+                                                                                                "{{cpf}}",
+                                                                                                "historico"
+                                                                                            ]
+                                                                               },
+                                                                       "description":  "Retorna data, profissionalUserId e alteracao. Gestante: apenas o próprio (JWT claim cpf). Path: CPF do prontuÃ¡rio."
+                                                                   },
+                                                       "response":  [
+
+                                                                    ]
+                                                   }
+                                               ]
+                                  }
+                              ]
+                 }
+             ],
+    "info":  {
+                 "description":  "Collection unificada: Agenda, Auth, Documento e Prontuário. Use o environment Prenatal-Digital-SUS-Local.",
+                 "name":  "Prenatal Digital SUS - API Unificada",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+                 "_postman_id":  "prenatal-digital-sus-unified"
+             }
+}
