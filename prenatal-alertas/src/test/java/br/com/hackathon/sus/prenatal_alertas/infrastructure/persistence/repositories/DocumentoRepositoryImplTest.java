@@ -27,6 +27,7 @@ import br.com.hackathon.sus.prenatal_alertas.domain.entities.VaccineRecord;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes do DocumentoRepositoryImpl")
+@SuppressWarnings({"null", "unchecked"})
 class DocumentoRepositoryImplTest {
 
     @Mock

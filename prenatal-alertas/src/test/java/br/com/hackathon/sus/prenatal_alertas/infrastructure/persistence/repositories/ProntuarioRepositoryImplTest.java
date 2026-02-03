@@ -23,6 +23,7 @@ import br.com.hackathon.sus.prenatal_alertas.domain.entities.PregnantPatient;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes do ProntuarioRepositoryImpl")
+@SuppressWarnings({"null", "unchecked"})
 class ProntuarioRepositoryImplTest {
 
     @Mock

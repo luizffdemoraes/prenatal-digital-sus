@@ -1,28 +1,29 @@
 package br.com.hackathon.sus.prenatal_alertas;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import br.com.hackathon.sus.prenatal_alertas.domain.gateways.NotificationOrchestratorGateway;
 import br.com.hackathon.sus.prenatal_alertas.domain.repositories.AgendaRepository;
 import br.com.hackathon.sus.prenatal_alertas.domain.repositories.DocumentoRepository;
 import br.com.hackathon.sus.prenatal_alertas.domain.repositories.ProntuarioRepository;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test")
 class PrenatalAlertasApplicationTests {
 
-    @MockBean
+    @MockitoBean
     private ProntuarioRepository prontuarioRepository;
 
-    @MockBean
+    @MockitoBean
     private AgendaRepository agendaRepository;
 
-    @MockBean
+    @MockitoBean
     private DocumentoRepository documentoRepository;
 
-    @MockBean
+    @MockitoBean
     private NotificationOrchestratorGateway notificationGateway;
 
     @Test
