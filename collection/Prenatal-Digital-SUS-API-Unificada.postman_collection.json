@@ -2,6 +2,7 @@
     "item":  [
                  {
                      "name":  "Prenatal Agenda",
+                     "description":  "Serviço de agendamento de consultas pré-natais. **Ordem:** 1) Criar Agenda do Médico 2) Consultar Horários 3) Agendar Consulta. Requer token JWT.",
                      "item":  [
                                   {
                                       "name":  "Health Check",
@@ -26,7 +27,7 @@
                                                                                                 "health"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Verifica o status de saúde da aplicaÃ§Ã£o. Rota pÃºblica â€” nÃ£o requer autenticação (sem Bearer)."
+                                                                       "description":  "Verifica o status de saúde da aplicação. Rota pública â€” não requer autenticação (sem Bearer)."
                                                                    },
                                                        "response":  [
 
@@ -35,10 +36,10 @@
                                                ]
                                   },
                                   {
-                                      "name":  "Agenda MÃ©dico",
+                                      "name":  "Agenda Médico",
                                       "item":  [
                                                    {
-                                                       "name":  "Criar Agenda do MÃ©dico",
+                                                       "name":  "Criar Agenda do Médico",
                                                        "request":  {
                                                                        "method":  "POST",
                                                                        "header":  [
@@ -72,14 +73,14 @@
                                                                                                 "medico"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Cria a agenda semanal de um mÃ©dico. Requer ROLE_DOCTOR ou ROLE_NURSE.\n\n- crm, medicoNome, especialidade: obrigatórios (mÃ©dico identificado por CRM).\n- unidadeId, diasAtendimento, horarioInicio, horarioFim, duracaoConsultaMinutos.\n\nStub: CRM 12345 ou 123456 â†’ medico_id=1. Dias: SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO, DOMINGO."
+                                                                       "description":  "Cria a agenda semanal de um médico. Requer ROLE_DOCTOR ou ROLE_NURSE.\n\n- crm, medicoNome, especialidade: obrigatórios (médico identificado por CRM).\n- unidadeId, diasAtendimento, horarioInicio, horarioFim, duracaoConsultaMinutos.\n\nStub: CRM 12345 ou 123456 â†’ medico_id=1. Dias: SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO, DOMINGO."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Buscar Agenda por MÃ©dico (CRM)",
+                                                       "name":  "Buscar Agenda por Médico (CRM)",
                                                        "request":  {
                                                                        "method":  "GET",
                                                                        "header":  [
@@ -101,14 +102,14 @@
                                                                                                 "{{crm}}"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Busca a agenda de um mÃ©dico pelo CRM. Requer ROLE_DOCTOR, ROLE_NURSE ou ROLE_PATIENT (gestantes consultam agendas para escolher mÃ©dico). Stub: 12345 ou 123456."
+                                                                       "description":  "Busca a agenda de um médico pelo CRM. Requer ROLE_DOCTOR, ROLE_NURSE ou ROLE_PATIENT (gestantes consultam agendas para escolher médico). Stub: 12345 ou 123456."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Atualizar Agenda do MÃ©dico",
+                                                       "name":  "Atualizar Agenda do Médico",
                                                        "request":  {
                                                                        "method":  "PUT",
                                                                        "header":  [
@@ -143,14 +144,14 @@
                                                                                                 "{{crm}}"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Altera a agenda semanal do mÃ©dico. Requer ROLE_DOCTOR ou ROLE_NURSE. CRM na URL. Body: unidadeId, diasAtendimento, horarioInicio, horarioFim, duracaoConsultaMinutos."
+                                                                       "description":  "Altera a agenda semanal do médico. Requer ROLE_DOCTOR ou ROLE_NURSE. CRM na URL. Body: unidadeId, diasAtendimento, horarioInicio, horarioFim, duracaoConsultaMinutos."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Excluir Agenda do MÃ©dico",
+                                                       "name":  "Excluir Agenda do Médico",
                                                        "request":  {
                                                                        "method":  "DELETE",
                                                                        "header":  [
@@ -172,7 +173,7 @@
                                                                                                 "{{crm}}"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Exclui a agenda do mÃ©dico. Requer ROLE_DOCTOR ou ROLE_NURSE. CRM na URL. SÃ³ Ã© permitido se nÃ£o houver consultas agendadas (status AGENDADA) para o mÃ©dico; caso contrÃ¡rio retorna 400. Retorna 204 quando excluÃ­da."
+                                                                       "description":  "Exclui a agenda do médico. Requer ROLE_DOCTOR ou ROLE_NURSE. CRM na URL. Só é permitido se não houver consultas agendadas (status AGENDADA) para o médico; caso contrário retorna 400. Retorna 204 quando excluída."
                                                                    },
                                                        "response":  [
 
@@ -215,7 +216,7 @@
                                                                                       {
                                                                                           "key":  "X-Unidade-Id",
                                                                                           "value":  "{{unidade_id}}",
-                                                                                          "description":  "ID da UBS que estÃ¡ realizando o agendamento"
+                                                                                          "description":  "ID da UBS que está realizando o agendamento"
                                                                                       }
                                                                                   ],
                                                                        "body":  {
@@ -238,7 +239,7 @@
                                                                                                 "agendar"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Agenda uma consulta (MVP). Requer ROLE_PATIENT ou ROLE_NURSE.\n\n- Header X-Unidade-Id: UBS que realiza o agendamento (obrigatÃ³rio).\n- Gestante: gestanteNome e gestanteCpf (obrigatórios).\n- MÃ©dico: medicoNome OU especialidade OU crm (um deles).\n- data, horario (obrigatórios).\n\nStub: CPF 111.111.111-11; especialidade Obstetrícia/Obstetra/Prenatal ou nome Dr. JoÃ£o/Silva ou CRM 12345 â†’ 1."
+                                                                       "description":  "Agenda uma consulta (MVP). Requer ROLE_PATIENT ou ROLE_NURSE.\n\n- Header X-Unidade-Id: UBS que realiza o agendamento (obrigatório).\n- Gestante: gestanteNome e gestanteCpf (obrigatórios).\n- Médico: medicoNome OU especialidade OU crm (um deles).\n- data, horario (obrigatórios).\n\nStub: CPF 111.111.111-11; especialidade Obstetrícia/Obstetra/Prenatal ou nome Dr. João/Silva ou CRM 12345 â†’ 1."
                                                                    },
                                                        "response":  [
 
@@ -270,11 +271,11 @@
                                                                                                  {
                                                                                                      "key":  "motivo",
                                                                                                      "value":  "GESTANTE_DESISTIU",
-                                                                                                     "description":  "Motivos disponÃ­veis: GESTANTE_DESISTIU, MEDICO_INDISPONIVEL, EMERGENCIA, OUTRO"
+                                                                                                     "description":  "Motivos disponíveis: GESTANTE_DESISTIU, MEDICO_INDISPONIVEL, EMERGENCIA, OUTRO"
                                                                                                  }
                                                                                              ]
                                                                                },
-                                                                       "description":  "Cancela uma consulta agendada. Requer permissÃ£o ROLE_PATIENT, ROLE_NURSE ou ROLE_DOCTOR.\n\nMotivos disponÃ­veis:\n- GESTANTE_DESISTIU\n- MEDICO_INDISPONIVEL\n- EMERGENCIA\n- OUTRO"
+                                                                       "description":  "Cancela uma consulta agendada. Requer permissÃ£o ROLE_PATIENT, ROLE_NURSE ou ROLE_DOCTOR.\n\nMotivos disponíveis:\n- GESTANTE_DESISTIU\n- MEDICO_INDISPONIVEL\n- EMERGENCIA\n- OUTRO"
                                                                    },
                                                        "response":  [
 
@@ -286,7 +287,7 @@
                                       "name":  "Gestantes",
                                       "item":  [
                                                    {
-                                                       "name":  "Consultar Consultas por CPF (prÃ³pria agenda)",
+                                                       "name":  "Consultar Consultas por CPF (própria agenda)",
                                                        "request":  {
                                                                        "method":  "GET",
                                                                        "header":  [
@@ -310,11 +311,11 @@
                                                                                                  {
                                                                                                      "key":  "cpf",
                                                                                                      "value":  "{{cpf}}",
-                                                                                                     "description":  "CPF da gestante (prÃ³pria agenda)"
+                                                                                                     "description":  "CPF da gestante (própria agenda)"
                                                                                                  }
                                                                                              ]
                                                                                },
-                                                                       "description":  "Consulta a prÃ³pria agenda (consultas agendadas) da gestante por CPF. Gestantes, Enfermeiras e MÃ©dicos. Stub: 111.111.111-11 ou 11111111111."
+                                                                       "description":  "Consulta a própria agenda (consultas agendadas) da gestante por CPF. Gestantes, Enfermeiras e Médicos. Stub: 111.111.111-11 ou 11111111111."
                                                                    },
                                                        "response":  [
 
@@ -343,7 +344,7 @@
                                                                                                 "consultas"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Lista consultas por ID da gestante (apoio). Preferir \u0027Consultar por CPF\u0027 quando a gestante nÃ£o souber o ID. ROLE_PATIENT, ROLE_NURSE, ROLE_DOCTOR."
+                                                                       "description":  "Lista consultas por ID da gestante (apoio). Preferir \u0027Consultar por CPF\u0027 quando a gestante não souber o ID. ROLE_PATIENT, ROLE_NURSE, ROLE_DOCTOR."
                                                                    },
                                                        "response":  [
 
@@ -355,7 +356,7 @@
                                       "name":  "Disponibilidade",
                                       "item":  [
                                                    {
-                                                       "name":  "Consultar HorÃ¡rios DisponÃ­veis",
+                                                       "name":  "Consultar Horários Disponíveis",
                                                        "request":  {
                                                                        "method":  "GET",
                                                                        "header":  [
@@ -378,7 +379,7 @@
                                                                                                  {
                                                                                                      "key":  "crm",
                                                                                                      "value":  "{{crm}}",
-                                                                                                     "description":  "CRM do mÃ©dico (ex.: 12345)"
+                                                                                                     "description":  "CRM do médico (ex.: 12345)"
                                                                                                  },
                                                                                                  {
                                                                                                      "key":  "data",
@@ -387,7 +388,7 @@
                                                                                                  }
                                                                                              ]
                                                                                },
-                                                                       "description":  "Consulta os horÃ¡rios disponÃ­veis de um mÃ©dico em uma data. ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT.\n\n- crm: CRM do mÃ©dico (identificaÃ§Ã£o por CRM, nÃ£o por ID).\n- data: yyyy-MM-dd.\n\nResposta: medicoNome, especialidade, data, horariosDisponiveis[]. Ex.: {\"medicoNome\":\"Dr. JoÃ£o\",\"especialidade\":\"Obstetrícia\",\"data\":\"2026-01-28\",\"horariosDisponiveis\":[\"08:00\",\"08:30\",...]}\n\n404 se CRM nÃ£o encontrado."
+                                                                       "description":  "Consulta os horários disponíveis de um médico em uma data. ROLE_DOCTOR, ROLE_NURSE, ROLE_PATIENT.\n\n- crm: CRM do médico (identificação por CRM, não por ID).\n- data: yyyy-MM-dd.\n\nResposta: medicoNome, especialidade, data, horariosDisponiveis[]. Ex.: {\"medicoNome\":\"Dr. João\",\"especialidade\":\"Obstetrícia\",\"data\":\"2026-01-28\",\"horariosDisponiveis\":[\"08:00\",\"08:30\",...]}\n\n404 se CRM não encontrado."
                                                                    },
                                                        "response":  [
 
@@ -399,6 +400,7 @@
                  },
                  {
                      "name":  "Prenatal Auth",
+                     "description":  "Serviço de autenticação OAuth2/JWT. **Execute primeiro:** Obter Token OAuth2 para salvar o access_token. Sem token, os demais serviços retornam 401.",
                      "item":  [
                                   {
                                       "name":  "Health Check",
@@ -420,7 +422,7 @@
                                                                                                 "health"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Verifica o status de saúde da aplicaÃ§Ã£o. NÃ£o requer autenticação."
+                                                                       "description":  "Verifica o status de saúde da aplicação. Não requer autenticação."
                                                                    },
                                                        "response":  [
 
@@ -429,7 +431,7 @@
                                                ]
                                   },
                                   {
-                                      "name":  "AutenticaÃ§Ã£o",
+                                      "name":  "Autenticação",
                                       "item":  [
                                                    {
                                                        "name":  "Obter Token OAuth2 Paciente",
@@ -537,7 +539,7 @@
                                                                                                 "token"
                                                                                             ]
                                                                                },
-                                                                       "description":  "ObtÃ©m token OAuth2 para o paciente Maria da Silva (email: maria.silva@tuamaeaquelaursa.com). O token Ã© salvo em \u0027access_token\u0027."
+                                                                       "description":  "Obtém token OAuth2 para o paciente Maria da Silva (email: maria.silva@tuamaeaquelaursa.com). O token é salvo em \u0027access_token\u0027."
                                                                    },
                                                        "response":  [
 
@@ -634,14 +636,14 @@
                                                                                                 "token"
                                                                                             ]
                                                                                },
-                                                                       "description":  "ObtÃ©m token OAuth2 para a enfermeira Ana Costa (email: ana.costa@tuamaeaquelaursa.com). O token Ã© salvo em \u0027access_token\u0027."
+                                                                       "description":  "Obtém token OAuth2 para a enfermeira Ana Costa (email: ana.costa@tuamaeaquelaursa.com). O token é salvo em \u0027access_token\u0027."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Obter Token OAuth2 Medico",
+                                                       "name":  "Obter Token OAuth2 Médico",
                                                        "event":  [
                                                                      {
                                                                          "listen":  "prerequest",
@@ -731,7 +733,7 @@
                                                                                                 "token"
                                                                                             ]
                                                                                },
-                                                                       "description":  "ObtÃ©m token OAuth2 para o mÃ©dico Dr. Pedro Souza (email: pedro.souza@tuamaeaquelaursa.com). O token Ã© salvo em \u0027access_token\u0027."
+                                                                       "description":  "Obtém token OAuth2 para o médico Dr. Pedro Souza (email: pedro.souza@tuamaeaquelaursa.com). O token é salvo em \u0027access_token\u0027."
                                                                    },
                                                        "response":  [
 
@@ -740,10 +742,10 @@
                                                ]
                                   },
                                   {
-                                      "name":  "UsuÃ¡rios",
+                                      "name":  "Usuários",
                                       "item":  [
                                                    {
-                                                       "name":  "Criar UsuÃ¡rio Paciente",
+                                                       "name":  "Criar Usuário Paciente",
                                                        "request":  {
                                                                        "method":  "POST",
                                                                        "header":  [
@@ -759,7 +761,7 @@
                                                                                   ],
                                                                        "body":  {
                                                                                     "mode":  "raw",
-                                                                                    "raw":  "{\n    \"nome\": \"Maria da Silva\",\n    \"email\": \"maria.silva@tuamaeaquelaursa.com\",\n    \"login\": \"maria.silva\",\n    \"cpf\": \"12345678900\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural CapÃ£o\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+                                                                                    "raw":  "{\n    \"nome\": \"Maria da Silva\",\n    \"email\": \"maria.silva@tuamaeaquelaursa.com\",\n    \"login\": \"maria.silva\",\n    \"cpf\": \"12345678900\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
                                                                                     "options":  {
                                                                                                     "raw":  {
                                                                                                                 "language":  "json"
@@ -776,14 +778,14 @@
                                                                                                 "usuarios"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Cria um novo usuÃ¡rio paciente no sistema. CPF obrigatÃ³rio (11 dÃ­gitos)."
+                                                                       "description":  "Cria um novo usuário paciente no sistema. CPF obrigatório (11 dígitos)."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Criar UsuÃ¡rio Enfermeira",
+                                                       "name":  "Criar Usuário Enfermeira",
                                                        "request":  {
                                                                        "method":  "POST",
                                                                        "header":  [
@@ -799,7 +801,7 @@
                                                                                   ],
                                                                        "body":  {
                                                                                     "mode":  "raw",
-                                                                                    "raw":  "{\n    \"nome\": \"Ana Costa\",\n    \"email\": \"ana.costa@tuamaeaquelaursa.com\",\n    \"login\": \"ana.costa\",\n    \"cpf\": \"12345678902\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_NURSE\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural CapÃ£o\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+                                                                                    "raw":  "{\n    \"nome\": \"Ana Costa\",\n    \"email\": \"ana.costa@tuamaeaquelaursa.com\",\n    \"login\": \"ana.costa\",\n    \"cpf\": \"12345678902\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_NURSE\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
                                                                                     "options":  {
                                                                                                     "raw":  {
                                                                                                                 "language":  "json"
@@ -816,14 +818,14 @@
                                                                                                 "usuarios"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Cria um novo usuÃ¡rio enfermeira (ROLE_NURSE). CPF obrigatÃ³rio (11 dÃ­gitos). Use o token de um usuÃ¡rio jÃ¡ existente (ex.: mÃ©dico ou admin) para criar."
+                                                                       "description":  "Cria um novo usuário enfermeira (ROLE_NURSE). CPF obrigatório (11 dígitos). Use o token de um usuário já existente (ex.: médico ou admin) para criar."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Criar UsuÃ¡rio Medico",
+                                                       "name":  "Criar Usuário Médico",
                                                        "request":  {
                                                                        "method":  "POST",
                                                                        "header":  [
@@ -839,7 +841,7 @@
                                                                                   ],
                                                                        "body":  {
                                                                                     "mode":  "raw",
-                                                                                    "raw":  "{\n    \"nome\": \"Dr. Pedro Souza\",\n    \"email\": \"pedro.souza@tuamaeaquelaursa.com\",\n    \"login\": \"pedro.souza\",\n    \"cpf\": \"12345678903\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_DOCTOR\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural CapÃ£o\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
+                                                                                    "raw":  "{\n    \"nome\": \"Dr. Pedro Souza\",\n    \"email\": \"pedro.souza@tuamaeaquelaursa.com\",\n    \"login\": \"pedro.souza\",\n    \"cpf\": \"12345678903\",\n    \"senha\": \"senha123\",\n    \"perfil\": \"ROLE_DOCTOR\",\n    \"endereco\": {\n        \"rua\": \"R. Maria Marciana Dos Santos, Zona Rural Capão\",\n        \"numero\": 628,\n        \"cidade\": \"Nova Serrana\",\n        \"estado\": \"MG\",\n        \"cep\": \"35519-000\"\n    }\n}",
                                                                                     "options":  {
                                                                                                     "raw":  {
                                                                                                                 "language":  "json"
@@ -856,14 +858,14 @@
                                                                                                 "usuarios"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Cria um novo usuÃ¡rio mÃ©dico (ROLE_DOCTOR). CPF obrigatÃ³rio (11 dÃ­gitos). Para o primeiro mÃ©dico, use um token de usuÃ¡rio criado via migration/seed ou crie-o sem auth se a API permitir em dev."
+                                                                       "description":  "Cria um novo usuário médico (ROLE_DOCTOR). CPF obrigatório (11 dígitos). Para o primeiro médico, use um token de usuário criado via migration/seed ou crie-o sem auth se a API permitir em dev."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Buscar UsuÃ¡rio por ID",
+                                                       "name":  "Buscar Usuário por ID",
                                                        "request":  {
                                                                        "auth":  {
                                                                                     "type":  "bearer",
@@ -894,14 +896,14 @@
                                                                                                 "{{user_id}}"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Busca um usuÃ¡rio especÃ­fico pelo seu ID"
+                                                                       "description":  "Busca um usuário específico pelo seu ID"
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Atualizar UsuÃ¡rio",
+                                                       "name":  "Atualizar Usuário",
                                                        "request":  {
                                                                        "auth":  {
                                                                                     "type":  "bearer",
@@ -927,7 +929,7 @@
                                                                                   ],
                                                                        "body":  {
                                                                                     "mode":  "raw",
-                                                                                    "raw":  "{\n    \"nome\": \"JoÃ£o Silva Atualizado\",\n    \"email\": \"joao.silva.updated@example.com\",\n    \"login\": \"joao.silva.updated\",\n    \"senha\": \"novaSenha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"Rua das Flores Atualizada\",\n        \"numero\": 456,\n        \"cidade\": \"SÃ£o Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01234-567\"\n    }\n}",
+                                                                                    "raw":  "{\n    \"nome\": \"João Silva Atualizado\",\n    \"email\": \"joao.silva.updated@example.com\",\n    \"login\": \"joao.silva.updated\",\n    \"senha\": \"novaSenha123\",\n    \"perfil\": \"ROLE_PATIENT\",\n    \"endereco\": {\n        \"rua\": \"Rua das Flores Atualizada\",\n        \"numero\": 456,\n        \"cidade\": \"São Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01234-567\"\n    }\n}",
                                                                                     "options":  {
                                                                                                     "raw":  {
                                                                                                                 "language":  "json"
@@ -945,7 +947,7 @@
                                                                                                 "{{user_id}}"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Atualiza os dados de um usuÃ¡rio existente"
+                                                                       "description":  "Atualiza os dados de um usuário existente"
                                                                    },
                                                        "response":  [
 
@@ -997,7 +999,7 @@
                                                                                                 "senha"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Atualiza a senha de um usuÃ¡rio especÃ­fico"
+                                                                       "description":  "Atualiza a senha de um usuário específico"
                                                                    },
                                                        "response":  [
 
@@ -1009,6 +1011,7 @@
                  },
                  {
                      "name":  "Prenatal Documento",
+                     "description":  "Serviço de documentos médicos e vacinas. Upload de exames (PDF), registro de vacinas. Requer token JWT e LocalStack S3.",
                      "item":  [
                                   {
                                       "name":  "Documents",
@@ -1054,7 +1057,7 @@
                                                                                                          "src":  [
 
                                                                                                                  ],
-                                                                                                         "description":  "Arquivo PDF (mÃ¡ximo 10MB)"
+                                                                                                         "description":  "Arquivo PDF (máximo 10MB)"
                                                                                                      },
                                                                                                      {
                                                                                                          "key":  "documentType",
@@ -1066,7 +1069,7 @@
                                                                                                          "key":  "examType",
                                                                                                          "value":  "",
                                                                                                          "type":  "text",
-                                                                                                         "description":  "Tipo especÃ­fico (opcional). Ex: MORPHOLOGICAL_ULTRASOUND, NUCHAL_TRANSLUCENCY, CURVA_GLICEMICA, GLICEMIA. Usado pela IA."
+                                                                                                         "description":  "Tipo específico (opcional). Ex: MORPHOLOGICAL_ULTRASOUND, NUCHAL_TRANSLUCENCY, CURVA_GLICEMICA, GLICEMIA. Usado pela IA."
                                                                                                      }
                                                                                                  ]
                                                                                 },
@@ -1085,11 +1088,11 @@
                                                                                                     {
                                                                                                         "key":  "cpf",
                                                                                                         "value":  "{{patientCpf}}",
-                                                                                                        "description":  "CPF da paciente (apenas nÃºmeros)"
+                                                                                                        "description":  "CPF da paciente (apenas números)"
                                                                                                     }
                                                                                                 ]
                                                                                },
-                                                                       "description":  "Upload de documento (exame ou ultrassom) em PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**ValidaÃ§Ãµes:**\n- Apenas arquivos PDF\n- Tamanho mÃ¡ximo: 10MB\n- documentType: EXAM ou ULTRASOUND\n- examType (opcional): MORPHOLOGICAL_ULTRASOUND, NUCHAL_TRANSLUCENCY, CURVA_GLICEMICA, GLICEMIA - usado pela IA para regras clÃ­nicas\n\n**Response:** inclui tipoExame quando informado"
+                                                                       "description":  "Upload de documento (exame ou ultrassom) em PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Validações:**\n- Apenas arquivos PDF\n- Tamanho máximo: 10MB\n- documentType: EXAM ou ULTRASOUND\n- examType (opcional): MORPHOLOGICAL_ULTRASOUND, NUCHAL_TRANSLUCENCY, CURVA_GLICEMICA, GLICEMIA - usado pela IA para regras clínicas\n\n**Response:** inclui tipoExame quando informado"
                                                                    },
                                                        "response":  [
 
@@ -1142,7 +1145,7 @@
                                                                                                     {
                                                                                                         "key":  "cpf",
                                                                                                         "value":  "{{patientCpf}}",
-                                                                                                        "description":  "CPF da paciente (apenas nÃºmeros)"
+                                                                                                        "description":  "CPF da paciente (apenas números)"
                                                                                                     }
                                                                                                 ]
                                                                                },
@@ -1182,7 +1185,7 @@
                                                                                                     }
                                                                                                 ]
                                                                                },
-                                                                       "description":  "Faz download de um documento PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Response:** Arquivo PDF binÃ¡rio"
+                                                                       "description":  "Faz download de um documento PDF.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Response:** Arquivo PDF binário"
                                                                    },
                                                        "response":  [
 
@@ -1218,7 +1221,7 @@
                                                                                                     }
                                                                                                 ]
                                                                                },
-                                                                       "description":  "Inativa um documento (soft delete). O documento nÃ£o serÃ¡ mais listado, mas permanece no banco de dados.\n\n**Roles permitidas:** NURSE, DOCTOR\n\n**Response:** 204 No Content"
+                                                                       "description":  "Inativa um documento (soft delete). O documento não será mais listado, mas permanece no banco de dados.\n\n**Roles permitidas:** NURSE, DOCTOR\n\n**Response:** 204 No Content"
                                                                    },
                                                        "response":  [
 
@@ -1254,7 +1257,7 @@
                                                                                                     }
                                                                                                 ]
                                                                                },
-                                                                       "description":  "Exclui permanentemente um documento (hard delete). Remove o arquivo do S3 e os metadados do banco de dados.\n\n**Roles permitidas:** NURSE, DOCTOR\n\n**Response:** 204 No Content\n\n**âš ï¸ ATENÃ‡ÃƒO:** Esta aÃ§Ã£o Ã© irreversÃ­vel!"
+                                                                       "description":  "Exclui permanentemente um documento (hard delete). Remove o arquivo do S3 e os metadados do banco de dados.\n\n**Roles permitidas:** NURSE, DOCTOR\n\n**Response:** 204 No Content\n\n**âš ï¸ ATENÇÃO:** Esta aÃ§Ã£o Ã© irreversível!"
                                                                    },
                                                        "response":  [
 
@@ -1290,14 +1293,14 @@
                                                                                                     }
                                                                                                 ]
                                                                                },
-                                                                       "description":  "Solicita a exclusÃ£o de um documento. Cria uma solicitaÃ§Ã£o que precisa ser aprovada por um profissional (NURSE ou DOCTOR).\n\n**Roles permitidas:** PATIENT\n\n**Response:** 202 Accepted"
+                                                                       "description":  "Solicita a exclusão de um documento. Cria uma solicitação que precisa ser aprovada por um profissional (NURSE ou DOCTOR).\n\n**Roles permitidas:** PATIENT\n\n**Response:** 202 Accepted"
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    }
                                                ],
-                                      "description":  "Endpoints para gerenciamento de documentos mÃ©dicos"
+                                      "description":  "Endpoints para gerenciamento de documentos médicos"
                                   },
                                   {
                                       "name":  "Vaccines",
@@ -1333,18 +1336,18 @@
                                                                                                  {
                                                                                                      "key":  "dataAplicacao",
                                                                                                      "value":  "2025-01-15",
-                                                                                                     "description":  "Data da aplicaÃ§Ã£o (yyyy-MM-dd)"
+                                                                                                     "description":  "Data da aplicação (yyyy-MM-dd)"
                                                                                                  }
                                                                                              ],
                                                                                    "variable":  [
                                                                                                     {
                                                                                                         "key":  "cpf",
                                                                                                         "value":  "{{patientCpf}}",
-                                                                                                        "description":  "CPF da paciente (apenas nÃºmeros)"
+                                                                                                        "description":  "CPF da paciente (apenas números)"
                                                                                                     }
                                                                                                 ]
                                                                                },
-                                                                       "description":  "Registra a aplicaÃ§Ã£o de uma vacina para a gestante.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**ParÃ¢metros:**\n- tipoVacina: ex. DTpa, Hepatite B, Influenza\n- dataAplicacao: yyyy-MM-dd\n\n**Response:** 201 com VaccineResponse (id, gestanteCpf, tipoVacina, dataAplicacao)"
+                                                                       "description":  "Registra a aplicação de uma vacina para a gestante.\n\n**Roles permitidas:** PATIENT, NURSE, DOCTOR\n\n**Parâmetros:**\n- tipoVacina: ex. DTpa, Hepatite B, Influenza\n- dataAplicacao: yyyy-MM-dd\n\n**Response:** 201 com VaccineResponse (id, gestanteCpf, tipoVacina, dataAplicacao)"
                                                                    },
                                                        "response":  [
 
@@ -1373,7 +1376,7 @@
                                                                                                 "health"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Endpoint de health check da aplicaÃ§Ã£o (nÃ£o requer autenticação)"
+                                                                       "description":  "Endpoint de health check da aplicação (não requer autenticação)"
                                                                    },
                                                        "response":  [
 
@@ -1386,6 +1389,7 @@
                  },
                  {
                      "name":  "Prenatal Prontuario",
+                     "description":  "Serviço de prontuário eletrônico. **Ordem:** 1) Criar prontuário na primeira consulta 2) Demais operações. Requer token JWT.",
                      "item":  [
                                   {
                                       "name":  "Health Check",
@@ -1407,7 +1411,7 @@
                                                                                                 "health"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Verifica o status de saúde da aplicaÃ§Ã£o. NÃ£o requer autenticação."
+                                                                       "description":  "Verifica o status de saúde da aplicação. Não requer autenticação."
                                                                    },
                                                        "response":  [
 
@@ -1419,7 +1423,7 @@
                                       "name":  "Prontuários",
                                       "item":  [
                                                    {
-                                                       "name":  "Criar prontuÃ¡rio (primeira consulta)",
+                                                       "name":  "Criar prontuário (primeira consulta)",
                                                        "request":  {
                                                                        "method":  "POST",
                                                                        "header":  [
@@ -1453,14 +1457,14 @@
                                                                                                 "prontuarios"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Cria o prontuÃ¡rio na primeira consulta. ObrigatÃ³rio: cpf (11 dÃ­gitos), dataUltimaMenstruacao. Idade gestacional = semanas entre dataUltimaMenstruacao e dataConsulta (ou hoje se dataConsulta omitida); deve ser 1â€“44. dataConsulta (opcional): para retroativo/testes. tipoParto (opcional): PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO; omitir = NAO_DEFINIDO. Opcional: emailPaciente, medicoNome, medicoEmail (contato e mÃ©dico responsÃ¡vel para notificaÃ§Ãµes/IA). Um prontuÃ¡rio por CPF. Acesso: ENFERMEIRO, MEDICO, NURSE, DOCTOR."
+                                                                       "description":  "Cria o prontuário na primeira consulta. Obrigatório: cpf (11 dígitos), dataUltimaMenstruacao. Idade gestacional = semanas entre dataUltimaMenstruacao e dataConsulta (ou hoje se dataConsulta omitida); deve ser 1â€“44. dataConsulta (opcional): para retroativo/testes. tipoParto (opcional): PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO; omitir = NAO_DEFINIDO. Opcional: emailPaciente, medicoNome, medicoEmail (contato e médico responsável para notificações/IA). Um prontuário por CPF. Acesso: ENFERMEIRO, MEDICO, NURSE, DOCTOR."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Buscar prontuÃ¡rio por CPF",
+                                                       "name":  "Buscar prontuário por CPF",
                                                        "request":  {
                                                                        "method":  "GET",
                                                                        "header":  [
@@ -1483,14 +1487,14 @@
                                                                                                 "{{cpf}}"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Busca prontuÃ¡rio por CPF (11 dÃ­gitos). Gestante: apenas o próprio (JWT com claim cpf). Profissionais: qualquer CPF."
+                                                                       "description":  "Busca prontuário por CPF (11 dígitos). Gestante: apenas o próprio (JWT com claim cpf). Profissionais: qualquer CPF."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Atualizar dados clÃ­nicos",
+                                                       "name":  "Atualizar dados clínicos",
                                                        "request":  {
                                                                        "method":  "PUT",
                                                                        "header":  [
@@ -1526,7 +1530,7 @@
                                                                                                 "{{cpf}}"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Atualiza usoVitaminas, usoAAS, observacoes, tipoParto, emailPaciente, medicoNome, medicoEmail. Campos null ou omitidos nÃ£o alteram. tipoParto: PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuÃ¡rio."
+                                                                       "description":  "Atualiza usoVitaminas, usoAAS, observacoes, tipoParto, emailPaciente, medicoNome, medicoEmail. Campos null ou omitidos não alteram. tipoParto: PARTO_NATURAL, CESARIANA ou NAO_DEFINIDO. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuário."
                                                                    },
                                                        "response":  [
 
@@ -1570,14 +1574,14 @@
                                                                                                 "fatores-risco"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Substitui a lista de fatores de risco. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuÃ¡rio."
+                                                                       "description":  "Substitui a lista de fatores de risco. Acesso: ENFERMEIRO, MEDICO. Path: CPF do prontuário."
                                                                    },
                                                        "response":  [
 
                                                                     ]
                                                    },
                                                    {
-                                                       "name":  "Consultar histÃ³rico do prontuÃ¡rio",
+                                                       "name":  "Consultar histórico do prontuário",
                                                        "request":  {
                                                                        "method":  "GET",
                                                                        "header":  [
@@ -1601,7 +1605,7 @@
                                                                                                 "historico"
                                                                                             ]
                                                                                },
-                                                                       "description":  "Retorna data, profissionalUserId e alteracao. Gestante: apenas o próprio (JWT claim cpf). Path: CPF do prontuÃ¡rio."
+                                                                       "description":  "Retorna data, profissionalUserId e alteracao. Gestante: apenas o próprio (JWT claim cpf). Path: CPF do prontuário."
                                                                    },
                                                        "response":  [
 
@@ -1613,7 +1617,7 @@
                  }
              ],
     "info":  {
-                 "description":  "Collection unificada: Agenda, Auth, Documento e Prontuário. Use o environment Prenatal-Digital-SUS-Local.",
+                 "description":  "# Prenatal Digital SUS - API Unificada\n\nCollection unificada dos serviços: Auth, Agenda, Documento e Prontuário.\n\n## Environment\nUse o environment **Prenatal-Digital-SUS-Local**.\n\n## Ordem de Execução Recomendada\n\n### 1. Prenatal Auth (obter token primeiro)\n- **Health Check** - Verificar se o serviço está rodando\n- **Obter Token OAuth2** (Paciente, Enfermeira ou Médico) - Obtém o JWT e salva em `access_token`\n- **Criar Usuários** (se necessário) - Paciente, Enfermeira, Médico\n\n### 2. Prenatal Prontuário\n- **Health Check**\n- **Criar prontuário** - Primeira consulta (obrigatório antes de agendar)\n- Demais operações\n\n### 3. Prenatal Agenda\n- **Health Check**\n- **Criar Agenda do Médico** - Cadastrar agenda do médico (obrigatório antes de agendar)\n- **Consultar Horários Disponíveis** - Verificar horários livres\n- **Agendar Consulta** - Agendar nova consulta\n- Demais operações\n\n### 4. Prenatal Documento\n- **Health Check**\n- **Upload Document** - Upload de exames\n- **Registrar Vacina** - Registro de vacinas\n- Demais operações\n\n## Portas dos Serviços\n- Auth: 8079 | Agenda: 8080 | Documento: 8081 | Prontuário: 8082",
                  "name":  "Prenatal Digital SUS - API Unificada",
                  "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
                  "_postman_id":  "prenatal-digital-sus-unified"
