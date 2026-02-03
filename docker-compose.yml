@@ -1,0 +1,221 @@
+# Docker Compose unificado - Prenatal Digital SUS
+# Subir todos os serviços: docker compose up --build -d
+# Ver logs: docker compose logs -f
+# Parar: docker compose down
+
+services:
+  # ============ Infraestrutura ============
+
+  postgres:
+    image: postgres:16
+    container_name: prenatal-postgres
+    environment:
+      POSTGRES_DB: prenatal_digital_sus
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./docker/postgres-init:/docker-entrypoint-initdb.d:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d prenatal_digital_sus"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    networks:
+      - prenatal-network
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: prenatal-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEBUG=0
+      - PERSISTENCE=1
+      - DATA_DIR=/var/lib/localstack/data
+    volumes:
+      - localstack_data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:4566/_localstack/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - prenatal-network
+
+  s3-init:
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    container_name: prenatal-s3-init
+    depends_on:
+      localstack:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+        aws --endpoint-url=http://localstack:4566 s3 mb s3://prenatal-documents --region us-east-1 2>/dev/null || true
+        aws --endpoint-url=http://localstack:4566 s3 ls
+        echo 'Bucket s3://prenatal-documents pronto.'
+      "
+    environment:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+    networks:
+      - prenatal-network
+
+  # ============ Aplicações (ordem: auth primeiro, depois as que usam JWT) ============
+
+  prenatal-auth:
+    build:
+      context: ./prenatal-auth
+      dockerfile: Dockerfile
+    container_name: prenatal-auth
+    ports:
+      - "8079:8079"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/prenatal_digital_sus
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      CLIENT_ID: ${CLIENT_ID:-myclientid}
+      CLIENT_SECRET: ${CLIENT_SECRET:-myclientsecret}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8079/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - prenatal-network
+
+  prenatal-agenda:
+    build:
+      context: ./prenatal-agenda
+      dockerfile: Dockerfile
+    container_name: prenatal-agenda
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/prenatal_digital_sus
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      JWT_ISSUER: http://prenatal-auth:8079
+      JWKS_URI: http://prenatal-auth:8079/oauth2/jwks
+    depends_on:
+      postgres:
+        condition: service_healthy
+      prenatal-auth:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    networks:
+      - prenatal-network
+
+  prenatal-prontuario:
+    build:
+      context: ./prenatal-prontuario
+      dockerfile: Dockerfile
+    container_name: prenatal-prontuario
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/prenatal_digital_sus
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      JWT_ISSUER: http://prenatal-auth:8079
+      JWKS_URI: http://prenatal-auth:8079/oauth2/jwks
+    depends_on:
+      postgres:
+        condition: service_healthy
+      prenatal-auth:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    networks:
+      - prenatal-network
+
+  prenatal-documento:
+    build:
+      context: ./prenatal-documento
+      dockerfile: Dockerfile
+    container_name: prenatal-documento
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/prenatal_digital_sus
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      JWT_ISSUER: http://prenatal-auth:8079
+      JWKS_URI: http://prenatal-auth:8079/oauth2/jwks
+      AWS_S3_ENDPOINT_URL: http://localstack:4566
+      AWS_S3_REGION: us-east-1
+      AWS_S3_ACCESS_KEY: test
+      AWS_S3_SECRET_KEY: test
+      AWS_S3_BUCKET_NAME: prenatal-documents
+    depends_on:
+      postgres:
+        condition: service_healthy
+      prenatal-auth:
+        condition: service_healthy
+      s3-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    networks:
+      - prenatal-network
+
+  prenatal-alertas:
+    build:
+      context: ./prenatal-alertas
+      dockerfile: Dockerfile
+    container_name: prenatal-alertas
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/prenatal_digital_sus
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      SMTP_EMAIL: ${SMTP_EMAIL:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      prenatal-auth:
+        condition: service_healthy
+      prenatal-prontuario:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    networks:
+      - prenatal-network
+
+volumes:
+  postgres_data:
+  localstack_data:
+
+networks:
+  prenatal-network:
+    driver: bridge

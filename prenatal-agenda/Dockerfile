@@ -11,9 +11,11 @@ RUN apk add --no-cache curl
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
+# Expõe a porta do serviço de agendamento
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+# Health check para verificar se o serviço está saudável
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
