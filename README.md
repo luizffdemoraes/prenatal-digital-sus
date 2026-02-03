@@ -534,109 +534,193 @@ flowchart TD
 
 ## 🗄️ Diagrama do Banco de Dados
 
+### Visão Geral da Arquitetura de Dados
+
+```mermaid
+flowchart TB
+    subgraph Infra["Infraestrutura de Dados"]
+        PG[(PostgreSQL 16<br/>prenatal_digital_sus)]
+        S3[("LocalStack S3<br/>Bucket: prenatal-documents")]
+    end
+
+    subgraph Auth["Schema: auth"]
+        users[(auth.users)]
+        roles[(auth.roles)]
+        user_role[(auth.user_role)]
+    end
+
+    subgraph Agenda["Schema: agenda"]
+        agenda_medico[(agenda.agenda_medico)]
+        agenda_dias[(agenda.agenda_dias_atendimento)]
+        consulta[(agenda.consulta)]
+    end
+
+    subgraph Pront["Schema: prontuario"]
+        prontuario[(prontuario.prontuario)]
+        fatores[(prontuario.prontuario_fatores_risco)]
+        historico[(prontuario.prontuario_historico)]
+    end
+
+    subgraph Doc["Schema: documento"]
+        doc_medico[(documento.documento_medico)]
+        vacina[(documento.vacina)]
+    end
+
+    PG --> Auth
+    PG --> Agenda
+    PG --> Pront
+    PG --> Doc
+    Doc -->|caminho_armazenamento| S3
+```
+
+### Diagrama Entidade-Relacionamento
+
 ```mermaid
 erDiagram
-    subgraph auth
-        users {
-            bigint id PK
-            varchar name
-            varchar email UK
-            varchar login UK
-            varchar cpf UK
-            varchar password
-            varchar street
-            bigint number
-            varchar city
-            varchar state
-            varchar zip_code
-        }
-        roles {
-            bigint id PK
-            varchar authority UK
-        }
-        user_role {
-            bigint user_id PK,FK
-            bigint role_id PK,FK
-        }
-        users ||--o{ user_role : has
-        roles ||--o{ user_role : has
+    auth_users ||--o{ auth_user_role : "possui"
+    auth_roles ||--o{ auth_user_role : "atribuído"
+    auth_users {
+        bigint id PK
+        varchar name
+        varchar email UK
+        varchar login UK
+        varchar cpf UK
+        varchar password
+        varchar street
+        bigint number
+        varchar city
+        varchar state
+        varchar zip_code
+    }
+    auth_roles {
+        bigint id PK
+        varchar authority UK
+    }
+    auth_user_role {
+        bigint user_id PK,FK
+        bigint role_id PK,FK
+    }
+
+    agenda_medico ||--o{ agenda_dias_atendimento : "dias_semana"
+    agenda_medico {
+        bigint id PK
+        bigint medico_id
+        bigint unidade_id
+        time horario_inicio
+        time horario_fim
+        int duracao_consulta_minutos
+    }
+    agenda_dias_atendimento {
+        bigint agenda_id PK,FK
+        varchar dia_semana PK
+    }
+    agenda_consulta {
+        bigint id PK
+        bigint gestante_id
+        varchar cpf
+        bigint medico_id
+        bigint unidade_id
+        date data
+        time horario
+        varchar status
+    }
+
+    prontuario ||--o{ prontuario_fatores_risco : "fatores"
+    prontuario ||--o{ prontuario_historico : "historico"
+    prontuario {
+        uuid id PK
+        varchar cpf
+        varchar nome_completo
+        int idade_gestacional_semanas
+        varchar email_paciente
+        varchar medico_email
+    }
+    prontuario_fatores_risco {
+        uuid prontuario_id PK,FK
+        varchar fator_risco PK
+    }
+    prontuario_historico {
+        uuid id PK
+        uuid prontuario_id FK
+        timestamp data
+        text alteracao
+    }
+
+    documento_medico {
+        uuid id PK
+        varchar cpf
+        varchar tipo_documento
+        varchar tipo_exame
+        varchar caminho_armazenamento
+        boolean ativo
+    }
+    documento_vacina {
+        uuid id PK
+        varchar cpf
+        varchar tipo_vacina
+        date data_aplicacao
+    }
+```
+
+### Tabelas por Schema
+
+```mermaid
+flowchart LR
+    subgraph auth["🔐 auth"]
+        direction TB
+        U[auth.users]
+        R[auth.roles]
+        UR[auth.user_role]
     end
 
-    subgraph agenda
-        agenda_medico {
-            bigint id PK
-            bigint medico_id
-            bigint unidade_id
-            time horario_inicio
-            time horario_fim
-            int duracao_consulta_minutos
-        }
-        agenda_dias_atendimento {
-            bigint agenda_id PK,FK
-            varchar dia_semana PK
-        }
-        consulta {
-            bigint id PK
-            bigint gestante_id
-            varchar cpf
-            bigint medico_id
-            bigint unidade_id
-            date data
-            time horario
-            varchar status
-            varchar motivo_cancelamento
-        }
-        agenda_medico ||--o{ agenda_dias_atendimento : "dias"
+    subgraph agenda["📅 agenda"]
+        direction TB
+        AM[agenda_medico]
+        AD[agenda_dias_atendimento]
+        C[consulta]
     end
 
-    subgraph prontuario
-        prontuario {
-            uuid id PK
-            varchar cpf
-            varchar nome_completo
-            date data_nascimento
-            uuid gestante_id
-            uuid consulta_id
-            date data_ultima_menstruacao
-            int idade_gestacional_semanas
-            varchar tipo_gestacao
-            varchar tipo_parto
-            varchar email_paciente
-            varchar medico_nome
-            varchar medico_email
-        }
-        prontuario_fatores_risco {
-            uuid prontuario_id PK,FK
-            varchar fator_risco PK
-        }
-        prontuario_historico {
-            uuid id PK
-            uuid prontuario_id FK
-            timestamp data
-            varchar profissional_user_id
-            text alteracao
-        }
-        prontuario ||--o{ prontuario_fatores_risco : "fatores"
-        prontuario ||--o{ prontuario_historico : "historico"
+    subgraph prontuario["📖 prontuario"]
+        direction TB
+        P[prontuario]
+        PF[prontuario_fatores_risco]
+        PH[prontuario_historico]
     end
 
-    subgraph documento
-        documento_medico {
-            uuid id PK
-            varchar cpf
-            varchar nome_arquivo
-            varchar tipo_documento
-            varchar tipo_exame
-            varchar caminho_armazenamento
-            boolean ativo
-        }
-        vacina {
-            uuid id PK
-            varchar cpf
-            varchar tipo_vacina
-            date data_aplicacao
-        }
+    subgraph documento["📄 documento"]
+        direction TB
+        DM[documento_medico]
+        V[vacina]
     end
+```
+
+### Relacionamentos e Chaves de Ligação
+
+```mermaid
+flowchart TB
+    subgraph auth_schema["auth"]
+        auth_users(auth.users)
+    end
+
+    subgraph agenda_schema["agenda"]
+        tbl_agenda_medico(agenda_medico)
+        tbl_consulta(consulta)
+    end
+
+    subgraph pront_schema["prontuario"]
+        tbl_prontuario(prontuario)
+    end
+
+    subgraph doc_schema["documento"]
+        tbl_doc(documento_medico)
+        tbl_vacina(vacina)
+    end
+
+    auth_users -.->|medico_id| tbl_agenda_medico
+    auth_users -.->|gestante_id| tbl_consulta
+    tbl_consulta -.->|cpf| tbl_prontuario
+    tbl_consulta -.->|cpf| tbl_doc
+    tbl_consulta -.->|cpf| tbl_vacina
 ```
 
 ### Schemas e Serviços
