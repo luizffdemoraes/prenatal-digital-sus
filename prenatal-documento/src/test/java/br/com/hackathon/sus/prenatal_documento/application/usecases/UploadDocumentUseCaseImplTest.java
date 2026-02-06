@@ -189,6 +189,26 @@ class UploadDocumentUseCaseImplTest {
     }
 
     @Test
+    @DisplayName("Deve normalizar examType quando informado")
+    void shouldNormalizeExamTypeWhenProvided() throws IOException {
+        byte[] fileContent = "PDF content".getBytes();
+        when(file.getInputStream()).thenReturn(new ByteArrayInputStream(fileContent));
+        String storagePath = "prenatal-records/12345678900/123456789/test.pdf";
+        when(storageGateway.upload(anyString(), any(), eq(CONTENT_TYPE), eq(FILE_SIZE))).thenReturn(storagePath);
+        MedicalDocument savedDocument = new MedicalDocument(
+                PATIENT_CPF, "test.pdf", FILE_NAME, CONTENT_TYPE, FILE_SIZE,
+                DocumentType.ULTRASOUND, "MORFOLOGICO", storagePath
+        );
+        savedDocument.setId(UUID.randomUUID());
+        when(repository.save(any(MedicalDocument.class))).thenReturn(savedDocument);
+
+        MedicalDocument result = uploadUseCase.upload(PATIENT_CPF, file, "ULTRASOUND", "  morfologico  ");
+
+        assertNotNull(result);
+        verify(repository).save(argThat(doc -> "MORFOLOGICO".equals(doc.getExamType())));
+    }
+
+    @Test
     @DisplayName("Deve fazer upload de documento do tipo ULTRASOUND")
     void shouldUploadUltrasoundDocumentSuccessfully() throws IOException {
         // Arrange

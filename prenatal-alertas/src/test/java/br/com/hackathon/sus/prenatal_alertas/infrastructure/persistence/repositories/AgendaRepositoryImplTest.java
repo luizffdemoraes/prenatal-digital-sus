@@ -1,10 +1,14 @@
 package br.com.hackathon.sus.prenatal_alertas.infrastructure.persistence.repositories;
 
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +19,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -92,5 +97,28 @@ class AgendaRepositoryImplTest {
         assertEquals(2, result.size());
         assertEquals(1L, result.get(0).getId());
         assertEquals(2L, result.get(1).getId());
+    }
+
+    @Test
+    @DisplayName("row mapper mapeia linha com data e horario nulos")
+    void rowMapperMapeiaDataEHorarioNulos() throws Exception {
+        ResultSet rs = org.mockito.Mockito.mock(ResultSet.class);
+        when(rs.getLong("id")).thenReturn(99L);
+        when(rs.getObject("data", Date.class)).thenReturn(null);
+        when(rs.getObject("horario", Time.class)).thenReturn(null);
+        when(rs.getString("status")).thenReturn("AGENDADA");
+
+        doAnswer(inv -> {
+            RowMapper<?> mapper = inv.getArgument(1);
+            return List.of(mapper.mapRow(rs, 0));
+        }).when(jdbcTemplate).query(anyString(), any(RowMapper.class), eq("12345678901"));
+
+        List<AppointmentSummary> result = repository.findAppointmentsByCpf("12345678901");
+
+        assertEquals(1, result.size());
+        assertEquals(99L, result.get(0).getId());
+        assertNull(result.get(0).getDate());
+        assertNull(result.get(0).getTime());
+        assertEquals("AGENDADA", result.get(0).getStatus());
     }
 }

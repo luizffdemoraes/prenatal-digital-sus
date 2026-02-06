@@ -141,6 +141,15 @@ class MedicalRecordControllerTest {
         };
     }
 
+    /** Limpa o contexto de segurança (auth nulo). */
+    private RequestPostProcessor noPrincipal() {
+        return request -> {
+            SecurityContextHolder.clearContext();
+            ((MockHttpServletRequest) request).setUserPrincipal(null);
+            return request;
+        };
+    }
+
     @Nested
     @DisplayName("POST /api/v1/prontuarios")
     class CriarProntuario {
@@ -184,6 +193,79 @@ class MedicalRecordControllerTest {
                     .andExpect(jsonPath("$.nomeCompleto").value("Maria Silva"));
 
             verify(createMedicalRecordUseCase).execute(any(CreateMedicalRecordRequest.class), eq("user-123"));
+        }
+
+        @Test
+        @DisplayName("Deve usar 'sistema' quando autenticação é nula")
+        void shouldUseSistemaWhenAuthIsNull() throws Exception {
+            String lmp = LocalDate.now().minusWeeks(20).toString();
+            String createBody = """
+                    {
+                      "cpf": "%s",
+                      "nomeCompleto": "Maria Silva",
+                      "dataNascimento": "1990-01-01",
+                      "dataUltimaMenstruacao": "%s",
+                      "tipoGestacao": "UNICA",
+                      "numeroGestacoesAnteriores": 1,
+                      "numeroPartos": 1,
+                      "numeroAbortos": 0,
+                      "gestacaoAltoRisco": false,
+                      "fatoresRisco": ["HIPERTENSAO"],
+                      "usoVitaminas": true,
+                      "usoAAS": false,
+                      "observacoes": "Ok",
+                      "tipoParto": "PARTO_NATURAL"
+                    }
+                    """.formatted(cpf, lmp).replaceAll("\\s+", " ").trim();
+
+            when(createMedicalRecordUseCase.execute(any(CreateMedicalRecordRequest.class), eq("sistema")))
+                    .thenReturn(medicalRecord);
+
+            mvc.perform(post("/api/v1/prontuarios")
+                            .with(noPrincipal())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(createBody))
+                    .andExpect(status().isCreated());
+
+            verify(createMedicalRecordUseCase).execute(any(CreateMedicalRecordRequest.class), eq("sistema"));
+        }
+
+        @Test
+        @DisplayName("Deve usar 'sistema' quando principal não é Jwt")
+        void shouldUseSistemaWhenPrincipalIsNotJwt() throws Exception {
+            String lmp = LocalDate.now().minusWeeks(20).toString();
+            String createBody = """
+                    {
+                      "cpf": "%s",
+                      "nomeCompleto": "Maria Silva",
+                      "dataNascimento": "1990-01-01",
+                      "dataUltimaMenstruacao": "%s",
+                      "tipoGestacao": "UNICA",
+                      "numeroGestacoesAnteriores": 1,
+                      "numeroPartos": 1,
+                      "numeroAbortos": 0,
+                      "gestacaoAltoRisco": false,
+                      "fatoresRisco": ["HIPERTENSAO"],
+                      "usoVitaminas": true,
+                      "usoAAS": false,
+                      "observacoes": "Ok",
+                      "tipoParto": "PARTO_NATURAL"
+                    }
+                    """.formatted(cpf, lmp).replaceAll("\\s+", " ").trim();
+
+            Authentication authWithStringPrincipal = mock(Authentication.class);
+            when(authWithStringPrincipal.getPrincipal()).thenReturn("not-a-jwt");
+
+            when(createMedicalRecordUseCase.execute(any(CreateMedicalRecordRequest.class), eq("sistema")))
+                    .thenReturn(medicalRecord);
+
+            mvc.perform(post("/api/v1/prontuarios")
+                            .with(asPrincipal(authWithStringPrincipal))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(createBody))
+                    .andExpect(status().isCreated());
+
+            verify(createMedicalRecordUseCase).execute(any(CreateMedicalRecordRequest.class), eq("sistema"));
         }
     }
 
@@ -388,6 +470,38 @@ class MedicalRecordControllerTest {
                     .andExpect(jsonPath("$.length()").value(2));
 
             verify(findMedicalRecordHistoryUseCase).execute(cpf);
+        }
+
+        @Test
+        @DisplayName("Deve permitir acesso quando ROLE_PATIENT acessa próprio CPF")
+        void shouldAllowAccessWhenRolePatientAccessesOwnCpf() throws Exception {
+            List<MedicalRecordHistory> history = List.of(
+                    new MedicalRecordHistory(medicalRecord.getId(), "user-1", "Alteração")
+            );
+            when(findMedicalRecordHistoryUseCase.execute(cpf)).thenReturn(history);
+
+            Authentication auth = createMockAuthentication("patient-1", "ROLE_PATIENT", cpf);
+
+            mvc.perform(get("/api/v1/prontuarios/cpf/{cpf}/historico", cpf)
+                            .with(asPrincipal(auth)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(1));
+
+            verify(findMedicalRecordHistoryUseCase).execute(cpf);
+        }
+
+        @Test
+        @DisplayName("Deve negar acesso quando ROLE_PATIENT tenta acessar outro CPF")
+        void shouldDenyAccessWhenRolePatientAccessesOtherCpf() throws Exception {
+            String otherCpf = "98765432100";
+            Authentication auth = createMockAuthentication("patient-1", "ROLE_PATIENT", cpf);
+
+            mvc.perform(get("/api/v1/prontuarios/cpf/{cpf}/historico", otherCpf)
+                            .with(asPrincipal(auth)))
+                    .andExpect(status().isForbidden())
+                    .andExpect(jsonPath("$.message").value("Gestante só pode acessar o próprio prontuário."));
+
+            verify(findMedicalRecordHistoryUseCase, never()).execute(any());
         }
     }
 }

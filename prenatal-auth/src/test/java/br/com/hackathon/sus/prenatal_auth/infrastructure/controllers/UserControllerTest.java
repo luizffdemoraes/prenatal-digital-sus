@@ -4,6 +4,7 @@ import br.com.hackathon.sus.prenatal_auth.application.dtos.requests.PasswordRequ
 import br.com.hackathon.sus.prenatal_auth.application.dtos.requests.UserRequest;
 import br.com.hackathon.sus.prenatal_auth.application.dtos.responses.UserResponse;
 import br.com.hackathon.sus.prenatal_auth.application.usecases.CreateUserUseCase;
+import br.com.hackathon.sus.prenatal_auth.application.usecases.FindUserByCpfUseCase;
 import br.com.hackathon.sus.prenatal_auth.application.usecases.FindUserByIdUseCase;
 import br.com.hackathon.sus.prenatal_auth.application.usecases.UpdatePasswordUseCase;
 import br.com.hackathon.sus.prenatal_auth.application.usecases.UpdateUserUseCase;
@@ -55,6 +56,9 @@ class UserControllerTest {
 
     @MockitoBean
     private FindUserByIdUseCase findUserByIdUseCase;
+
+    @MockitoBean
+    private FindUserByCpfUseCase findUserByCpfUseCase;
 
     @MockitoBean
     private UpdateUserUseCase updateUserUseCase;
@@ -143,5 +147,27 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(passwordRequest)))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 quando buscar por CPF e usuário não existe")
+    void shouldReturnNotFoundWhenFindUserByCpfEmpty() throws Exception {
+        when(findUserByCpfUseCase.execute("12345678901")).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/v1/usuarios/cpf/{cpf}", "12345678901"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 200 e usuário quando buscar por CPF e existe")
+    void shouldReturnOkWhenFindUserByCpfPresent() throws Exception {
+        User userDomain = UserMapper.toDomain(TestDataFactory.createUserRequest());
+        when(findUserByCpfUseCase.execute("12345678901")).thenReturn(Optional.of(userDomain));
+
+        mockMvc.perform(get("/v1/usuarios/cpf/{cpf}", "12345678901"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(userDomain.getId()))
+                .andExpect(jsonPath("$.email").value(userDomain.getEmail()));
     }
 }

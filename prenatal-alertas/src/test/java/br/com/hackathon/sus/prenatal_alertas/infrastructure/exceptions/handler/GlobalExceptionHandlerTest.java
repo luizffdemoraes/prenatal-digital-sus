@@ -30,7 +30,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("handleIllegalArgumentException retorna 400 com StandardError")
-    void handleIllegalArgumentExceptionRetorna400() throws Exception {
+    void handleIllegalArgumentExceptionRetorna400() {
         IllegalArgumentException ex = new IllegalArgumentException("CPF inválido");
 
         ResponseEntity<StandardError> response = handler.handleIllegalArgumentException(ex);

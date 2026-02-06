@@ -1,10 +1,12 @@
 package br.com.hackathon.sus.prenatal_alertas.infrastructure.persistence.repositories;
 
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -104,5 +107,43 @@ class DocumentoRepositoryImplTest {
 
         assertEquals(1, result.size());
         assertEquals("DTPA", result.get(0).getType());
+    }
+
+    @Test
+    @DisplayName("findExamsByCpf row mapper com criado_em nulo retorna data null")
+    void findExamsByCpfRowMapperComCriadoEmNulo() throws Exception {
+        ResultSet rs = org.mockito.Mockito.mock(ResultSet.class);
+        when(rs.getString("tipo")).thenReturn("ULTRASOUND");
+        when(rs.getTimestamp("criado_em")).thenReturn(null);
+
+        doAnswer(inv -> {
+            RowMapper<?> mapper = inv.getArgument(1);
+            return List.of(mapper.mapRow(rs, 0));
+        }).when(jdbcTemplate).query(anyString(), any(RowMapper.class), eq("12345678901"));
+
+        List<ExamRecord> result = repository.findExamsByCpf("12345678901");
+
+        assertEquals(1, result.size());
+        assertEquals("ULTRASOUND", result.get(0).getType());
+        assertNull(result.get(0).getDate());
+    }
+
+    @Test
+    @DisplayName("findVaccinesByCpf row mapper mapeia tipo e data")
+    void findVaccinesByCpfRowMapperMapeiaTipoEData() throws Exception {
+        ResultSet rs = org.mockito.Mockito.mock(ResultSet.class);
+        when(rs.getString("tipo_vacina")).thenReturn("INFLUENZA");
+        when(rs.getObject("data_aplicacao", LocalDate.class)).thenReturn(LocalDate.of(2025, 6, 1));
+
+        doAnswer(inv -> {
+            RowMapper<?> mapper = inv.getArgument(1);
+            return List.of(mapper.mapRow(rs, 0));
+        }).when(jdbcTemplate).query(anyString(), any(RowMapper.class), eq("12345678901"));
+
+        List<VaccineRecord> result = repository.findVaccinesByCpf("12345678901");
+
+        assertEquals(1, result.size());
+        assertEquals("INFLUENZA", result.get(0).getType());
+        assertEquals(LocalDate.of(2025, 6, 1), result.get(0).getDate());
     }
 }

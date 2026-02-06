@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -62,6 +63,7 @@ class GlobalExceptionHandlerTest {
         when(messageSource.getMessage(eq("error.unauthorized"), any(), any())).thenReturn("Unauthorized access");
         when(messageSource.getMessage(eq("error.resource.not.found"), any(), any())).thenReturn("Resource not found");
         when(messageSource.getMessage(eq("error.request.invalid"), any(), any())).thenReturn("Invalid request");
+        when(messageSource.getMessage(eq("error.access.denied"), any(), any())).thenReturn("Access denied");
     }
 
     @Test
@@ -187,5 +189,88 @@ class GlobalExceptionHandlerTest {
         assertEquals("Invalid request", response.getBody().error());
         assertEquals("Invalid parameter", response.getBody().message());
         assertEquals("/test-uri", response.getBody().path());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 quando BusinessException tem messageKey contendo not.found")
+    void shouldReturnNotFoundWhenBusinessExceptionHasMessageKeyNotFound() {
+        BusinessException ex = new BusinessException("error.user.id.not.found", 999);
+        when(messageSource.getMessage(eq("error.user.id.not.found"), any(), any())).thenReturn("User not found");
+        when(messageSource.getMessage(eq("error.resource.not.found"), any(), any())).thenReturn("Resource not found");
+
+        ResponseEntity<StandardError> response = handler.handleBusinessException(ex, request);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Resource not found", response.getBody().error());
+        assertEquals("User not found", response.getBody().message());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 401 quando BusinessException tem messageKey contendo access.denied")
+    void shouldReturnUnauthorizedWhenBusinessExceptionHasMessageKeyAccessDenied() {
+        BusinessException ex = new BusinessException("error.access.denied", new Object[0]);
+
+        ResponseEntity<StandardError> response = handler.handleBusinessException(ex, request);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Unauthorized access", response.getBody().error());
+        assertEquals("Access denied", response.getBody().message());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 quando BusinessException tem messageKey sem not.found nem access.denied")
+    void shouldReturnBadRequestWhenBusinessExceptionHasOtherMessageKey() {
+        BusinessException ex = new BusinessException("user.cpf.exists", new Object[0]);
+        when(messageSource.getMessage(eq("user.cpf.exists"), any(), any())).thenReturn("CPF already registered");
+
+        ResponseEntity<StandardError> response = handler.handleBusinessException(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Invalid request", response.getBody().error());
+        assertEquals("CPF already registered", response.getBody().message());
+    }
+
+    @Test
+    @DisplayName("handleIllegalArgument deve usar mensagem traduzida quando formato error.xxx: arg")
+    void handleIllegalArgument_shouldUseTranslatedMessageWhenFormatKeyArg() {
+        when(messageSource.getMessage(eq("error.role.invalid"), any(), any())).thenReturn("Invalid role: {0}");
+        IllegalArgumentException ex = new IllegalArgumentException("error.role.invalid: ROLE_XXX");
+
+        ResponseEntity<StandardError> response = handler.handleIllegalArgument(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Invalid request", response.getBody().error());
+        assertTrue(response.getBody().message().contains("ROLE_XXX") || response.getBody().message().contains("Invalid"));
+    }
+
+    @Test
+    @DisplayName("handleIllegalArgument deve usar mensagem original quando mensagem é null")
+    void handleIllegalArgument_shouldUseOriginalMessageWhenMessageIsNull() {
+        IllegalArgumentException ex = new IllegalArgumentException((String) null);
+
+        ResponseEntity<StandardError> response = handler.handleIllegalArgument(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Invalid request", response.getBody().error());
+        assertEquals(null, response.getBody().message());
+    }
+
+    @Test
+    @DisplayName("handleIllegalArgument deve usar mensagem original quando NoSuchMessageException")
+    void handleIllegalArgument_shouldUseOriginalMessageWhenNoSuchMessage() {
+        when(messageSource.getMessage(eq("error.unknown.key"), any(), any(), any())).thenThrow(new NoSuchMessageException("error.unknown.key"));
+        IllegalArgumentException ex = new IllegalArgumentException("error.unknown.key");
+
+        ResponseEntity<StandardError> response = handler.handleIllegalArgument(ex, request);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Invalid request", response.getBody().error());
+        assertEquals("error.unknown.key", response.getBody().message());
     }
 }

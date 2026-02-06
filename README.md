@@ -418,15 +418,69 @@ Cada serviço expõe **Swagger UI** em:
 
 ## 📊 Cobertura de Código
 
-Gerada com **JaCoCo** em cada módulo:
+Todas as aplicações usam **JaCoCo** para cobertura de testes. O relatório é gerado automaticamente ao rodar os testes. Instruções detalhadas e comandos: [scripts/README.md](scripts/README.md).
 
-```bash
-cd prenatal-auth   # ou agenda, prontuario, documento, alertas
-mvn clean test
-mvn jacoco:report
+Relatórios visuais da cobertura por projeto estão na pasta [docs/coverage](docs/coverage/):
+
+| Projeto | Imagem |
+|---------|--------|
+| prenatal-auth | [prenatal-auth.png](docs/coverage/prenatal-auth.png) |
+| prenatal-agenda | [prenatal-agenda.png](docs/coverage/prenatal-agenda.png) |
+| prenatal-prontuario | [prenatal-prontuario.png](docs/coverage/prenatal-prontuario.png) |
+| prenatal-documento | [prenatal-documento.png](docs/coverage/prenatal-documento.png) |
+| prenatal-alertas | [prenatal-alertas.png](docs/coverage/prenatal-alertas.png) |
+
+### Cobertura por projeto (visão geral)
+
+#### prenatal-auth
+![Cobertura de código - prenatal-auth](docs/coverage/prenatal-auth.png)
+
+#### prenatal-agenda
+![Cobertura de código - prenatal-agenda](docs/coverage/prenatal-agenda.png)
+
+#### prenatal-prontuario
+![Cobertura de código - prenatal-prontuario](docs/coverage/prenatal-prontuario.png)
+
+#### prenatal-documento
+![Cobertura de código - prenatal-documento](docs/coverage/prenatal-documento.png)
+
+#### prenatal-alertas
+![Cobertura de código - prenatal-alertas](docs/coverage/prenatal-alertas.png)
+
+### Rodar cobertura em todas as aplicações
+
+Na **raiz do projeto**:
+
+**PowerShell:**
+```powershell
+.\scripts\coverage.ps1
 ```
 
-Relatório em: `target/site/jacoco/index.html`
+**CMD:**
+```cmd
+scripts\coverage.cmd
+```
+
+O script executa `mvn clean test` em cada módulo (prenatal-auth, prenatal-agenda, prenatal-prontuario, prenatal-documento, prenatal-alertas). Ao final, os relatórios ficam em cada pasta do módulo.
+
+### Rodar cobertura em um único módulo
+
+```bash
+cd prenatal-auth   # ou prenatal-agenda, prenatal-prontuario, prenatal-documento, prenatal-alertas
+mvn clean test
+```
+
+### Onde ver o relatório
+
+| Módulo            | Caminho do relatório (HTML)                    |
+|-------------------|-------------------------------------------------|
+| prenatal-auth     | `prenatal-auth/target/site/jacoco/index.html`   |
+| prenatal-agenda   | `prenatal-agenda/target/site/jacoco/index.html` |
+| prenatal-prontuario | `prenatal-prontuario/target/site/jacoco/index.html` |
+| prenatal-documento | `prenatal-documento/target/site/jacoco/index.html` |
+| prenatal-alertas  | `prenatal-alertas/target/site/jacoco/index.html`  |
+
+Abra o `index.html` no navegador para ver instruções, ramos e cobertura por pacote. Configuração do JaCoCo (exclusões de config, DTOs, entities) está no `pom.xml` de cada módulo.
 
 ---
 

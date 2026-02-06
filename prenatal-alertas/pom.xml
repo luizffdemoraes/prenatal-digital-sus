@@ -74,6 +74,25 @@
 
 	<build>
 		<plugins>
+			<!-- Evita erro "arquivo já está sendo usado" ao rodar clean com relatório JaCoCo aberto -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<excludeDefaultDirectories>true</excludeDefaultDirectories>
+					<fileSets>
+						<fileSet>
+							<directory>${project.basedir}/target</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+							<excludes>
+								<exclude>site/jacoco/**</exclude>
+							</excludes>
+						</fileSet>
+					</fileSets>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

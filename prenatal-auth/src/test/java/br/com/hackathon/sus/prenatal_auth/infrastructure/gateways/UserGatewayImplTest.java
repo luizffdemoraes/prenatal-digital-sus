@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import org.mockito.InjectMocks;
@@ -214,5 +216,124 @@ class UserGatewayImplTest {
     void shouldThrowExceptionWhenOtherUserOnValidation() {
         mockAuthenticated(userEntity);
         assertThrows(BusinessException.class, () -> userGateway.validateSelf(999));
+    }
+
+    @Test
+    @DisplayName("existsByCpf deve retornar false quando CPF é null")
+    void existsByCpf_shouldReturnFalseWhenCpfIsNull() {
+        assertFalse(userGateway.existsByCpf(null));
+    }
+
+    @Test
+    @DisplayName("existsByCpf deve retornar true quando CPF existe")
+    void existsByCpf_shouldReturnTrueWhenCpfExists() {
+        when(userRepository.existsByCpf("12345678901")).thenReturn(true);
+        assertTrue(userGateway.existsByCpf("12345678901"));
+        verify(userRepository).existsByCpf("12345678901");
+    }
+
+    @Test
+    @DisplayName("existsByCpfExcludingId deve retornar false quando CPF é null")
+    void existsByCpfExcludingId_shouldReturnFalseWhenCpfIsNull() {
+        assertFalse(userGateway.existsByCpfExcludingId(null, 1));
+    }
+
+    @Test
+    @DisplayName("existsByCpfExcludingId deve retornar true quando outro usuário tem o CPF")
+    void existsByCpfExcludingId_shouldReturnTrueWhenOtherUserHasCpf() {
+        when(userRepository.existsByCpfAndIdNot("12345678901", 1)).thenReturn(true);
+        assertTrue(userGateway.existsByCpfExcludingId("12345678901", 1));
+        verify(userRepository).existsByCpfAndIdNot("12345678901", 1);
+    }
+
+    @Test
+    @DisplayName("findUserByCpf deve retornar Optional vazio quando CPF é null")
+    void findUserByCpf_shouldReturnEmptyWhenCpfIsNull() {
+        assertEquals(Optional.empty(), userGateway.findUserByCpf(null));
+    }
+
+    @Test
+    @DisplayName("findUserByCpf deve retornar Optional vazio quando CPF é em branco")
+    void findUserByCpf_shouldReturnEmptyWhenCpfIsBlank() {
+        assertEquals(Optional.empty(), userGateway.findUserByCpf("   "));
+    }
+
+    @Test
+    @DisplayName("findUserByCpf deve retornar Optional vazio quando CPF tem menos de 11 dígitos")
+    void findUserByCpf_shouldReturnEmptyWhenCpfLengthNot11() {
+        assertEquals(Optional.empty(), userGateway.findUserByCpf("123"));
+    }
+
+    @Test
+    @DisplayName("findUserByCpf deve retornar usuário quando CPF existe")
+    void findUserByCpf_shouldReturnUserWhenCpfExists() {
+        when(userRepository.findByCpf("12345678901")).thenReturn(Optional.of(userEntity));
+        Optional<User> result = userGateway.findUserByCpf("123.456.789-01");
+        assertTrue(result.isPresent());
+        assertEquals(domainUser.getId(), result.get().getId());
+        verify(userRepository).findByCpf("12345678901");
+    }
+
+    @Test
+    @DisplayName("findUserByCpf deve retornar Optional vazio quando CPF não existe")
+    void findUserByCpf_shouldReturnEmptyWhenCpfNotFound() {
+        when(userRepository.findByCpf("12345678901")).thenReturn(Optional.empty());
+        assertEquals(Optional.empty(), userGateway.findUserByCpf("12345678901"));
+    }
+
+    @Test
+    @DisplayName("authenticated deve lançar quando principal não é Jwt")
+    void authenticated_shouldThrowWhenPrincipalIsNotJwt() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn("not-a-jwt");
+        SecurityContext sc = mock(SecurityContext.class);
+        when(sc.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(sc);
+        assertThrows(UsernameNotFoundException.class, () -> userGateway.authenticated());
+    }
+
+    @Test
+    @DisplayName("updateUser deve manter senha quando nova senha é null")
+    void updateUser_shouldKeepPasswordWhenNewPasswordIsNull() {
+        mockAuthenticated(userEntity);
+        when(userRepository.findById(domainUser.getId())).thenReturn(Optional.of(userEntity));
+        when(userRepository.save(any(UserEntity.class))).thenAnswer(inv -> inv.getArgument(0));
+        User updateRequest = TestDataFactory.createUser();
+        updateRequest.setPassword(null);
+        updateRequest.setCpf(domainUser.getCpf());
+        when(userRepository.existsByCpfAndIdNot(anyString(), anyInt())).thenReturn(false);
+        User saved = userGateway.updateUser(domainUser.getId(), updateRequest);
+        assertNotNull(saved);
+        verify(userRepository).save(argThat(e -> e.getPassword() != null));
+    }
+
+    @Test
+    @DisplayName("updateUser deve lançar quando CPF alterado já existe para outro usuário")
+    void updateUser_shouldThrowWhenNewCpfExistsForOtherUser() {
+        mockAuthenticated(userEntity);
+        when(userRepository.findById(domainUser.getId())).thenReturn(Optional.of(userEntity));
+        when(userRepository.existsByCpfAndIdNot("99999999999", domainUser.getId())).thenReturn(true);
+        User updateRequest = TestDataFactory.createUser();
+        updateRequest.setCpf("99999999999");
+        updateRequest.setPassword("");
+        assertThrows(BusinessException.class, () -> userGateway.updateUser(domainUser.getId(), updateRequest));
+    }
+
+    @Test
+    @DisplayName("updateUser deve codificar nova senha quando não vazia")
+    void updateUser_shouldEncodeNewPasswordWhenNotEmpty() {
+        mockAuthenticated(userEntity);
+        when(userRepository.findById(domainUser.getId())).thenReturn(Optional.of(userEntity));
+        when(userRepository.save(any(UserEntity.class))).thenAnswer(inv -> {
+            UserEntity e = inv.getArgument(0);
+            e.setId(domainUser.getId());
+            return e;
+        });
+        when(userRepository.existsByCpfAndIdNot(anyString(), anyInt())).thenReturn(false);
+        User updateRequest = TestDataFactory.createUser();
+        updateRequest.setPassword("novaSenha123");
+        updateRequest.setCpf(domainUser.getCpf());
+        userGateway.updateUser(domainUser.getId(), updateRequest);
+        verify(passwordEncoder).encode("novaSenha123");
     }
 }
