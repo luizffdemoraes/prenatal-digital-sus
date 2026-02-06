@@ -141,18 +141,18 @@ O serviço de alertas executa periodicamente, consultando os dados de prontuári
 
 ```
 prenatal-digital-sus/
-├── prenatal-auth/          # Microsserviço de autenticação (OAuth2 + JWT)
-├── prenatal-agenda/        # Microsserviço de agendamento de consultas
-├── prenatal-prontuario/    # Microsserviço de prontuário eletrônico
-├── prenatal-documento/     # Microsserviço de documentos e vacinas
-├── prenatal-alertas/       # Motor de alertas e notificações por e-mail
-├── docker-compose.yml      # Orquestração unificada dos serviços
+├── prenatal-auth/           # Microsserviço de autenticação (OAuth2 + JWT)
+├── prenatal-agenda/         # Microsserviço de agendamento de consultas
+├── prenatal-prontuario/     # Microsserviço de prontuário eletrônico
+├── prenatal-documento/      # Microsserviço de documentos e vacinas
+├── prenatal-alertas/        # Motor de alertas e notificações por e-mail
+├── docker-compose.yml       # Orquestração unificada dos serviços
 ├── docker/
 │   └── postgres-init/
 │       └── 01-create-schemas.sql   # Criação dos schemas
-├── collection/             # Collections e environments do Postman
-├── .env.example            # Variáveis de ambiente de exemplo
-└── DOCKER.md               # Instruções detalhadas do Docker
+├── collection/              # Collections e environments do Postman
+├── .env.example             # Variáveis de ambiente de exemplo
+└── DOCKER.md                # Instruções detalhadas do Docker
 ```
 
 ---

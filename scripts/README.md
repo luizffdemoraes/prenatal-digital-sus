@@ -65,7 +65,7 @@ Os relatórios HTML ficam em cada módulo, em `target/site/jacoco/index.html`:
 | prenatal-documento | `prenatal-documento/target/site/jacoco/index.html`        |
 | prenatal-alertas   | `prenatal-alertas/target/site/jacoco/index.html`          |
 
-Abra o `index.html` no navegador para ver cobertura por pacote, instruções e ramos. A configuração do JaCoCo (exclusões de config, DTOs, entities) está no `pom.xml` de cada módulo.
+Abra o `index.html` no navegador para ver cobertura de instruções, ramos e linhas por pacote. A configuração do JaCoCo (exclusões de config, DTOs, entities) está no `pom.xml` de cada módulo. Relatórios visuais (imagens) por projeto estão em [docs/coverage](../docs/coverage/).
 
 ---
 
