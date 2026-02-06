@@ -1,0 +1,15 @@
+flowchart TD
+    START([Início]) --> A1[Criar usuário<br/>POST /v1/usuarios]
+    A1 --> A2{Usuário<br/>criado?}
+    A2 -->|Não| ERR1[Erro de validação]
+    A2 -->|Sim| A3[Obter token JWT<br/>POST /oauth2/token]
+    A3 --> A4{Token<br/>válido?}
+    A4 -->|Não| ERR2[Credenciais inválidas]
+    A4 -->|Sim| A5[Criar prontuário<br/>POST /api/v1/prontuarios]
+    A5 --> A6{Prontuário<br/>criado?}
+    A6 -->|Não| ERR3[Erro ao criar prontuário]
+    A6 -->|Sim| A7[Médico cadastra agenda<br/>POST /api/agendas/medico]
+    A7 --> END([Cadastro concluído])
+    ERR1 --> END
+    ERR2 --> END
+    ERR3 --> END

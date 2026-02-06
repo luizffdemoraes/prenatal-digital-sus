@@ -1,0 +1,23 @@
+flowchart TD
+    subgraph Upload["Upload de Exame"]
+        U1([Início]) --> U2[Upload documento<br/>POST /api/prenatal-records/cpf/documents]
+        U2 --> U3{Arquivo<br/>válido?}
+        U3 -->|Não| U4[Erro: arquivo inválido]
+        U3 -->|Sim| U5[Salvar no S3]
+        U5 --> U6[Registrar no banco]
+        U6 --> U7([Documento registrado])
+    end
+
+    subgraph Vacina["Registro de Vacina"]
+        V1([Início]) --> V2[Registrar vacina<br/>POST /api/prenatal-records/cpf/vacinas]
+        V2 --> V3{Dados<br/>válidos?}
+        V3 -->|Não| V4[Erro de validação]
+        V3 -->|Sim| V5[Salvar no banco]
+        V5 --> V6([Vacina registrada])
+    end
+
+    subgraph Download["Download"]
+        D1([Solicitar]) --> D2[GET /api/documents/id/download]
+        D2 --> D3[Buscar no S3]
+        D3 --> D4([Arquivo retornado])
+    end

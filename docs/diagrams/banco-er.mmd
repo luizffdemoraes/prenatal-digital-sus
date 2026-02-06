@@ -1,0 +1,84 @@
+erDiagram
+    auth_users ||--o{ auth_user_role : "possui"
+    auth_roles ||--o{ auth_user_role : "atribuído"
+    auth_users {
+        bigint id PK
+        varchar name
+        varchar email UK
+        varchar login UK
+        varchar cpf UK
+        varchar password
+        varchar street
+        bigint number
+        varchar city
+        varchar state
+        varchar zip_code
+    }
+    auth_roles {
+        bigint id PK
+        varchar authority UK
+    }
+    auth_user_role {
+        bigint user_id PK,FK
+        bigint role_id PK,FK
+    }
+
+    agenda_medico ||--o{ agenda_dias_atendimento : "dias_semana"
+    agenda_medico {
+        bigint id PK
+        bigint medico_id
+        bigint unidade_id
+        time horario_inicio
+        time horario_fim
+        int duracao_consulta_minutos
+    }
+    agenda_dias_atendimento {
+        bigint agenda_id PK,FK
+        varchar dia_semana PK
+    }
+    agenda_consulta {
+        bigint id PK
+        bigint gestante_id
+        varchar cpf
+        bigint medico_id
+        bigint unidade_id
+        date data
+        time horario
+        varchar status
+    }
+
+    prontuario ||--o{ prontuario_fatores_risco : "fatores"
+    prontuario ||--o{ prontuario_historico : "historico"
+    prontuario {
+        uuid id PK
+        varchar cpf
+        varchar nome_completo
+        int idade_gestacional_semanas
+        varchar email_paciente
+        varchar medico_email
+    }
+    prontuario_fatores_risco {
+        uuid prontuario_id PK,FK
+        varchar fator_risco PK
+    }
+    prontuario_historico {
+        uuid id PK
+        uuid prontuario_id FK
+        timestamp data
+        text alteracao
+    }
+
+    documento_medico {
+        uuid id PK
+        varchar cpf
+        varchar tipo_documento
+        varchar tipo_exame
+        varchar caminho_armazenamento
+        boolean ativo
+    }
+    documento_vacina {
+        uuid id PK
+        varchar cpf
+        varchar tipo_vacina
+        date data_aplicacao
+    }

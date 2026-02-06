@@ -1,0 +1,20 @@
+flowchart TD
+    START([Solicitar agendamento]) --> B1[Consultar disponibilidade<br/>GET /api/disponibilidade]
+    B1 --> B2[Enviar requisição<br/>POST /api/consultas/agendar]
+    B2 --> B3{CPF da gestante<br/>válido?}
+    B3 -->|Não| ERR1[Erro: Gestante não encontrada]
+    B3 -->|Sim| B4{Médico<br/>encontrado?}
+    B4 -->|Não| ERR2[Erro: Médico não encontrado]
+    B4 -->|Sim| B5{Médico atende<br/>no dia da semana?}
+    B5 -->|Não| ERR3[Erro: Médico não atende neste dia]
+    B5 -->|Sim| B6{Horário dentro<br/>do expediente?}
+    B6 -->|Não| ERR4[Erro: Horário fora do expediente]
+    B6 -->|Sim| B7{Horário<br/>disponível?}
+    B7 -->|Não| ERR5[Erro: Horário já ocupado]
+    B7 -->|Sim| B8[Consulta agendada com sucesso]
+    B8 --> END([Sucesso])
+    ERR1 --> END
+    ERR2 --> END
+    ERR3 --> END
+    ERR4 --> END
+    ERR5 --> END

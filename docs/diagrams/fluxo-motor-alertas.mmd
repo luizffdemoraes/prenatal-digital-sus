@@ -1,0 +1,23 @@
+flowchart TD
+    START([Scheduler dispara]) --> A1[Buscar gestantes ativas<br/>no prontuário]
+    A1 --> A2{Tem<br/>gestantes?}
+    A2 -->|Não| END([Fim])
+    A2 -->|Sim| A3[Para cada gestante]
+    A3 --> A4[Buscar exames por CPF]
+    A4 --> A5[Buscar vacinas por CPF]
+    A5 --> A6[Buscar consultas por CPF]
+    A6 --> A7[Aplicar regras de negócio]
+
+    A7 --> R1[Ultrassom morfológico / Ecocardiograma<br/>Exames sangue e urina]
+    R1 --> R2[Translucência nucal 12-14 sem]
+    R2 --> R3[Curva glicêmica >= 28 sem]
+    R3 --> R4[Vacinas: dTpa, Hepatite B, Influenza]
+    R4 --> R5[Consulta agendada]
+    R5 --> R6[Gestante de risco + exame crítico]
+
+    R6 --> A8{Tem<br/>alertas?}
+    A8 -->|Sim| A9[Enviar notificações<br/>por e-mail]
+    A9 --> A10{Próxima<br/>gestante?}
+    A8 -->|Não| A10
+    A10 -->|Sim| A3
+    A10 -->|Não| END

@@ -26,6 +26,7 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
 
     private static final int NUCHAL_WEEKS_MIN = 12;
     private static final int NUCHAL_WEEKS_MAX = 14;
+    /** Ultrassom morfológico e vacina dTpa: a partir da 20ª semana (quinto mês). Gravidez ideal 40 sem; termo 37–42 sem. */
     private static final int MORPHOLOGICAL_WEEKS_MIN = 20;
     private static final int GLUCOSE_CURVE_WEEKS_MIN = 28;
 
@@ -97,9 +98,10 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
         checkMorphologicalUltrasound(gestationalWeeks, exams, alerts);
         checkNuchalTranslucency(gestationalWeeks, exams, alerts);
         checkGlucoseCurve(gestationalWeeks, exams, alerts);
-        checkPendingVaccine(vaccines, alerts);
+        checkPendingVaccines(patient, gestationalWeeks, vaccines, alerts);
         checkNoAppointmentScheduled(appointments, alerts);
         checkCriticalExamWithRiskFactor(patient, gestationalWeeks, exams, alerts);
+        checkDoctorShouldRequestExams(gestationalWeeks, exams, alerts);
 
         return alerts;
     }
@@ -130,14 +132,58 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
         }
     }
 
-    private void checkPendingVaccine(List<VaccineRecord> vaccines, List<PrenatalAlert> alerts) {
+    /**
+     * Verifica vacinas pendentes conforme Calendário Nacional de Vacinação da Gestante (PNI).
+     * - Antitetânica (dT/dTpa): a partir da 20ª semana – proteção contra tétano e coqueluche no RN.
+     * - Hepatite B: qualquer fase – iniciar/completar esquema de 3 doses.
+     * - Influenza: qualquer fase – 1 dose anual (proteção materna e do RN).
+     * Gera alertas diferenciados: gestante (sua responsabilidade: procurar UBS) e médico (orientar/prescrever).
+     */
+    private void checkPendingVaccines(PregnantPatient patient, Integer gestationalWeeks,
+                                      List<VaccineRecord> vaccines, List<PrenatalAlert> alerts) {
+        // Antitetânica: PNI recomenda a partir da 20ª semana
         boolean hasTetanusVaccine = vaccines.stream()
                 .anyMatch(v -> "DTPA".equalsIgnoreCase(v.getType()) || "DTAP".equalsIgnoreCase(v.getType())
                         || "DT".equalsIgnoreCase(v.getType()) || "DUPLA_ADULTO".equalsIgnoreCase(v.getType()));
 
-        if (!hasTetanusVaccine) {
+        if (gestationalWeeks >= MORPHOLOGICAL_WEEKS_MIN && !hasTetanusVaccine) {
             alerts.add(new PrenatalAlert(AlertType.PENDING_VACCINE, AlertSeverity.MEDIUM,
-                    "Vacina antitetânica (dT ou dTpa) pendente", NotificationTarget.PATIENT));
+                    "Vacina antitetânica (dT ou dTpa) pendente – recomendada a partir da 20ª semana",
+                    NotificationTarget.PATIENT));
+            alerts.add(new PrenatalAlert(AlertType.PENDING_VACCINE, AlertSeverity.MEDIUM,
+                    "Gestante com vacina antitetânica pendente – orientar e administrar na próxima consulta",
+                    NotificationTarget.PROFESSIONAL));
+        }
+
+        // Hepatite B: qualquer fase – esquema completo de 3 doses (PNI)
+        long hepatitisBDoses = vaccines.stream()
+                .filter(v -> "HEPATITE_B".equalsIgnoreCase(v.getType()) || "HEPATITEB".equalsIgnoreCase(v.getType())
+                        || "HB".equalsIgnoreCase(v.getType()))
+                .count();
+
+        if (hepatitisBDoses < 3) {
+            String msgPatient = hepatitisBDoses == 0
+                    ? "Vacina Hepatite B pendente – procurar UBS para iniciar esquema de 3 doses"
+                    : "Vacina Hepatite B – esquema incompleto (" + hepatitisBDoses + "/3 doses)";
+            alerts.add(new PrenatalAlert(AlertType.PENDING_VACCINE, AlertSeverity.MEDIUM, msgPatient,
+                    NotificationTarget.PATIENT));
+            alerts.add(new PrenatalAlert(AlertType.PENDING_VACCINE, AlertSeverity.MEDIUM,
+                    "Gestante com vacina Hepatite B pendente ou incompleta – orientar na próxima consulta",
+                    NotificationTarget.PROFESSIONAL));
+        }
+
+        // Influenza: em qualquer fase – 1 dose anual (temporada)
+        boolean hasInfluenza = vaccines.stream()
+                .anyMatch(v -> "INFLUENZA".equalsIgnoreCase(v.getType()) || "GRIPE".equalsIgnoreCase(v.getType())
+                        || "FLU".equalsIgnoreCase(v.getType()));
+
+        if (!hasInfluenza) {
+            alerts.add(new PrenatalAlert(AlertType.PENDING_VACCINE, AlertSeverity.MEDIUM,
+                    "Vacina Influenza (gripe) pendente – procure a UBS para dose anual",
+                    NotificationTarget.PATIENT));
+            alerts.add(new PrenatalAlert(AlertType.PENDING_VACCINE, AlertSeverity.MEDIUM,
+                    "Gestante com vacina Influenza pendente – orientar e administrar na próxima consulta",
+                    NotificationTarget.PROFESSIONAL));
         }
     }
 
@@ -194,6 +240,76 @@ public class AnalyzeAllPregnanciesUseCaseImpl implements AnalyzeAllPregnanciesUs
         if (hasCriticalMissing) {
             alerts.add(new PrenatalAlert(AlertType.HIGH_RISK_ATTENTION, AlertSeverity.HIGH,
                     "Gestante de risco com exame crítico pendente - atenção necessária", NotificationTarget.PROFESSIONAL));
+        }
+    }
+
+    /**
+     * Orienta o médico a solicitar exames importantes caso ainda não tenham sido solicitados/realizados:
+     * - Ultrassom morfológico (≥ 20ª semana)
+     * - Ecocardiograma fetal (20ª–24ª semana – avaliação cardíaca fetal)
+     * - Exames de sangue (hemograma, tipagem, glicemia, sorologias – rotina 1ª consulta)
+     * - Exames de urina (EAS, urocultura – rotina pré-natal)
+     */
+    private void checkDoctorShouldRequestExams(Integer gestationalWeeks, List<ExamRecord> exams,
+                                               List<PrenatalAlert> alerts) {
+        // Ultrassom morfológico: médico deve solicitar se ausente (≥ 20 sem)
+        if (gestationalWeeks >= MORPHOLOGICAL_WEEKS_MIN) {
+            boolean hasMorphological = exams.stream()
+                    .anyMatch(e -> "MORPHOLOGICAL_ULTRASOUND".equalsIgnoreCase(e.getType())
+                            || "ULTRASOUND".equalsIgnoreCase(e.getType()));
+            if (!hasMorphological) {
+                alerts.add(new PrenatalAlert(AlertType.MISSING_EXAM, AlertSeverity.HIGH,
+                        "Solicitar ultrassom morfológico para a gestante – exame não encontrado no prontuário",
+                        NotificationTarget.PROFESSIONAL));
+            }
+        }
+
+        // Ecocardiograma fetal: 20ª–24ª semana (avaliação cardíaca fetal)
+        if (gestationalWeeks >= MORPHOLOGICAL_WEEKS_MIN && gestationalWeeks <= 24) {
+            boolean hasEchocardiogram = exams.stream()
+                    .anyMatch(e -> "ECOCARDIOGRAMA".equalsIgnoreCase(e.getType())
+                            || "ECO_CARDIACA".equalsIgnoreCase(e.getType())
+                            || "ECOCARDIOGRAMA_FETAL".equalsIgnoreCase(e.getType())
+                            || "ECHOCARDIOGRAM".equalsIgnoreCase(e.getType())
+                            || "FETAL_ECHO".equalsIgnoreCase(e.getType()));
+            if (!hasEchocardiogram) {
+                alerts.add(new PrenatalAlert(AlertType.MISSING_EXAM, AlertSeverity.MEDIUM,
+                        "Solicitar ecocardiograma fetal para a gestante – janela ideal 20ª–24ª semana",
+                        NotificationTarget.PROFESSIONAL));
+            }
+        }
+
+        // Exames de sangue: rotina 1ª consulta (hemograma, tipagem, glicemia, sorologias)
+        if (gestationalWeeks >= 8) {
+            boolean hasBloodExam = exams.stream()
+                    .anyMatch(e -> {
+                        String t = e.getType() != null ? e.getType().toUpperCase() : "";
+                        return t.contains("HEMOGRAMA") || t.contains("TIPAGEM") || t.contains("GLICEMIA")
+                                || t.contains("VDRL") || t.contains("HIV") || t.contains("SOROLOGIA")
+                                || t.contains("HEPATITE") || t.contains("TOXOPLASMOSE") || t.contains("SIFILIS")
+                                || t.contains("EXAME_SANGUE") || t.contains("BLOOD") || t.equals("HEMOGRAMA")
+                                || t.equals("TIPAGEM_SANGUINEA") || t.equals("GLICEMIA");
+                    });
+            if (!hasBloodExam) {
+                alerts.add(new PrenatalAlert(AlertType.MISSING_EXAM, AlertSeverity.MEDIUM,
+                        "Solicitar exames de sangue de rotina (hemograma, tipagem, glicemia, sorologias) – não encontrados no prontuário",
+                        NotificationTarget.PROFESSIONAL));
+            }
+        }
+
+        // Exames de urina: EAS, urocultura – rotina pré-natal
+        if (gestationalWeeks >= 8) {
+            boolean hasUrineExam = exams.stream()
+                    .anyMatch(e -> {
+                        String t = e.getType() != null ? e.getType().toUpperCase() : "";
+                        return t.contains("EAS") || t.contains("URINA") || t.contains("UROCULTURA")
+                                || t.contains("URINALISE") || t.equals("EXAME_URINA");
+                    });
+            if (!hasUrineExam) {
+                alerts.add(new PrenatalAlert(AlertType.MISSING_EXAM, AlertSeverity.MEDIUM,
+                        "Solicitar exames de urina (EAS, urocultura) – rotina pré-natal não encontrada no prontuário",
+                        NotificationTarget.PROFESSIONAL));
+            }
         }
     }
 }

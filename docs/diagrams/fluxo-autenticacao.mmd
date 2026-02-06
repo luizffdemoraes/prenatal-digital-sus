@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant C as Cliente
+    participant A as prenatal-auth
+    participant S as Serviço (Agenda/Prontuário/Documento)
+
+    C->>A: POST /oauth2/token (grant_type=password)
+    A->>A: Valida credenciais
+    A->>C: access_token (JWT)
+
+    C->>S: GET/POST ... (Authorization: Bearer JWT)
+    S->>A: GET /oauth2/jwks (valida assinatura)
+    A->>S: Chaves públicas
+    S->>S: Valida JWT
+    S->>C: Resposta

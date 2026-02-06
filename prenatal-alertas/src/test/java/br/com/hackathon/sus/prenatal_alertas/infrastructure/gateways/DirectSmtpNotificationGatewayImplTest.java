@@ -1,26 +1,31 @@
 package br.com.hackathon.sus.prenatal_alertas.infrastructure.gateways;
 
-import br.com.hackathon.sus.prenatal_alertas.domain.entities.PrenatalAlert;
-import br.com.hackathon.sus.prenatal_alertas.domain.entities.PrenatalAnalysisResult;
-import br.com.hackathon.sus.prenatal_alertas.domain.enums.AlertSeverity;
-import br.com.hackathon.sus.prenatal_alertas.domain.enums.AlertType;
-import br.com.hackathon.sus.prenatal_alertas.domain.enums.NotificationTarget;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import br.com.hackathon.sus.prenatal_alertas.domain.entities.PrenatalAlert;
+import br.com.hackathon.sus.prenatal_alertas.domain.entities.PrenatalAnalysisResult;
+import br.com.hackathon.sus.prenatal_alertas.domain.enums.AlertSeverity;
+import br.com.hackathon.sus.prenatal_alertas.domain.enums.AlertType;
+import br.com.hackathon.sus.prenatal_alertas.domain.enums.NotificationTarget;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes do DirectSmtpNotificationGatewayImpl")
@@ -74,14 +79,16 @@ class DirectSmtpNotificationGatewayImplTest {
         ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
         verify(mailSender, times(1)).send(captor.capture());
         SimpleMailMessage msg = captor.getValue();
-        assertEquals(FROM_EMAIL, msg.getFrom());
+        assertTrue(msg.getFrom().contains(FROM_EMAIL));
+        assertTrue(msg.getFrom().contains("Pré-natal Digital SUS"));
         assertEquals("maria@email.com", msg.getTo()[0]);
         assertTrue(msg.getSubject().contains("Pré-natal: pendências"));
         assertTrue(msg.getSubject().contains("25"));
         assertTrue(msg.getSubject().contains("Maria"));
         assertTrue(msg.getText().contains("Olá Maria"));
         assertTrue(msg.getText().contains("Ultrassom morfológico pendente"));
-        assertTrue(msg.getText().contains("Prenatal Digital SUS"));
+        assertTrue(msg.getText().contains("Pré-natal Digital – SUS Digital – Ministério da Saúde"));
+        assertTrue(msg.getText().contains("Disque 136"));
     }
 
     @Test

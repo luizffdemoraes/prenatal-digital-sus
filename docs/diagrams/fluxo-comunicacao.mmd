@@ -1,0 +1,26 @@
+flowchart LR
+    subgraph Docker["prenatal-network"]
+        PG[(PostgreSQL<br/>:5432)]
+        LS[(LocalStack<br/>:4566)]
+        AUTH[Auth<br/>:8079]
+        AGENDA[Agenda<br/>:8080]
+        PRONT[Prontuário<br/>:8082]
+        DOC[Documento<br/>:8081]
+        ALERTAS[Alertas<br/>:8084]
+    end
+
+    PG --> AUTH
+    PG --> AGENDA
+    PG --> PRONT
+    PG --> DOC
+    PG --> ALERTAS
+
+    LS --> DOC
+
+    AUTH -->|JWKS / Token| AGENDA
+    AUTH -->|JWKS / Token| PRONT
+    AUTH -->|JWKS / Token| DOC
+
+    PRONT --> ALERTAS
+    AGENDA --> ALERTAS
+    DOC --> ALERTAS

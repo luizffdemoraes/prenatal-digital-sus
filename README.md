@@ -286,94 +286,19 @@ prenatal-alertas/
 
 ## 📡 Diagrama de Arquitetura
 
+Os diagramas principais são exibidos em PNG para melhor visualização. Código-fonte em [docs/diagrams/](docs/diagrams/) (arquivos `.mmd`).
+
 ### Visão Geral dos Serviços
 
-```mermaid
-flowchart TB
-    subgraph Infraestrutura
-        PG[(PostgreSQL<br/>prenatal_digital_sus)]
-        S3[("LocalStack S3<br/>prenatal-documents")]
-    end
-
-    subgraph Serviços
-        AUTH[prenatal-auth<br/>:8079<br/>OAuth2 / JWT]
-        AGENDA[prenatal-agenda<br/>:8080]
-        PRONT[prenatal-prontuario<br/>:8082]
-        DOC[prenatal-documento<br/>:8081]
-        ALERTAS[prenatal-alertas<br/>:8084]
-    end
-
-    subgraph Cliente
-        USER[Cliente / Postman]
-    end
-
-    USER -->|POST /oauth2/token| AUTH
-    USER -->|Bearer JWT| AGENDA
-    USER -->|Bearer JWT| PRONT
-    USER -->|Bearer JWT| DOC
-
-    AUTH -->|valida JWT| AGENDA
-    AUTH -->|valida JWT| PRONT
-    AUTH -->|valida JWT| DOC
-    AUTH --> PG
-
-    AGENDA --> PG
-    PRONT --> PG
-    DOC --> PG
-    DOC --> S3
-    ALERTAS --> PG
-    ALERTAS -->|SMTP| EMAIL[📧 E-mail]
-```
+![Visão geral dos serviços e infraestrutura](docs/diagrams/arquitetura-visao-geral.png)
 
 ### Fluxo de Comunicação e Dependências
 
-```mermaid
-flowchart LR
-    subgraph Docker["prenatal-network"]
-        PG[(PostgreSQL<br/>:5432)]
-        LS[(LocalStack<br/>:4566)]
-        AUTH[Auth<br/>:8079]
-        AGENDA[Agenda<br/>:8080]
-        PRONT[Prontuário<br/>:8082]
-        DOC[Documento<br/>:8081]
-        ALERTAS[Alertas<br/>:8084]
-    end
-
-    PG --> AUTH
-    PG --> AGENDA
-    PG --> PRONT
-    PG --> DOC
-    PG --> ALERTAS
-
-    LS --> DOC
-
-    AUTH -->|JWKS / Token| AGENDA
-    AUTH -->|JWKS / Token| PRONT
-    AUTH -->|JWKS / Token| DOC
-
-    PRONT --> ALERTAS
-    AGENDA --> ALERTAS
-    DOC --> ALERTAS
-```
+![Fluxo de comunicação e dependências](docs/diagrams/fluxo-comunicacao.png)
 
 ### Fluxo de Autenticação
 
-```mermaid
-sequenceDiagram
-    participant C as Cliente
-    participant A as prenatal-auth
-    participant S as Serviço (Agenda/Prontuário/Documento)
-
-    C->>A: POST /oauth2/token (grant_type=password)
-    A->>A: Valida credenciais
-    A->>C: access_token (JWT)
-
-    C->>S: GET/POST ... (Authorization: Bearer JWT)
-    S->>A: GET /oauth2/jwks (valida assinatura)
-    A->>S: Chaves públicas
-    S->>S: Valida JWT
-    S->>C: Resposta
-```
+![Fluxo de autenticação OAuth2/JWT](docs/diagrams/fluxo-autenticacao.png)
 
 ---
 
@@ -381,154 +306,27 @@ sequenceDiagram
 
 ### Fluxograma 1: Onboarding e Cadastro Inicial
 
-```mermaid
-flowchart TD
-    START([Início]) --> A1[Criar usuário<br/>POST /v1/usuarios]
-    A1 --> A2{Usuário<br/>criado?}
-    A2 -->|Não| ERR1[Erro de validação]
-    A2 -->|Sim| A3[Obter token JWT<br/>POST /oauth2/token]
-    A3 --> A4{Token<br/>válido?}
-    A4 -->|Não| ERR2[Credenciais inválidas]
-    A4 -->|Sim| A5[Criar prontuário<br/>POST /api/v1/prontuarios]
-    A5 --> A6{Prontuário<br/>criado?}
-    A6 -->|Não| ERR3[Erro ao criar prontuário]
-    A6 -->|Sim| A7[Médico cadastra agenda<br/>POST /api/agendas/medico]
-    A7 --> END([Cadastro concluído])
-    ERR1 --> END
-    ERR2 --> END
-    ERR3 --> END
-```
+![Onboarding e cadastro inicial](docs/diagrams/fluxo-onboarding.png)
 
 ### Fluxograma 2: Agendamento de Consulta
 
-```mermaid
-flowchart TD
-    START([Solicitar agendamento]) --> B1[Consultar disponibilidade<br/>GET /api/disponibilidade]
-    B1 --> B2[Enviar requisição<br/>POST /api/consultas/agendar]
-    B2 --> B3{CPF da gestante<br/>válido?}
-    B3 -->|Não| ERR1[Erro: Gestante não encontrada]
-    B3 -->|Sim| B4{Médico<br/>encontrado?}
-    B4 -->|Não| ERR2[Erro: Médico não encontrado]
-    B4 -->|Sim| B5{Médico atende<br/>no dia da semana?}
-    B5 -->|Não| ERR3[Erro: Médico não atende neste dia]
-    B5 -->|Sim| B6{Horário dentro<br/>do expediente?}
-    B6 -->|Não| ERR4[Erro: Horário fora do expediente]
-    B6 -->|Sim| B7{Horário<br/>disponível?}
-    B7 -->|Não| ERR5[Erro: Horário já ocupado]
-    B7 -->|Sim| B8[Consulta agendada com sucesso]
-    B8 --> END([Sucesso])
-    ERR1 --> END
-    ERR2 --> END
-    ERR3 --> END
-    ERR4 --> END
-    ERR5 --> END
-```
+![Agendamento de consulta](docs/diagrams/fluxo-agendamento.png)
 
 ### Fluxograma 3: Upload e Gestão de Documentos
 
-```mermaid
-flowchart TD
-    subgraph Upload["Upload de Exame"]
-        U1([Início]) --> U2[Upload documento<br/>POST /api/prenatal-records/cpf/documents]
-        U2 --> U3{Arquivo<br/>válido?}
-        U3 -->|Não| U4[Erro: arquivo inválido]
-        U3 -->|Sim| U5[Salvar no S3]
-        U5 --> U6[Registrar no banco]
-        U6 --> U7([Documento registrado])
-    end
-
-    subgraph Vacina["Registro de Vacina"]
-        V1([Início]) --> V2[Registrar vacina<br/>POST /api/prenatal-records/cpf/vacinas]
-        V2 --> V3{Dados<br/>válidos?}
-        V3 -->|Não| V4[Erro de validação]
-        V3 -->|Sim| V5[Salvar no banco]
-        V5 --> V6([Vacina registrada])
-    end
-
-    subgraph Download["Download"]
-        D1([Solicitar]) --> D2[GET /api/documents/id/download]
-        D2 --> D3[Buscar no S3]
-        D3 --> D4([Arquivo retornado])
-    end
-```
+![Upload e gestão de documentos](docs/diagrams/fluxo-documentos.png)
 
 ### Fluxograma 4: Motor de Alertas (prenatal-alertas)
 
-```mermaid
-flowchart TD
-    START([Scheduler dispara]) --> A1[Buscar gestantes ativas<br/>no prontuário]
-    A1 --> A2{Tem<br/>gestantes?}
-    A2 -->|Não| END([Fim])
-    A2 -->|Sim| A3[Para cada gestante]
-    A3 --> A4[Buscar exames por CPF]
-    A4 --> A5[Buscar vacinas por CPF]
-    A5 --> A6[Buscar consultas por CPF]
-    A6 --> A7[Aplicar regras de negócio]
-
-    A7 --> R1[Verificar ultrassom morfológico<br/>>= 20 semanas]
-    R1 --> R2[Verificar translucência nucal<br/>12-14 semanas]
-    R2 --> R3[Verificar curva glicêmica<br/>>= 28 semanas]
-    R3 --> R4[Verificar vacina antitetânica]
-    R4 --> R5[Verificar consulta agendada]
-    R5 --> R6[Verificar gestante de risco<br/>+ exame crítico pendente]
-
-    R6 --> A8{Tem<br/>alertas?}
-    A8 -->|Sim| A9[Enviar notificações<br/>por e-mail]
-    A9 --> A10{Próxima<br/>gestante?}
-    A8 -->|Não| A10
-    A10 -->|Sim| A3
-    A10 -->|Não| END
-```
+![Motor de alertas](docs/diagrams/fluxo-motor-alertas.png)
 
 ### Fluxograma 5: Ciclo Completo do Pré-Natal
 
-```mermaid
-flowchart LR
-    subgraph Cadastro["1. Cadastro"]
-        C1[Usuário] --> C2[Prontuário]
-        C2 --> C3[Agenda médico]
-    end
-
-    subgraph Consultas["2. Consultas"]
-        CO1[Disponibilidade] --> CO2[Agendar]
-        CO2 --> CO3[Realizar consulta]
-        CO3 --> CO4{Cancelar?}
-        CO4 -->|Sim| CO5[Cancelar consulta]
-        CO4 -->|Não| CO3
-    end
-
-    subgraph Documentos["3. Documentos"]
-        D1[Upload exame] --> D2[Registrar vacina]
-    end
-
-    subgraph Alertas["4. Monitoramento"]
-        AL1[Scheduler] --> AL2[Analisar gestações]
-        AL2 --> AL3[Regras clínicas]
-        AL3 --> AL4[Notificar gestante/médico]
-    end
-
-    Cadastro --> Consultas
-    Consultas --> Documentos
-    Documentos --> Alertas
-    Alertas -.->|Retroalimenta| Consultas
-```
+![Ciclo completo do pré-natal](docs/diagrams/fluxo-ciclo-completo.png)
 
 ### Fluxograma 6: Cancelamento de Consulta
 
-```mermaid
-flowchart TD
-    START([Solicitar cancelamento]) --> C1[DELETE /api/consultas/id/cancelar]
-    C1 --> C2{Consulta<br/>existe?}
-    C2 -->|Não| ERR1[Consulta não encontrada]
-    C2 -->|Sim| C3{Status =<br/>AGENDADA?}
-    C3 -->|Não| ERR2[Já cancelada ou realizada]
-    C3 -->|Sim| C4[Informar motivo do cancelamento]
-    C4 --> C5[Atualizar status = CANCELADA]
-    C5 --> C6[Registrar data de cancelamento]
-    C6 --> END([Cancelamento concluído])
-    ERR1 --> END
-    ERR2 --> END
-```
+![Cancelamento de consulta](docs/diagrams/fluxo-cancelamento.png)
 
 ---
 
@@ -536,229 +334,15 @@ flowchart TD
 
 ### Visão Geral da Arquitetura de Dados
 
-```mermaid
-flowchart TB
-    subgraph Infra["Infraestrutura de Dados"]
-        PG[(PostgreSQL 16<br/>prenatal_digital_sus)]
-        S3[("LocalStack S3<br/>Bucket: prenatal-documents")]
-    end
-
-    subgraph Auth["Schema: auth"]
-        users[(auth.users)]
-        roles[(auth.roles)]
-        user_role[(auth.user_role)]
-    end
-
-    subgraph Agenda["Schema: agenda"]
-        agenda_medico[(agenda.agenda_medico)]
-        agenda_dias[(agenda.agenda_dias_atendimento)]
-        consulta[(agenda.consulta)]
-    end
-
-    subgraph Pront["Schema: prontuario"]
-        prontuario[(prontuario.prontuario)]
-        fatores[(prontuario.prontuario_fatores_risco)]
-        historico[(prontuario.prontuario_historico)]
-    end
-
-    subgraph Doc["Schema: documento"]
-        doc_medico[(documento.documento_medico)]
-        vacina[(documento.vacina)]
-    end
-
-    PG --> Auth
-    PG --> Agenda
-    PG --> Pront
-    PG --> Doc
-    Doc -->|caminho_armazenamento| S3
-```
+![Visão geral da arquitetura de dados](docs/diagrams/banco-dados-visao.png)
 
 ### Diagrama Entidade-Relacionamento
 
-```mermaid
-erDiagram
-    auth_users ||--o{ auth_user_role : "possui"
-    auth_roles ||--o{ auth_user_role : "atribuído"
-    auth_users {
-        bigint id PK
-        varchar name
-        varchar email UK
-        varchar login UK
-        varchar cpf UK
-        varchar password
-        varchar street
-        bigint number
-        varchar city
-        varchar state
-        varchar zip_code
-    }
-    auth_roles {
-        bigint id PK
-        varchar authority UK
-    }
-    auth_user_role {
-        bigint user_id PK,FK
-        bigint role_id PK,FK
-    }
-
-    agenda_medico ||--o{ agenda_dias_atendimento : "dias_semana"
-    agenda_medico {
-        bigint id PK
-        bigint medico_id
-        bigint unidade_id
-        time horario_inicio
-        time horario_fim
-        int duracao_consulta_minutos
-    }
-    agenda_dias_atendimento {
-        bigint agenda_id PK,FK
-        varchar dia_semana PK
-    }
-    agenda_consulta {
-        bigint id PK
-        bigint gestante_id
-        varchar cpf
-        bigint medico_id
-        bigint unidade_id
-        date data
-        time horario
-        varchar status
-    }
-
-    prontuario ||--o{ prontuario_fatores_risco : "fatores"
-    prontuario ||--o{ prontuario_historico : "historico"
-    prontuario {
-        uuid id PK
-        varchar cpf
-        varchar nome_completo
-        int idade_gestacional_semanas
-        varchar email_paciente
-        varchar medico_email
-    }
-    prontuario_fatores_risco {
-        uuid prontuario_id PK,FK
-        varchar fator_risco PK
-    }
-    prontuario_historico {
-        uuid id PK
-        uuid prontuario_id FK
-        timestamp data
-        text alteracao
-    }
-
-    documento_medico {
-        uuid id PK
-        varchar cpf
-        varchar tipo_documento
-        varchar tipo_exame
-        varchar caminho_armazenamento
-        boolean ativo
-    }
-    documento_vacina {
-        uuid id PK
-        varchar cpf
-        varchar tipo_vacina
-        date data_aplicacao
-    }
-```
-
-### Tabelas por Schema
-
-```mermaid
-flowchart LR
-    subgraph auth["🔐 auth"]
-        direction TB
-        U[auth.users]
-        R[auth.roles]
-        UR[auth.user_role]
-    end
-
-    subgraph agenda["📅 agenda"]
-        direction TB
-        AM[agenda_medico]
-        AD[agenda_dias_atendimento]
-        C[consulta]
-    end
-
-    subgraph prontuario["📖 prontuario"]
-        direction TB
-        P[prontuario]
-        PF[prontuario_fatores_risco]
-        PH[prontuario_historico]
-    end
-
-    subgraph documento["📄 documento"]
-        direction TB
-        DM[documento_medico]
-        V[vacina]
-    end
-```
-
-### Relacionamentos e Chaves de Ligação
-
-```mermaid
-flowchart TB
-    subgraph auth_schema["auth"]
-        auth_users(auth.users)
-    end
-
-    subgraph agenda_schema["agenda"]
-        tbl_agenda_medico(agenda_medico)
-        tbl_consulta(consulta)
-    end
-
-    subgraph pront_schema["prontuario"]
-        tbl_prontuario(prontuario)
-    end
-
-    subgraph doc_schema["documento"]
-        tbl_doc(documento_medico)
-        tbl_vacina(vacina)
-    end
-
-    auth_users -.->|medico_id| tbl_agenda_medico
-    auth_users -.->|gestante_id| tbl_consulta
-    tbl_consulta -.->|cpf| tbl_prontuario
-    tbl_consulta -.->|cpf| tbl_doc
-    tbl_consulta -.->|cpf| tbl_vacina
-```
+![Diagrama entidade-relacionamento](docs/diagrams/banco-er.png)
 
 ### Schemas e Serviços
 
-```mermaid
-flowchart TB
-    subgraph DB["PostgreSQL - prenatal_digital_sus"]
-        direction TB
-        subgraph auth_schema["Schema: auth"]
-            users[(users)]
-            roles[(roles)]
-            user_role[(user_role)]
-        end
-        subgraph prontuario_schema["Schema: prontuario"]
-            prontuario[(prontuario)]
-            fatores[(prontuario_fatores_risco)]
-            historico[(prontuario_historico)]
-        end
-        subgraph agenda_schema["Schema: agenda"]
-            agenda_medico[(agenda_medico)]
-            agenda_dias[(agenda_dias_atendimento)]
-            consulta[(consulta)]
-        end
-        subgraph documento_schema["Schema: documento"]
-            documento_medico[(documento_medico)]
-            vacina[(vacina)]
-        end
-    end
-
-    prenatal_auth[prenatal-auth] --> auth_schema
-    prenatal_agenda[prenatal-agenda] --> agenda_schema
-    prenatal_prontuario[prenatal-prontuario] --> prontuario_schema
-    prenatal_documento[prenatal-documento] --> documento_schema
-    prenatal_alertas[prenatal-alertas] --> auth_schema
-    prenatal_alertas --> prontuario_schema
-    prenatal_alertas --> agenda_schema
-    prenatal_alertas --> documento_schema
-```
+![Schemas e serviços](docs/diagrams/banco-schemas-servicos.png)
 
 ---
 

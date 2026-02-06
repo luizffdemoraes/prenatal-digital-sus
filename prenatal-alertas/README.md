@@ -32,10 +32,76 @@ O prenatal-alertas lê de **prontuario**, **agenda** e **documento**. O containe
 
 O prenatal-alertas envia e-mails **diretamente por SMTP** (Spring Mail), sem dependências externas de workflow.
 
-- **Gestante:** recebe e-mail com assunto e corpo claros (“Pré-natal: pendências no seu acompanhamento”) e lista das **pendências identificadas** (ex.: ultrassom morfológico não encontrado, vacina pendente). Recomendação: procurar a unidade de saúde para agendar.
-- **Médico:** quando **medico_email** está cadastrado no prontuário, recebe **alerta clínico** com as pendências que requerem atenção (target PROFESSIONAL), incluindo severidade e ID da gestante.
+- **Gestante:** recebe e-mail com assunto e corpo claros (“Pré-natal: pendências no seu acompanhamento”) e lista das **pendências identificadas** (ex.: ultrassom morfológico não encontrado, vacinas pendentes). Recomendação: procurar a unidade de saúde para agendar. Canal de suporte: Disque 136 – OuvSUS.
+- **Médico:** quando **medico_email** está cadastrado no prontuário, recebe **alerta clínico** com as pendências que requerem atenção (target PROFESSIONAL), incluindo severidade e ID da gestante. Inclui vacinas pendentes (antitetânica, Hepatite B, Influenza) para orientação na consulta.
+
+Os e-mails utilizam assinatura institucional "Pré-natal Digital – SUS Digital – Ministério da Saúde" e From com nome amigável "Pré-natal Digital SUS".
 
 Defina **SMTP_EMAIL** e **SMTP_PASSWORD** (Gmail: use **senha de app**).
+
+---
+
+## Lógica de alertas
+
+### Duração da gestação (referência clínica)
+
+- **Ideal**: até 40 semanas (nove meses)
+- **A termo (segura)**: entre 37 e 42 semanas
+- O acompanhamento considera gestações de 1 a 44 semanas (pré-termo, termo e pós-termo)
+
+### Regras por semana gestacional
+
+| Exame/Vacina | Janela gestacional | Alvo e-mail | Responsabilidade |
+|--------------|--------------------|-------------|------------------|
+| **Translucência nucal** | 12ª–14ª semana | Gestante | Agendar ultrassom na UBS |
+| **Ultrassom morfológico** | ≥ 20ª semana | Gestante | Agendar ultrassom morfológico |
+| **Vacina antitetânica (dT/dTpa)** | ≥ 20ª semana até o final | Gestante + Médico | Gestante: procurar UBS; Médico: orientar e administrar |
+| **Curva glicêmica** | ≥ 28ª semana | Gestante | Realizar exame de rastreamento de DMG |
+| **Hepatite B** | Qualquer fase | Gestante + Médico | Esquema de 3 doses; orientar na consulta |
+| **Influenza (gripe)** | Qualquer fase | Gestante + Médico | 1 dose anual; orientar e administrar |
+| **Consulta agendada** | Contínuo | Médico | Garantir próxima consulta |
+| **Alto risco** | Conforme exames | Médico | Atenção clínica prioritária |
+| **Ecocardiograma fetal** | 20ª–24ª semana | Médico | Solicitar – avaliação cardíaca fetal |
+| **Exames de sangue** | A partir da 8ª semana | Médico | Solicitar hemograma, tipagem, glicemia, sorologias |
+| **Exames de urina** | A partir da 8ª semana | Médico | Solicitar EAS, urocultura |
+
+### Vacinas (Calendário Nacional – PNI)
+
+- **dTpa**: a partir da 20ª semana (quinto mês) até o final da gravidez; 1 dose por gestação
+- **Hepatite B**: qualquer fase; 3 doses (intervalos: 1 mês entre 1ª e 2ª; 6 meses entre 1ª e 3ª)
+- **Influenza**: qualquer fase; 1 dose anual da vacina da temporada
+
+### Diferenciação de e-mails
+
+| Destinatário | Mensagem | Responsabilidade |
+|--------------|----------|------------------|
+| **Gestante** | Linguagem clara e orientadora | Procurar UBS, agendar exames, tomar vacinas |
+| **Médico** | Linguagem clínica com severidade e ID | Verificar prontuário, orientar, administrar vacinas, contatar gestante |
+
+### Exames que o médico deve solicitar (se ausentes)
+
+- **Ultrassom morfológico** (≥ 20ª semana)
+- **Ecocardiograma fetal** (20ª–24ª semana – avaliação cardíaca)
+- **Exames de sangue** (hemograma, tipagem, glicemia, sorologias) – a partir da 8ª semana
+- **Exames de urina** (EAS, urocultura) – a partir da 8ª semana
+
+### Tipos de vacina aceitos (registro em `documento.vacina`)
+
+| Vacina | Valores aceitos |
+|--------|-----------------|
+| Antitetânica | DTPA, DTAP, DT, DUPLA_ADULTO |
+| Hepatite B | HEPATITE_B, HEPATITEB, HB |
+| Influenza | INFLUENZA, GRIPE, FLU |
+
+### Tipos de exame aceitos (registro em `documento.documento_medico`)
+
+| Categoria | Exemplos |
+|-----------|----------|
+| Sangue | HEMOGRAMA, TIPAGEM_SANGUINEA, GLICEMIA, VDRL, SOROLOGIA |
+| Urina | EAS, UROCULTURA, URINA |
+| Ecocardiograma | ECOCARDIOGRAMA, ECO_CARDIACA, ECOCARDIOGRAMA_FETAL |
+
+Documentação completa: [docs/LOGICA-ALERTAS-E-EMAILS.md](docs/LOGICA-ALERTAS-E-EMAILS.md)
 
 ## Rodar a aplicação fora do Docker
 
@@ -72,7 +138,7 @@ Para **receber e-mails**, verifique:
 
 ## Verificação: dados para alertas
 
-O cadastro de gestante no serviço de prontuário **cria registros** em `prontuario.prontuario`. Para o prenatal-alertas considerar uma gestante, o registro precisa ter: **CPF com 11 dígitos** (apenas números) e **idade_gestacional_semanas entre 1 e 44**.
+O cadastro de gestante no serviço de prontuário **cria registros** em `prontuario.prontuario`. Para o prenatal-alertas considerar uma gestante, o registro precisa ter: **CPF com 11 dígitos** (apenas números) e **idade_gestacional_semanas entre 1 e 44** (gravidez ideal 40 sem; termo 37–42 sem).
 
 Para conferir no **mesmo banco** em que o prenatal-alertas conecta:
 

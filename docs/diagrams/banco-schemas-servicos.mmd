@@ -1,0 +1,32 @@
+flowchart TB
+    subgraph DB["PostgreSQL - prenatal_digital_sus"]
+        direction TB
+        subgraph auth_schema["Schema: auth"]
+            users[(users)]
+            roles[(roles)]
+            user_role[(user_role)]
+        end
+        subgraph prontuario_schema["Schema: prontuario"]
+            prontuario[(prontuario)]
+            fatores[(prontuario_fatores_risco)]
+            historico[(prontuario_historico)]
+        end
+        subgraph agenda_schema["Schema: agenda"]
+            agenda_medico[(agenda_medico)]
+            agenda_dias[(agenda_dias_atendimento)]
+            consulta[(consulta)]
+        end
+        subgraph documento_schema["Schema: documento"]
+            documento_medico[(documento_medico)]
+            vacina[(vacina)]
+        end
+    end
+
+    prenatal_auth[prenatal-auth] --> auth_schema
+    prenatal_agenda[prenatal-agenda] --> agenda_schema
+    prenatal_prontuario[prenatal-prontuario] --> prontuario_schema
+    prenatal_documento[prenatal-documento] --> documento_schema
+    prenatal_alertas[prenatal-alertas] --> auth_schema
+    prenatal_alertas --> prontuario_schema
+    prenatal_alertas --> agenda_schema
+    prenatal_alertas --> documento_schema

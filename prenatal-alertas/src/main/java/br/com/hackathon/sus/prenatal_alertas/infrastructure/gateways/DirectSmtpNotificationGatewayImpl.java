@@ -23,6 +23,15 @@ public class DirectSmtpNotificationGatewayImpl implements NotificationOrchestrat
 
     private static final Logger log = LoggerFactory.getLogger(DirectSmtpNotificationGatewayImpl.class);
 
+    /** Nome amigável para o campo From, conforme padrão SUS. */
+    private static final String FROM_DISPLAY_NAME = "Pré-natal Digital SUS";
+
+    /** Assinatura institucional padronizada (Pré-natal Digital – SUS Digital – Ministério da Saúde). */
+    private static final String SIGNATURE = "Pré-natal Digital – SUS Digital – Ministério da Saúde";
+
+    /** Canal oficial de suporte do SUS (OuvSUS). */
+    private static final String SUPPORT_CHANNEL = "Disque 136 – Ouvidoria-Geral do SUS (OuvSUS) – segunda a sexta, 8h às 20h";
+
     private final JavaMailSender mailSender;
 
     @Value("${app.smtp.email:}")
@@ -70,7 +79,8 @@ public class DirectSmtpNotificationGatewayImpl implements NotificationOrchestrat
             sb.append("• ").append(a.getMessage()).append("\n");
         }
         sb.append("\nRecomendação: procure sua unidade de saúde para agendar os procedimentos.\n\n");
-        sb.append("— Prenatal Digital SUS");
+        sb.append("Dúvidas ou sugestões: ").append(SUPPORT_CHANNEL).append(".\n\n");
+        sb.append("— ").append(SIGNATURE);
         return sb.toString();
     }
 
@@ -82,14 +92,16 @@ public class DirectSmtpNotificationGatewayImpl implements NotificationOrchestrat
             sb.append("• ").append(a.getMessage()).append(" [").append(a.getSeverity() != null ? a.getSeverity().name() : "—").append("]\n");
         }
         sb.append("\nAção recomendada: verificar prontuário e contatar a gestante.\n\n");
-        sb.append("— Prenatal Digital SUS");
+        sb.append("Suporte institucional: ").append(SUPPORT_CHANNEL).append(".\n\n");
+        sb.append("— ").append(SIGNATURE);
         return sb.toString();
     }
 
     private void send(String from, String to, String subject, String body, String destinatario, String patientId) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(from);
+            String fromWithDisplayName = from.contains("<") ? from : FROM_DISPLAY_NAME + " <" + from + ">";
+            message.setFrom(fromWithDisplayName);
             message.setTo(to);
             message.setSubject(subject);
             message.setText(body);

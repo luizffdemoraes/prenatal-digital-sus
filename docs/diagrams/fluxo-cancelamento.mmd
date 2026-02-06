@@ -1,0 +1,12 @@
+flowchart TD
+    START([Solicitar cancelamento]) --> C1[DELETE /api/consultas/id/cancelar]
+    C1 --> C2{Consulta<br/>existe?}
+    C2 -->|Não| ERR1[Consulta não encontrada]
+    C2 -->|Sim| C3{Status =<br/>AGENDADA?}
+    C3 -->|Não| ERR2[Já cancelada ou realizada]
+    C3 -->|Sim| C4[Informar motivo do cancelamento]
+    C4 --> C5[Atualizar status = CANCELADA]
+    C5 --> C6[Registrar data de cancelamento]
+    C6 --> END([Cancelamento concluído])
+    ERR1 --> END
+    ERR2 --> END

@@ -83,7 +83,10 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
         when(prontuarioRepository.findAllActivePregnancies()).thenReturn(List.of(patient));
         when(documentoRepository.findExamsByCpf("12345678900")).thenReturn(List.of());
         when(documentoRepository.findVaccinesByCpf("12345678900")).thenReturn(List.of(
-                new VaccineRecord("DTPA", LocalDate.now())));
+                new VaccineRecord("HEPATITE_B", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(1)),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(6)),
+                new VaccineRecord("INFLUENZA", LocalDate.now())));
         when(agendaRepository.findAppointmentsByCpf("12345678900")).thenReturn(List.of(
                 new AppointmentSummary(1L, LocalDate.now().plusDays(7), LocalTime.of(9, 0), "AGENDADA")));
 
@@ -127,9 +130,15 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
     void naoGeraAlertaUltrassomQuandoExameExiste() {
         when(prontuarioRepository.findAllActivePregnancies()).thenReturn(List.of(patientComCpfValido));
         when(documentoRepository.findExamsByCpf("12345678900")).thenReturn(List.of(
-                new ExamRecord("MORPHOLOGICAL_ULTRASOUND", LocalDate.now())));
+                new ExamRecord("MORPHOLOGICAL_ULTRASOUND", LocalDate.now()),
+                new ExamRecord("HEMOGRAMA", LocalDate.now()),
+                new ExamRecord("EAS", LocalDate.now())));
         when(documentoRepository.findVaccinesByCpf("12345678900")).thenReturn(List.of(
-                new VaccineRecord("DTPA", LocalDate.now())));
+                new VaccineRecord("DTPA", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(1)),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(6)),
+                new VaccineRecord("INFLUENZA", LocalDate.now())));
         when(agendaRepository.findAppointmentsByCpf("12345678900")).thenReturn(List.of(
                 new AppointmentSummary(1L, LocalDate.now().plusDays(7), LocalTime.of(9, 0), "AGENDADA")));
 
@@ -139,13 +148,17 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
     }
 
     @Test
-    @DisplayName("gera alerta de vacina antitetânica pendente")
+    @DisplayName("gera alerta de vacina antitetânica pendente a partir da 20ª semana")
     void geraAlertaVacinaPendente() {
-        PregnantPatient patient = new PregnantPatient("1", "Maria", "12345678900", 15, "maria@email.com", false, List.of());
+        PregnantPatient patient = new PregnantPatient("1", "Maria", "12345678900", 25, "maria@email.com", false, List.of());
         when(prontuarioRepository.findAllActivePregnancies()).thenReturn(List.of(patient));
         when(documentoRepository.findExamsByCpf("12345678900")).thenReturn(List.of(
-                new ExamRecord("NUCHAL_TRANSLUCENCY", LocalDate.now())));
-        when(documentoRepository.findVaccinesByCpf("12345678900")).thenReturn(Collections.emptyList());
+                new ExamRecord("MORPHOLOGICAL_ULTRASOUND", LocalDate.now())));
+        when(documentoRepository.findVaccinesByCpf("12345678900")).thenReturn(List.of(
+                new VaccineRecord("HEPATITE_B", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(1)),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(6)),
+                new VaccineRecord("INFLUENZA", LocalDate.now())));
         when(agendaRepository.findAppointmentsByCpf("12345678900")).thenReturn(List.of(
                 new AppointmentSummary(1L, LocalDate.now().plusDays(7), LocalTime.of(9, 0), "AGENDADA")));
 
@@ -153,11 +166,11 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
 
         ArgumentCaptor<PrenatalAnalysisResult> captor = ArgumentCaptor.forClass(PrenatalAnalysisResult.class);
         verify(notificationGateway).sendNotifications(captor.capture());
-        PrenatalAlert alertaVacina = captor.getValue().getAlerts().stream()
+        PrenatalAlert alertaAntitetanica = captor.getValue().getAlerts().stream()
                 .filter(a -> a.getMessage().contains("antitetânica"))
                 .findFirst().orElse(null);
-        assertNotNull(alertaVacina);
-        assertEquals(AlertType.PENDING_VACCINE, alertaVacina.getType());
+        assertNotNull(alertaAntitetanica);
+        assertEquals(AlertType.PENDING_VACCINE, alertaAntitetanica.getType());
     }
 
     @Test
@@ -165,9 +178,13 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
     void geraAlertaConsultaNaoAgendada() {
         PregnantPatient patient = new PregnantPatient("1", "Maria", "12345678900", 10, "maria@email.com", false, List.of());
         when(prontuarioRepository.findAllActivePregnancies()).thenReturn(List.of(patient));
-        when(documentoRepository.findExamsByCpf("12345678900")).thenReturn(List.of());
+        when(documentoRepository.findExamsByCpf("12345678900")).thenReturn(List.of(
+                new ExamRecord("NUCHAL_TRANSLUCENCY", LocalDate.now())));
         when(documentoRepository.findVaccinesByCpf("12345678900")).thenReturn(List.of(
-                new VaccineRecord("DTPA", LocalDate.now())));
+                new VaccineRecord("HEPATITE_B", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(1)),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(6)),
+                new VaccineRecord("INFLUENZA", LocalDate.now())));
         when(agendaRepository.findAppointmentsByCpf("12345678900")).thenReturn(Collections.emptyList());
 
         useCase.execute();
@@ -190,7 +207,11 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
         when(documentoRepository.findExamsByCpf("12345678900")).thenReturn(List.of(
                 new ExamRecord("MORPHOLOGICAL_ULTRASOUND", LocalDate.now())));
         when(documentoRepository.findVaccinesByCpf("12345678900")).thenReturn(List.of(
-                new VaccineRecord("DTPA", LocalDate.now())));
+                new VaccineRecord("DTPA", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(1)),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(6)),
+                new VaccineRecord("INFLUENZA", LocalDate.now())));
         when(agendaRepository.findAppointmentsByCpf("12345678900")).thenReturn(List.of(
                 new AppointmentSummary(1L, LocalDate.now().plusDays(7), LocalTime.of(9, 0), "AGENDADA")));
 
@@ -206,14 +227,20 @@ class AnalyzeAllPregnanciesUseCaseImplTest {
     }
 
     @Test
-    @DisplayName("aceita vacina DT como antitetânica")
+    @DisplayName("aceita vacina DT como antitetânica e não gera alerta a partir da 20ª semana")
     void aceitaVacinaDTComoAntitetanica() {
-        PregnantPatient patient = new PregnantPatient("1", "Maria", "12345678900", 10, "maria@email.com", false, List.of());
+        PregnantPatient patient = new PregnantPatient("1", "Maria", "12345678900", 25, "maria@email.com", false, List.of());
         when(prontuarioRepository.findAllActivePregnancies()).thenReturn(List.of(patient));
         when(documentoRepository.findExamsByCpf("12345678900")).thenReturn(List.of(
-                new ExamRecord("NUCHAL_TRANSLUCENCY", LocalDate.now())));
+                new ExamRecord("MORPHOLOGICAL_ULTRASOUND", LocalDate.now()),
+                new ExamRecord("HEMOGRAMA", LocalDate.now()),
+                new ExamRecord("EAS", LocalDate.now())));
         when(documentoRepository.findVaccinesByCpf("12345678900")).thenReturn(List.of(
-                new VaccineRecord("DT", LocalDate.now())));
+                new VaccineRecord("DT", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now()),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(1)),
+                new VaccineRecord("HEPATITE_B", LocalDate.now().plusMonths(6)),
+                new VaccineRecord("INFLUENZA", LocalDate.now())));
         when(agendaRepository.findAppointmentsByCpf("12345678900")).thenReturn(List.of(
                 new AppointmentSummary(1L, LocalDate.now().plusDays(7), LocalTime.of(9, 0), "AGENDADA")));
 

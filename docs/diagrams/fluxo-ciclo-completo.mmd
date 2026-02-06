@@ -1,0 +1,28 @@
+flowchart LR
+    subgraph Cadastro["1. Cadastro"]
+        C1[Usuário] --> C2[Prontuário]
+        C2 --> C3[Agenda médico]
+    end
+
+    subgraph Consultas["2. Consultas"]
+        CO1[Disponibilidade] --> CO2[Agendar]
+        CO2 --> CO3[Realizar consulta]
+        CO3 --> CO4{Cancelar?}
+        CO4 -->|Sim| CO5[Cancelar consulta]
+        CO4 -->|Não| CO3
+    end
+
+    subgraph Documentos["3. Documentos"]
+        D1[Upload exame] --> D2[Registrar vacina]
+    end
+
+    subgraph Alertas["4. Monitoramento"]
+        AL1[Scheduler] --> AL2[Analisar gestações]
+        AL2 --> AL3[Regras clínicas]
+        AL3 --> AL4[Notificar gestante/médico]
+    end
+
+    Cadastro --> Consultas
+    Consultas --> Documentos
+    Documentos --> Alertas
+    Alertas -.->|Retroalimenta| Consultas
