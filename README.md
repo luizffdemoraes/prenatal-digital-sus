@@ -396,9 +396,11 @@ docker compose up --build -d
 # Acompanhar logs
 docker compose logs -f
 
-# Parar
+# Parar (sempre use isso antes de subir de novo, para evitar conflito de nomes)
 docker compose down
 ```
+
+**Se aparecer erro de conflito de nome** (ex.: `The container name "/prenatal-postgres" is already in use`): pare e remova os containers da stack, depois suba de novo na raiz do projeto: `docker compose down` e em seguida `docker compose up -d`.
 
 ### Variáveis de ambiente (envio de e‑mail via Gmail)
 
