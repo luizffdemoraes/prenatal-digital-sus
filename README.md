@@ -108,7 +108,7 @@ O sistema utiliza um banco PostgreSQL compartilhado com schemas isolados por ser
 
 O serviço de alertas executa periodicamente, consultando os dados de prontuário, agenda e documentos para identificar situações que exigem atenção (exames pendentes, vacinas em atraso, consultas) e notifica gestantes e médicos por e-mail.
 
-**Obs.:** Para envio de e-mails, configure as variáveis de ambiente `SMTP_EMAIL` e `SMTP_PASSWORD` na máquina ou no arquivo `.env`.
+**Obs.:** Para envio de e-mails, configure as variáveis de ambiente `SMTP_EMAIL` e `SMTP_PASSWORD` **nas variáveis de ambiente da máquina**. Ao subir com `docker compose up`, o Docker Compose obtém essas variáveis do ambiente da máquina e repassa aos containers.
 
 ---
 
@@ -141,6 +141,8 @@ O serviço de alertas executa periodicamente, consultando os dados de prontuári
 
 ```
 prenatal-digital-sus/
+├── README.md                        # Documentação principal do projeto
+├── CONFIGURACAO-VARIAVEIS-AMBIENTE.md   # Guia de variáveis de ambiente (SMTP, Gmail, Windows)
 ├── prenatal-auth/           # Microsserviço de autenticação (OAuth2 + JWT)
 ├── prenatal-agenda/         # Microsserviço de agendamento de consultas
 ├── prenatal-prontuario/     # Microsserviço de prontuário eletrônico
@@ -151,7 +153,6 @@ prenatal-digital-sus/
 │   └── postgres-init/
 │       └── 01-create-schemas.sql   # Criação dos schemas
 ├── collection/              # Collections e environments do Postman
-├── .env.example             # Variáveis de ambiente de exemplo
 └── DOCKER.md                # Instruções detalhadas do Docker
 ```
 
@@ -383,14 +384,89 @@ docker compose logs -f
 docker compose down
 ```
 
-### Variáveis de ambiente
+### Variáveis de ambiente (envio de e‑mail via Gmail)
 
-As variáveis `SMTP_EMAIL` e `SMTP_PASSWORD` são lidas do ambiente da máquina ou do arquivo `.env`. Para configurar:
+As variáveis de ambiente abaixo são usadas pelo serviço de alertas para enviar e‑mails:
 
-```bash
-cp .env.example .env
-# Edite .env com suas credenciais SMTP (opcional)
+- **`SMTP_EMAIL`** → seu e‑mail do Gmail (ex: `seu-email@gmail.com`)
+- **`SMTP_PASSWORD`** → senha de app gerada no Gmail (NÃO é a senha normal da conta)
+
+**Regra do projeto:** essas variáveis **devem estar definidas nas variáveis de ambiente da máquina**. Ao executar `docker compose up`, o Docker Compose **obtém** os valores das variáveis de ambiente definidas na máquina e repassa aos containers. Não é usado arquivo `.env` no projeto.
+
+**Guia completo:** [CONFIGURACAO-VARIAVEIS-AMBIENTE.md](CONFIGURACAO-VARIAVEIS-AMBIENTE.md) (na raiz do projeto).
+
+---
+
+### 1️⃣ Etapa obrigatória no Gmail: gerar senha de app
+
+Para usar Gmail como servidor SMTP, você precisa **obrigatoriamente** gerar uma **senha de app**.  
+Resumo do processo (feito uma única vez por conta):
+
+- **Passo 1 – Ativar verificação em duas etapas**
+  1. Acesse `https://myaccount.google.com/security`
+  2. Em **“Como fazer login no Google”**, clique em **“Verificação em duas etapas”**
+  3. Siga o passo a passo (confirmação por SMS, etc.) até ficar **ATIVADA**
+
+- **Passo 2 – Gerar a senha de app**
+  1. Acesse `https://myaccount.google.com/apppasswords`
+  2. Faça login se for pedido
+  3. Em **“Selecionar app”**, escolha **“Mail”**
+  4. Em **“Selecionar dispositivo”**, escolha **“Outro (nome personalizado)”**
+  5. Digite um nome (ex.: `Prenatal Digital SUS`) e clique em **“Gerar”**
+  6. O Google vai mostrar uma senha de **16 caracteres** (ex.: `abcd efgh ijkl mnop`)
+  7. **Copie essa senha** e remova os espaços, ficando assim: `abcdefghijklmnop`
+
+> Essa senha de 16 caracteres (sem espaços) é o valor que será usado em `SMTP_PASSWORD`.
+
+---
+
+### 2️⃣ Criar as variáveis de ambiente no Windows (manual)
+
+Configuração **manual**, direto nas variáveis de ambiente do Windows:
+
+1. Pressione `Win + R`, digite `sysdm.cpl` e pressione **Enter**
+2. Na janela **“Propriedades do Sistema”**, vá na aba **“Avançado”**
+3. Clique no botão **“Variáveis de Ambiente...”**
+4. Na seção **“Variáveis de usuário”**, clique em **“Novo...”**
+   - **Nome da variável:** `SMTP_EMAIL`  
+   - **Valor da variável:** seu e‑mail Gmail completo (ex.: `seu-email@gmail.com`)  
+   - Clique em **OK**
+5. Ainda em **“Variáveis de usuário”**, clique de novo em **“Novo...”**
+   - **Nome da variável:** `SMTP_PASSWORD`  
+   - **Valor da variável:** a senha de app de 16 caracteres gerada na etapa do Gmail (sem espaços), ex.: `abcdefghijklmnop`  
+   - Clique em **OK**
+6. Clique em **OK** na janela de **“Variáveis de Ambiente”**
+7. Clique em **OK** na janela de **“Propriedades do Sistema”**
+8. **Feche completamente** o PowerShell / CMD que estiver aberto
+9. Abra um **novo** PowerShell / CMD
+
+---
+
+### 3️⃣ Conferir se as variáveis foram criadas
+
+No **novo** PowerShell, digite:
+
+```powershell
+echo $env:SMTP_EMAIL
+echo $env:SMTP_PASSWORD
 ```
+
+- Se aparecerem os valores configurados, está correto.
+- Se vier em branco, revise os passos de criação das variáveis no Windows.
+
+Depois disso, você já pode subir o projeto com:
+
+```powershell
+docker compose up --build -d
+```
+
+e acompanhar os logs do serviço de alertas:
+
+```powershell
+docker compose logs -f prenatal-alertas
+```
+
+Se as variáveis estiverem corretas, o serviço conseguirá autenticar no Gmail e enviar os e‑mails.
 
 ### Portas e URLs
 
@@ -420,7 +496,7 @@ Cada serviço expõe **Swagger UI** em:
 
 ## 📊 Cobertura de Código
 
-Todas as aplicações usam **JaCoCo** para cobertura de testes. O relatório é gerado automaticamente ao rodar os testes. Instruções detalhadas e comandos: [scripts/README.md](scripts/README.md).
+Todas as aplicações usam **JaCoCo** para cobertura de testes. O relatório é gerado automaticamente ao rodar os testes. Instruções detalhadas e comandos: [scripts/COBERTURA-CODIGO.md](scripts/COBERTURA-CODIGO.md).
 
 Relatórios visuais da cobertura por projeto estão na pasta [docs/coverage](docs/coverage/):
 

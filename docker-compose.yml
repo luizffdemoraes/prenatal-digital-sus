@@ -2,6 +2,9 @@
 # Subir todos os serviços: docker compose up --build -d
 # Ver logs: docker compose logs -f
 # Parar: docker compose down
+#
+# Variáveis de ambiente: devem estar definidas nas variáveis de ambiente da máquina.
+# Ao executar docker compose up, o Compose obtém os valores da máquina e repassa aos containers.
 
 services:
   # ============ Infraestrutura ============
