@@ -14,16 +14,18 @@
   - [Documento Service](#-documento-service)
   - [Alertas Service](#-alertas-service)
 - [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
+- [Segurança](#-segurança)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Clean Architecture](#-clean-architecture)
 - [Diagrama de Arquitetura](#-diagrama-de-arquitetura)
 - [Fluxogramas do Projeto](#-fluxogramas-do-projeto)
-- [Diagrama do Banco de Dados](#diagrama-do-banco-de-dados)
+- [Diagrama do Banco de Dados](#-diagrama-do-banco-de-dados)
 - [Requisitos](#-requisitos)
 - [Como Rodar o Projeto](#-como-rodar-o-projeto)
 - [Documentação da API](#-documentação-da-api)
 - [Cobertura de Código](#-cobertura-de-código)
 - [Collection e Environment Postman](#-collection-e-environment-postman)
+- [Fluxo de Autenticação](#-fluxo-de-autenticação)
 
 ---
 
@@ -272,7 +274,7 @@ prenatal-alertas/
 │   ├── domain/
 │   │   ├── entities/        (PregnantPatient, PrenatalAlert, ExamRecord, VaccineRecord)
 │   │   ├── enums/           (AlertType, AlertSeverity, NotificationTarget)
-│   │   └── gateways/        (NotificationOrchestratorGateway)
+│   │   ├── gateways/        (NotificationOrchestratorGateway)
 │   │   └── repositories/    (ProntuarioRepository, AgendaRepository, DocumentoRepository)
 │   └── infrastructure/
 │       ├── gateways/        (DirectSmtpNotificationGatewayImpl)
@@ -480,7 +482,7 @@ mvn clean test
 | prenatal-documento | `prenatal-documento/target/site/jacoco/index.html` |
 | prenatal-alertas  | `prenatal-alertas/target/site/jacoco/index.html`  |
 
-Abra o `index.html` no navegador para ver instruções, ramos e cobertura por pacote. Configuração do JaCoCo (exclusões de config, DTOs, entities) está no `pom.xml` de cada módulo.
+Abra o `index.html` no navegador para ver cobertura de instruções, ramos e linhas por pacote. Configuração do JaCoCo (exclusões de config, DTOs, entities) está no `pom.xml` de cada módulo.
 
 ---
 
