@@ -6,29 +6,30 @@
 
 ## 📑 ÍNDICE
 
-- [Descrição do Projeto](#-descrição-do-projeto)
-- [Funcionalidades e Endpoints](#-funcionalidades-e-endpoints)
-  - [Auth Service](#-auth-service)
-  - [Agenda Service](#-agenda-service)
-  - [Prontuário Service](#-prontuário-service)
-  - [Documento Service](#-documento-service)
-  - [Alertas Service](#-alertas-service)
-- [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
-- [Segurança](#-segurança)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Clean Architecture](#-clean-architecture)
-- [Diagrama de Arquitetura](#-diagrama-de-arquitetura)
-- [Fluxogramas do Projeto](#-fluxogramas-do-projeto)
-- [Diagrama do Banco de Dados](#-diagrama-do-banco-de-dados)
-- [Requisitos](#-requisitos)
-- [Como Rodar o Projeto](#-como-rodar-o-projeto)
-- [Documentação da API](#-documentação-da-api)
-- [Cobertura de Código](#-cobertura-de-código)
-- [Collection e Environment Postman](#-collection-e-environment-postman)
-- [Fluxo de Autenticação](#-fluxo-de-autenticação)
+- [Descrição do Projeto](#descrição-do-projeto)
+- [Funcionalidades e Endpoints](#funcionalidades-e-endpoints)
+  - [Auth Service](#auth-service-porta-8079)
+  - [Agenda Service](#agenda-service-porta-8080)
+  - [Prontuário Service](#prontuário-service-porta-8082)
+  - [Documento Service](#documento-service-porta-8081)
+  - [Alertas Service](#alertas-service-porta-8084)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Segurança](#segurança)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Clean Architecture](#clean-architecture)
+- [Diagrama de Arquitetura](#diagrama-de-arquitetura)
+- [Fluxogramas do Projeto](#fluxogramas-do-projeto)
+- [Diagrama do Banco de Dados](#diagrama-do-banco-de-dados)
+- [Requisitos](#requisitos)
+- [Como Rodar o Projeto](#como-rodar-o-projeto)
+- [Documentação da API](#documentação-da-api)
+- [Cobertura de Código](#cobertura-de-código)
+- [Collection e Environment Postman](#collection-e-environment-postman)
+- [Fluxo de Autenticação](#fluxo-de-autenticação)
 
 ---
 
+<a id="descrição-do-projeto"></a>
 ## 📌 Descrição do Projeto
 
 O **Prenatal Digital SUS** é uma API modular e containerizada que oferece:
@@ -43,8 +44,10 @@ O sistema utiliza um banco PostgreSQL compartilhado com schemas isolados por ser
 
 ---
 
+<a id="funcionalidades-e-endpoints"></a>
 ## ⚙️ Funcionalidades e Endpoints
 
+<a id="auth-service-porta-8079"></a>
 ### 🔐 Auth Service (porta 8079)
 
 | Operação | Descrição | Acesso |
@@ -58,6 +61,7 @@ O sistema utiliza um banco PostgreSQL compartilhado com schemas isolados por ser
 
 ---
 
+<a id="agenda-service-porta-8080"></a>
 ### 📅 Agenda Service (porta 8080)
 
 | Operação | Descrição | Acesso |
@@ -74,6 +78,7 @@ O sistema utiliza um banco PostgreSQL compartilhado com schemas isolados por ser
 
 ---
 
+<a id="prontuário-service-porta-8082"></a>
 ### 📖 Prontuário Service (porta 8082)
 
 | Operação | Descrição | Acesso |
@@ -86,6 +91,7 @@ O sistema utiliza um banco PostgreSQL compartilhado com schemas isolados por ser
 
 ---
 
+<a id="documento-service-porta-8081"></a>
 ### 📄 Documento Service (porta 8081)
 
 | Operação | Descrição | Acesso |
@@ -100,6 +106,7 @@ O sistema utiliza um banco PostgreSQL compartilhado com schemas isolados por ser
 
 ---
 
+<a id="alertas-service-porta-8084"></a>
 ### 📨 Alertas Service (porta 8084)
 
 | Operação | Descrição | Acesso |
@@ -112,6 +119,7 @@ O serviço de alertas executa periodicamente, consultando os dados de prontuári
 
 ---
 
+<a id="segurança"></a>
 ## 🛡️ Segurança
 
 | Validação | Descrição | Implementação |
@@ -122,6 +130,7 @@ O serviço de alertas executa periodicamente, consultando os dados de prontuári
 
 ---
 
+<a id="tecnologias-utilizadas"></a>
 ## 🛠️ Tecnologias Utilizadas
 
 | Stack | Tecnologia |
@@ -137,6 +146,7 @@ O serviço de alertas executa periodicamente, consultando os dados de prontuári
 
 ---
 
+<a id="estrutura-do-projeto"></a>
 ## 📂 Estrutura do Projeto
 
 ```
@@ -158,6 +168,7 @@ prenatal-digital-sus/
 
 ---
 
+<a id="clean-architecture"></a>
 ## 🧹 Clean Architecture
 
 Cada microsserviço segue os princípios da **Clean Architecture**, com camadas bem definidas:
@@ -287,6 +298,7 @@ prenatal-alertas/
 
 ---
 
+<a id="diagrama-de-arquitetura"></a>
 ## 📡 Diagrama de Arquitetura
 
 Os diagramas principais são exibidos em PNG para melhor visualização. Código-fonte em [docs/diagrams/](docs/diagrams/) (arquivos `.mmd`).
@@ -305,6 +317,7 @@ Os diagramas principais são exibidos em PNG para melhor visualização. Código
 
 ---
 
+<a id="fluxogramas-do-projeto"></a>
 ## 📊 Fluxogramas do Projeto
 
 ### Fluxograma 1: Onboarding e Cadastro Inicial
@@ -333,6 +346,7 @@ Os diagramas principais são exibidos em PNG para melhor visualização. Código
 
 ---
 
+<a id="diagrama-do-banco-de-dados"></a>
 ## 🗄️ Diagrama do Banco de Dados
 
 ### Visão Geral da Arquitetura de Dados
@@ -358,6 +372,7 @@ Os diagramas principais são exibidos em PNG para melhor visualização. Código
 
 ---
 
+<a id="requisitos"></a>
 ## 📋 Requisitos
 
 - Java 21
@@ -367,6 +382,7 @@ Os diagramas principais são exibidos em PNG para melhor visualização. Código
 
 ---
 
+<a id="como-rodar-o-projeto"></a>
 ## ▶️ Como Rodar o Projeto
 
 ### Via Docker Compose (recomendado)
@@ -482,6 +498,7 @@ Se as variáveis estiverem corretas, o serviço conseguirá autenticar no Gmail 
 
 ---
 
+<a id="documentação-da-api"></a>
 ## 📚 Documentação da API
 
 Cada serviço expõe **Swagger UI** em:
@@ -494,6 +511,7 @@ Cada serviço expõe **Swagger UI** em:
 
 ---
 
+<a id="cobertura-de-código"></a>
 ## 📊 Cobertura de Código
 
 Todas as aplicações usam **JaCoCo** para cobertura de testes. O relatório é gerado automaticamente ao rodar os testes. Instruções detalhadas e comandos: [scripts/COBERTURA-CODIGO.md](scripts/COBERTURA-CODIGO.md).
@@ -562,6 +580,7 @@ Abra o `index.html` no navegador para ver cobertura de instruções, ramos e lin
 
 ---
 
+<a id="collection-e-environment-postman"></a>
 ## 🧪 Collection e Environment Postman
 
 - **Collection:** `collection/Prenatal-Digital-SUS-API-Unificada.postman_collection.json`
@@ -571,6 +590,7 @@ Importe ambos no Postman e configure o token JWT obtido em `POST /oauth2/token` 
 
 ---
 
+<a id="fluxo-de-autenticação"></a>
 ## 🔒 Fluxo de Autenticação
 
 1. Obter token: `POST http://localhost:8079/oauth2/token` com `grant_type=password`, `username`, `password`, `client_id`, `client_secret`
