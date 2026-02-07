@@ -398,6 +398,9 @@ docker compose logs -f
 
 # Parar (sempre use isso antes de subir de novo, para evitar conflito de nomes)
 docker compose down
+
+# Parar e remover TUDO, inclusive dados do banco (PostgreSQL e LocalStack)
+docker compose down -v
 ```
 
 **Se aparecer erro de conflito de nome** (ex.: `The container name "/prenatal-postgres" is already in use`): pare e remova os containers da stack, depois suba de novo na raiz do projeto: `docker compose down` e em seguida `docker compose up -d`.
@@ -589,6 +592,8 @@ Abra o `index.html` no navegador para ver cobertura de instruções, ramos e lin
 - **Environment:** `collection/Prenatal-Digital-SUS-Local.postman_environment.json`
 
 Importe ambos no Postman e configure o token JWT obtido em `POST /oauth2/token` do prenatal-auth.
+
+**Ordem de uso:** A collection está numerada (01, 02, 03…) na ordem obrigatória de execução: **01 - Prenatal Autenticação** (criar usuários → obter token) → **02 - Prenatal Agenda** (criar agenda do médico → agendar consulta) → **03 - Prenatal Prontuário** (criar prontuário) → **04 - Prenatal Documento** (upload documento). Pastas e requisições estão em português; as obrigatórias estão indicadas no nome.
 
 ---
 

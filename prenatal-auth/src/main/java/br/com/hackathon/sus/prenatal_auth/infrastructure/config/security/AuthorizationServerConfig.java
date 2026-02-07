@@ -67,6 +67,9 @@ public class AuthorizationServerConfig {
     @Value("${security.jwt.duration}")
     private Integer jwtDurationSeconds;
 
+    @Value("${security.jwt.issuer:http://localhost:8079}")
+    private String jwtIssuer;
+
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
@@ -151,7 +154,7 @@ public class AuthorizationServerConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
-                .issuer("http://localhost:8079")
+                .issuer(jwtIssuer)
                 .build();
     }
 

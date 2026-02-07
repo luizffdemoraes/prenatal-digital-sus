@@ -86,6 +86,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-password}
       CLIENT_ID: ${CLIENT_ID:-myclientid}
       CLIENT_SECRET: ${CLIENT_SECRET:-myclientsecret}
+      # Issuer do JWT: no Docker os outros serviços validam por nome do container (prenatal-auth)
+      JWT_ISSUER: http://prenatal-auth:8079
     depends_on:
       postgres:
         condition: service_healthy
