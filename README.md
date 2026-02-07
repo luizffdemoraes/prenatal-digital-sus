@@ -2,6 +2,10 @@
 
 ## Tech Challenge - Sistema de Pré-Natal Digital
 
+<p align="center">
+  <img src="docs/diagrams/esposa.jpg" alt="Logo Prenatal Digital SUS" width="80"/>
+</p>
+
 ---
 
 ## 📑 ÍNDICE
