@@ -143,6 +143,7 @@ O serviço de alertas executa periodicamente, consultando os dados de prontuári
 | Build | Maven |
 | Framework | Spring Boot 3.x / 4.x |
 | Banco de Dados | PostgreSQL 16 |
+| Migração de banco | Flyway |
 | Armazenamento | LocalStack (S3) |
 | Autenticação | OAuth2 Authorization Server + JWT |
 | Documentação | SpringDoc OpenAPI 3 (Swagger) |
